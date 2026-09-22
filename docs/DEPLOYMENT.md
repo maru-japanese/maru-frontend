@@ -28,7 +28,8 @@ saída e encaminha `/api/*` para a Edge Function do projeto informado.
 Importe o repositório `maru-frontend` como projeto Vercel com o nome
 `maru-frontend`. A raiz do projeto
 deve ser o próprio repositório; o arquivo `vercel.json` já define o comando de
-build e o diretório publicado. Para a URL confirmada:
+build e o diretório publicado. Para a URL informada, depois de confirmar que o
+projeto Vercel está sob seu controle:
 
 1. Mantenha `https://maru-frontend.vercel.app` como origem permitida da Edge Function.
 2. Adicione `https://maru-frontend.vercel.app/api/auth/google/callback` às URLs de
