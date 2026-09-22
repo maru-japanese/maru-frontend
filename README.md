@@ -80,6 +80,10 @@ Consulte [a arquitetura](docs/ARCHITECTURE.md), [o guia de conteúdo](docs/CONTE
 
 ## Publicação
 
-O site é estático e o `netlify.toml` gera `dist/` com `frontend/` e `shared/`. Em produção, configure o host ou proxy para encaminhar `/api/*` ao `maru-backend` sob o mesmo domínio público. Isso mantém cookies de sessão e a proteção de origem funcionando sem expor credenciais no navegador.
+O site é estático. `npm run build` gera `dist/` com `frontend/` e `shared/`, e
+`vercel.json` publica essa pasta na Vercel. As requisições `/api/*` são
+encaminhadas à Edge Function `maru-api` no Supabase, sob o domínio do site.
+Configure `MARU_PUBLIC_ORIGIN` no backend com a origem pública exata da Vercel
+antes de ativar o login Google.
 
 Os modelos de traços usam [KanjiVG](https://kanjivg.tagaini.net/) sob [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), com atribuição na interface e em [LICENSE.md](frontend/assets/data/LICENSE.md). Veja também [APIs e créditos](docs/INTEGRATIONS.md).
