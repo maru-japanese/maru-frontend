@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
@@ -10,8 +10,6 @@ import { normalizeSnapshot, mergeSnapshots, recordActivity, currentStreak, avail
 import { moduleSeals, nextLesson } from "../shared/learningPath.js";
 import { MODULES, getLesson } from "../shared/curriculum.js";
 import { CULTURE_CAPSULES, THEMATIC_PATHS, thematicContent } from "../shared/discovery.js";
-import { createProgressStorage } from "../backend/storage.js";
-import { publicConfig } from "../backend/siteConfig.js";
 
 test("placement gates later stages on kana and recommends only a stage", () => {
   const answers = Object.fromEntries(PLACEMENT_QUESTIONS.map(q => [q.id, null]));
@@ -84,34 +82,6 @@ test("all thematic paths and culture capsules reference real, explained content"
     assert.ok([...content.words,...content.sentences,...content.expressions].every(Boolean));
   }
   assert.equal(thematicContent("missing"),null);
-});
-
-test("SQLite imports legacy JSON once, merges concurrent history and makes a restorable backup", async t => {
-  const directory = await mkdtemp(path.join(tmpdir(),"maru-sqlite-"));
-  const storage = createProgressStorage(directory);
-  t.after(async()=>{storage.close();await rm(directory,{recursive:true,force:true});});
-  const legacy = {xp:{total:70},lessons:{welcome:{completedAt:10}},preferences:{theme:"arcade"},updatedAt:10};
-  await writeFile(path.join(directory,"browser-old.json"),JSON.stringify(legacy));
-  assert.equal((await storage.read("browser-old")).xp.total,70);
-  await storage.write({xp:{total:90},lessons:{sounds:{completedAt:20}},updatedAt:20},"browser-old");
-  assert.equal((await storage.read("browser-old")).xp.total,90);
-  assert.equal(Object.keys((await storage.read("browser-old")).lessons).length,2);
-  assert.deepEqual(JSON.parse(await readFile(path.join(directory,"browser-old.json"),"utf8")),legacy);
-  await storage.write({xp:{total:1},updatedAt:1},"browser-old");
-  assert.equal((await storage.read("browser-old")).xp.total,90);
-  assert.equal((await storage.read("someone-else")).xp.total,0);
-  const backup = path.join(directory,"backup.sqlite");
-  await storage.backup(backup);
-  const Database = (await import("better-sqlite3")).default;
-  const copy = new Database(backup,{readonly:true});
-  assert.equal(copy.pragma("integrity_check",{simple:true}),"ok");
-  assert.equal(JSON.parse(copy.prepare("SELECT snapshot FROM progress WHERE owner_id=?").get("browser-old").snapshot).xp.total,90);
-  copy.close();
-});
-
-test("support exposes only configured HTTPS destinations and no credentials", () => {
-  assert.deepEqual(publicConfig({GOOGLE_CLIENT_SECRET:"never-public",MARU_SUPPORT_BR_URL:"javascript:alert(1)",MARU_SUPPORT_GLOBAL_URL:"https://user:secret@example.org"}),{support:[]});
-  assert.deepEqual(publicConfig({MARU_SUPPORT_BR_URL:"https://apoia.se/example",MARU_SUPPORT_GLOBAL_URL:"https://ko-fi.com/example"}).support.map(item=>item.label),["Apoiar no Brasil","Apoiar de outro país"]);
 });
 
 test("the authoring command creates a draft without publishing or overwriting it", async t => {

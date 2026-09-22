@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import path from "node:path";
 
 let count = 0;
-for (const root of ["backend", "shared", "frontend/assets/js", "scripts"]) {
+for (const root of ["shared", "frontend/assets/js", "scripts"]) {
   for (const file of readdirSync(root, { recursive: true }).filter(file => file.endsWith(".js"))) {
     execFileSync(process.execPath, ["--check", path.join(root, file)], { stdio: "pipe" });
     count++;

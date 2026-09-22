@@ -1,9 +1,0 @@
-node_modules
-.git
-.env
-.env.*
-data
-backups
-test-results
-playwright-report
-maru-arquitetura
