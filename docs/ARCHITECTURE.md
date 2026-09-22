@@ -2,7 +2,9 @@
 
 O produto começa com uma trilha para quem ainda não conhece japonês. Conteúdo
 didático, regras de aprendizado, infraestrutura e interface são separados.
-JavaScript nativo e CSS dão conta da aplicação sem build obrigatório. O servidor requer Node.js 22+, better-sqlite3 e google-auth-library.
+JavaScript nativo e CSS dão conta da aplicação sem build obrigatório. Este
+repositório contém a interface e as regras executadas no navegador; serviços,
+credenciais e persistência vivem no repositório `maru-backend`.
 
 ## Fronteiras
 
@@ -15,13 +17,13 @@ JavaScript nativo e CSS dão conta da aplicação sem build obrigatório. O serv
 | `shared/pronunciation.js` | Texto e leitura correta das pronúncias aceitas pela API. |
 | `shared/placement.js`, `learningPath.js` | Diagnóstico por etapa, ponto de entrada e selos de conclusão. |
 | `shared/discovery.js` | Cápsulas culturais e trilhas temáticas por referências ao acervo. |
-| `backend/authService.js`, `siteConfig.js` | Sessões Google, validação de origem e configuração pública restrita. |
+| `maru-backend/backend/authService.js`, `siteConfig.js` | Sessões Google, validação de origem e configuração pública restrita. |
 | `shared/gamification.js` | Níveis, missões e conquistas derivados do progresso. |
 | `shared/content.js` | Kana básicos e acervo complementar preservado. |
 | `shared/progress.js` | Normalização, migração, mesclagem, XP, constância e revisão. |
 | `shared/sentenceCheck.js` | Verificação de exercícios conhecidos, reutilizada offline. |
 | `shared/romaji.js` | Leitura de kana e comparação em diferentes grafias. |
-| `backend/` | HTTP, rotas, arquivos estáticos e persistência. |
+| `maru-backend/backend/` | HTTP, rotas da API e persistência. |
 | `frontend/assets/js/core/` | Estado persistido, áudio, ícones e helpers de UI. |
 | `frontend/assets/js/features/` | Telas e controladores de cada atividade. |
 | `frontend/assets/css/` | Sistema visual, layout, componentes e responsividade. |
@@ -31,10 +33,10 @@ chamam as regras de domínio sem reimplementar XP, migração ou revisão.
 
 ## Inicialização e navegação
 
-1. O backend cria o servidor e inicia a escuta quando executado diretamente.
-2. `staticFiles.js` serve apenas frontend e shared, com validação de caminhos.
+1. A hospedagem estática — ou `scripts/dev-server.js` localmente — entrega `frontend/` e `shared/`.
+2. No desenvolvimento, o mesmo servidor encaminha `/api` ao `maru-backend`.
 3. O HTML carrega o agregador de CSS e o módulo `app.js`.
-4. O store lê o estado local, migra dados antigos e mescla o snapshot do servidor.
+4. O store lê o estado local, migra dados antigos e mescla o snapshot da API.
 5. O app monta o shell e escolhe a tela pela URL, como `#/lesson/welcome`.
 6. Cada tela renderiza em main e devolve um cleanup para eventos e recursos.
 7. Ao navegar, o app limpa os recursos, interrompe o áudio e foca o título.
@@ -87,12 +89,12 @@ intactas. O envio ao servidor é serializado, com debounce, timeout e retomada
 ao voltar à conexão. A UI distingue salvamento no servidor, somente no
 navegador e somente na sessão.
 
-O servidor normaliza novamente e mescla snapshots em transação SQLite. O diretório
-padrão é relativo ao módulo. JSONs antigos são importados ao primeiro acesso de
-cada perfil e permanecem intactos. Contas Google usam cookies HttpOnly e sessões
-com token em hash. A identificação anônima nunca permite escolher uma conta.
-A identidade é conferida antes das escritas para impedir misturas ao trocar login.
-Veja DEPLOYMENT.md para configuração, limites de mesclagem e backup.
+O `maru-backend` normaliza novamente e mescla snapshots em transação SQLite.
+JSONs antigos são importados ao primeiro acesso de cada perfil e permanecem
+intactos. Contas Google usam cookies HttpOnly e sessões com token em hash. A
+identificação anônima nunca permite escolher uma conta. A identidade é conferida
+antes das escritas para impedir misturas ao trocar login. Veja a documentação do
+backend para configuração, limites de mesclagem e backup.
 
 ## Regras de aprendizado
 
@@ -116,7 +118,7 @@ leituras em kana e formas de romaji previstas. Divergência significa “diferen
 do modelo”, não “gramaticalmente impossível”. O mesmo código funciona localmente.
 O formato legado com item permanece, sem dar notas artificiais a frases livres.
 
-O áudio usa `POST /api/audio`. `speechService.js` valida o texto contra o catálogo
+O áudio usa `POST /api/audio`. O `speechService.js` do backend valida o texto contra o catálogo
 de estudo, consulta TTS Quest e devolve uma URL de streaming. Só URLs expiráveis
 ficam em memória; o servidor e o frontend não escrevem áudio no disco. O player
 cancela requisições e reprodução ao navegar, respeita a velocidade escolhida e
@@ -184,8 +186,8 @@ JSON inválido retorna 400; corpo excessivo, 413; caminhos inexistentes, 404.
 ## Verificação
 
 `npm run check` verifica sintaxe dos módulos e imports das folhas de estilo.
-`npm test` cobre currículo, respostas, traços, migração, revisão, constância,
-API e gravações concorrentes.
+`npm test` cobre currículo, respostas, traços, migração, revisão e constância.
+Os contratos HTTP e as gravações concorrentes são testados no `maru-backend`.
 
 `npm run test:e2e` usa servidor e dados isolados. Verifica conclusão e retomada,
 erros, kana digitado, frases, escrita, filtros, revisão, fallback local,

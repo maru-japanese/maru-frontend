@@ -24,7 +24,7 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 - Criar o cliente OAuth Google e informar as credenciais e o domínio em .env.
 - Definir a página real de Apoia.se e/ou Ko-fi; nenhum destino foi inventado.
 - Escolher hospedagem com volume persistente e configurar domínio/HTTPS.
-- Agendar backups e armazenar uma cópia fora do servidor. O comando local está pronto;
+- Agendar backups e armazenar uma cópia fora do servidor. O comando está no `maru-backend`;
   nenhum provedor ou despesa foi contratado.
 
 ## Fases posteriores do manual
