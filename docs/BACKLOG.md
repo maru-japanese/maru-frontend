@@ -12,20 +12,19 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | Dojo | Papel washi em SVG estático, tinta escura, vermelho de hanko e tipografia Shippori Mincho. |
 | Celular | Caractere e círculo inteiros dentro do card, nos dois modos. Scanline removida em telas pequenas e com movimento reduzido. |
 | Apoio | Página e links discretos no dashboard e configurações; destinos reais configuráveis para Brasil/exterior. |
-| Contas | Google OAuth, SQLite, sessões com hash, migração do navegador e isolamento ao sair/trocar conta. |
+| Contas | Supabase Auth para Google, cookies HttpOnly, migração do navegador e isolamento ao sair/trocar conta. |
 | Progresso | Selos por etapa realmente concluída e um dia de pausa protegido por semana. |
 | Cultura | Oito cápsulas vinculadas a lições, reutilizando expressões já explicadas. |
 | Temas | Viagem, anime/mangá e trabalho; palavras, frases, expressões e práticas do acervo existente. |
 | Editorial | Gerador de rascunhos, checklist e backlog. Nenhum rascunho é publicado automaticamente. |
-| Operação | Dockerfile e backup consistente de SQLite; guia de configuração e restauração. |
+| Operação | Frontend na Vercel, API e Postgres no Supabase; adaptador SQLite legado preservado. |
 
 ## Ativação externa
 
-- Criar o cliente OAuth Google e informar as credenciais e o domínio em .env.
+- Configurar o provedor Google no Supabase Auth e permitir o callback da Vercel.
 - Definir a página real de Apoia.se e/ou Ko-fi; nenhum destino foi inventado.
-- Escolher hospedagem com volume persistente e configurar domínio/HTTPS.
-- Agendar backups e armazenar uma cópia fora do servidor. O comando está no `maru-backend`;
-  nenhum provedor ou despesa foi contratado.
+- Publicar o frontend na Vercel e a Edge Function no Supabase; validar o domínio HTTPS.
+- Configurar a política de backup e retenção do Postgres no Supabase.
 
 ## Fases posteriores do manual
 

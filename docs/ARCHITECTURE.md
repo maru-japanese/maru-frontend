@@ -2,7 +2,7 @@
 
 O produto começa com uma trilha para quem ainda não conhece japonês. Conteúdo
 didático, regras de aprendizado, infraestrutura e interface são separados.
-JavaScript nativo e CSS dão conta da aplicação sem build obrigatório. Este
+JavaScript nativo e CSS dão conta da aplicação sem compilação de código. Este
 repositório contém a interface e as regras executadas no navegador; serviços,
 credenciais e persistência vivem no repositório `maru-backend`.
 
@@ -17,13 +17,13 @@ credenciais e persistência vivem no repositório `maru-backend`.
 | `shared/pronunciation.js` | Texto e leitura correta das pronúncias aceitas pela API. |
 | `shared/placement.js`, `learningPath.js` | Diagnóstico por etapa, ponto de entrada e selos de conclusão. |
 | `shared/discovery.js` | Cápsulas culturais e trilhas temáticas por referências ao acervo. |
-| `maru-backend/backend/authService.js`, `siteConfig.js` | Sessões Google, validação de origem e configuração pública restrita. |
+| `maru-backend/supabase/functions/maru-api/` | API de produção, sessões Supabase Auth e progresso no Postgres. |
 | `shared/gamification.js` | Níveis, missões e conquistas derivados do progresso. |
 | `shared/content.js` | Kana básicos e acervo complementar preservado. |
 | `shared/progress.js` | Normalização, migração, mesclagem, XP, constância e revisão. |
 | `shared/sentenceCheck.js` | Verificação de exercícios conhecidos, reutilizada offline. |
 | `shared/romaji.js` | Leitura de kana e comparação em diferentes grafias. |
-| `maru-backend/backend/` | HTTP, rotas da API e persistência. |
+| `maru-backend/backend/` | Serviços reutilizados e adaptador Node/SQLite local. |
 | `frontend/assets/js/core/` | Estado persistido, áudio, ícones e helpers de UI. |
 | `frontend/assets/js/features/` | Telas e controladores de cada atividade. |
 | `frontend/assets/css/` | Sistema visual, layout, componentes e responsividade. |
@@ -33,8 +33,8 @@ chamam as regras de domínio sem reimplementar XP, migração ou revisão.
 
 ## Inicialização e navegação
 
-1. A hospedagem estática — ou `scripts/dev-server.js` localmente — entrega `frontend/` e `shared/`.
-2. No desenvolvimento, o mesmo servidor encaminha `/api` ao `maru-backend`.
+1. O build copia `frontend/` e `shared/` para `dist/`, publicado na Vercel.
+2. Em produção, `/api` é encaminhado à função Supabase; localmente, ao adaptador Node.
 3. O HTML carrega o agregador de CSS e o módulo `app.js`.
 4. O store lê o estado local, migra dados antigos e mescla o snapshot da API.
 5. O app monta o shell e escolhe a tela pela URL, como `#/lesson/welcome`.
@@ -89,12 +89,13 @@ intactas. O envio ao servidor é serializado, com debounce, timeout e retomada
 ao voltar à conexão. A UI distingue salvamento no servidor, somente no
 navegador e somente na sessão.
 
-O `maru-backend` normaliza novamente e mescla snapshots em transação SQLite.
-JSONs antigos são importados ao primeiro acesso de cada perfil e permanecem
-intactos. Contas Google usam cookies HttpOnly e sessões com token em hash. A
-identificação anônima nunca permite escolher uma conta. A identidade é conferida
-antes das escritas para impedir misturas ao trocar login. Veja a documentação do
-backend para configuração, limites de mesclagem e backup.
+O `maru-backend` normaliza novamente e mescla snapshots na tabela
+`public.maru_progress` do Supabase com controle de versão. Contas Google usam
+Supabase Auth e cookies HttpOnly; a identificação anônima nunca permite escolher
+uma conta. A identidade é conferida antes das escritas para impedir misturas ao
+trocar login. O adaptador SQLite permanece somente para desenvolvimento local
+e leitura de dados legados. Veja a documentação do backend para publicação e
+recuperação de dados.
 
 ## Regras de aprendizado
 
