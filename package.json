@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Interface web da plataforma Maru para aprender japonês em português.",
   "scripts": {
+    "build": "node scripts/build.js",
     "dev": "node --env-file-if-exists=.env scripts/dev-server.js",
     "start": "node --env-file-if-exists=.env scripts/dev-server.js",
     "check": "node scripts/check.js",
