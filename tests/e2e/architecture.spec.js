@@ -12,6 +12,7 @@ async function answer(page, question, correct=true) {
   if(await next.count())await next.click();
 }
 test("placement resumes, preserves XP, accepts a suggestion and can be reset",async({page})=>{
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#/home");
   await page.locator("#welcome-goal").selectOption("10");
   await page.reload();
