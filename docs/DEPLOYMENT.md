@@ -5,7 +5,7 @@
 - `maru-api` publicada no projeto Supabase `qxtgaalmyzyldmcpwooo`;
 - migração `maru_progress` aplicada no Postgres;
 - origem pública `https://maru-frontend.vercel.app` configurada na Edge Function;
-- Google OAuth configurado no Supabase se o login for oferecido.
+- e-mail/senha habilitado no Supabase Auth; SMTP próprio para cadastro público.
 
 As etapas de banco, Auth e Edge Function estão no
 [`maru-backend`](https://github.com/maru-japanese/maru-backend).
@@ -32,11 +32,12 @@ build e o diretório publicado. Para a URL informada, depois de confirmar que o
 projeto Vercel está sob seu controle:
 
 1. Mantenha `https://maru-frontend.vercel.app` como origem permitida da Edge Function.
-2. Adicione `https://maru-frontend.vercel.app/api/auth/google/callback` às URLs de
-   redirecionamento permitidas no Supabase Auth.
-3. No Google Cloud, configure o callback do provedor apontando para o endereço
-   mostrado na configuração de Google do Supabase Auth.
-4. Verifique `/api/health`, uma lição sem conta e o login em uma janela privada.
+2. Defina `https://maru-frontend.vercel.app` como Site URL e permita essa origem
+   nas Redirect URLs do Supabase Auth.
+3. Configure SMTP próprio no painel Auth; o envio padrão não atende contas
+   públicas. Mantenha as credenciais SMTP fora do repositório.
+4. Verifique `/api/health`, uma lição sem conta, cadastro, confirmação, login,
+   recuperação e logout em uma janela privada.
 
 O navegador vê o mesmo domínio para o site e `/api`. A Edge Function mantém a
 sessão em cookies `HttpOnly` e compara a origem pública nas escritas.

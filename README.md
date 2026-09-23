@@ -14,8 +14,8 @@ O Maru organiza o estudo em uma trilha clara e acolhedora: a pessoa aprende o al
 - Livro 1 completo para imprimir, com as 37 lições, práticas de escrita, palavras, frases, partículas, imagens, diálogos e gabaritos;
 - pacotes públicos para professores compartilharem uma etapa ou trilha temática com a turma, sem conta de aluno ou acompanhamento individual;
 - diagnóstico inicial e uma trilha que indica o próximo passo;
-- modos visuais Dojo e Arcade, metas, constância e conquistas;
-- estudo anônimo no navegador ou sincronização entre aparelhos com uma conta.
+- estilos visuais Dojo, Arcade e Heisei Girly, metas, constância e conquistas;
+- estudo anônimo no navegador ou sincronização entre aparelhos com uma conta por e-mail.
 
 Todo o conteúdo é gratuito; apoio financeiro é voluntário e não libera recursos exclusivos. Duas ilustrações do Irasutoya são usadas como elementos visuais e catalogadas em [IRASUTOYA.md](frontend/assets/img/IRASUTOYA.md); o projeto limita o uso a 20 ilustrações distintas no site inteiro.
 
@@ -58,7 +58,7 @@ O progresso continua disponível no navegador se a API estiver temporariamente i
 | `PORT` | Porta do frontend; padrão: `4173`. |
 | `MARU_API_ORIGIN` | Endereço da API no desenvolvimento; padrão: `http://127.0.0.1:5173`. |
 
-Nenhum segredo deve ser colocado no frontend. Credenciais Google, chave de voz e configuração de persistência pertencem ao backend.
+Nenhum segredo deve ser colocado no frontend. Credenciais SMTP, chave de voz e configuração de persistência pertencem ao Supabase/backend. O adaptador Node local não implementa o login por e-mail; para testar esse fluxo, use a Edge Function e uma origem de teste permitida no Supabase Auth.
 
 ## Comandos
 
@@ -90,6 +90,6 @@ O site é estático. `npm run build` gera `dist/` com `frontend/` e `shared/`, e
 `vercel.json` publica essa pasta na Vercel. As requisições `/api/*` são
 encaminhadas à Edge Function `maru-api` no Supabase, sob o domínio do site.
 A origem pública confirmada é `https://maru-frontend.vercel.app`; mantenha-a
-igual na função Supabase e nas URLs permitidas do Auth antes de ativar o Google.
+igual na função Supabase e nas URLs permitidas do Auth antes de liberar o cadastro por e-mail. SMTP próprio é necessário para entregar confirmações e recuperações ao público.
 
 Os modelos de traços usam [KanjiVG](https://kanjivg.tagaini.net/) sob [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), com atribuição na interface e em [LICENSE.md](frontend/assets/data/LICENSE.md). Veja também [APIs e créditos](docs/INTEGRATIONS.md).

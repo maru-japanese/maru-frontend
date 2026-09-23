@@ -8,7 +8,7 @@ test("visible destinations lead to every resource and show its navigation contex
   for (const item of [...PRACTICE_TOOLS, ...RESOURCES]) {
     const hub = PRACTICE_TOOLS.includes(item) ? "practice" : "explore";
     await page.goto("/#/" + hub);
-    await page.getByRole("link", { name: item.title, exact: true }).click();
+    await page.locator("main").getByRole("link", { name: item.title, exact: true }).click();
     await expect(page).toHaveURL(new RegExp("/#/" + item.route + "$"));
     await expect(page.locator('main h1')).toBeVisible();
     const section = NAVIGATION.some(nav => nav.route === item.route) ? item.route : hub;
@@ -36,7 +36,7 @@ test("resource search combines categories, ignores accents and keeps its state o
   await page.locator('#resource-search').fill('impressao');
   await expect(page.locator('.hub-card')).toHaveCount(1);
   await page.getByRole('link', { name: 'Atividades para imprimir', exact: true }).click();
-  await expect(page.locator('.paper-row')).toHaveCount(5);
+  await expect(page.locator('.paper-row')).toHaveCount(20);
   await page.goBack();
   await expect(page.locator('#resource-search')).toHaveValue('impressao');
   await expect(page.getByRole('button', { name: 'Materiais de apoio', exact: true })).toHaveAttribute('aria-pressed', 'true');

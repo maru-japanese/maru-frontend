@@ -92,7 +92,7 @@ ao voltar à conexão. A UI distingue salvamento no servidor, somente no
 navegador e somente na sessão.
 
 O `maru-backend` normaliza novamente e mescla snapshots na tabela
-`public.maru_progress` do Supabase com controle de versão. Contas Google usam
+`public.maru_progress` do Supabase com controle de versão. Contas por e-mail usam
 Supabase Auth e cookies HttpOnly; a identificação anônima nunca permite escolher
 uma conta. A identidade é conferida antes das escritas para impedir misturas ao
 trocar login. O adaptador SQLite permanece somente para desenvolvimento local
@@ -150,6 +150,7 @@ A folha anterior foi substituída integralmente:
 - components.css: botões, campos, exemplos e feedback;
 - screens.css: composição de cada tela;
 - themes/arcade.css: variantes do modo Arcade, condicionadas por data-theme;
+- themes/heisei.css: cores pastéis e detalhes de caderno do estilo Heisei Girly;
 - responsive.css: desktop, tablet e celular, com prioridade sobre o tema;
 - learning.css: vocabulário, exercícios, temas, missões e conquistas;
 - navigation.css: navegação simplificada, páginas Praticar/Explorar e busca;
@@ -158,7 +159,7 @@ A folha anterior foi substituída integralmente:
 
 Dojo usa papel claro (#f8f7f3), superfícies quase brancas, washi em SVG estático, tinta escura,
 Shippori Mincho e vermelho de hanko. themes/dojo.css concentra essa identidade;
-experience.css compõe as novas telas e contém o selo da home em tamanhos móveis. Arcade usa pixels e neon.
+experience.css compõe as novas telas e contém o selo da home em tamanhos móveis. Arcade usa pixels e neon; Heisei Girly usa cores pastéis e detalhes desenhados em CSS.
 Os seletores de Arcade usam `:where()` para não impedir os ajustes de responsividade.
 A troca atualiza tokens sem reconstruir o DOM da atividade. Fontes externas têm
 fallbacks locais. React, Motion e Anime.js foram removidos; as animações de

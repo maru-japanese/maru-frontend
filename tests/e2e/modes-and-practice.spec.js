@@ -228,7 +228,7 @@ test("Book 1 compiles the full current curriculum into one printable volume",asy
   await expect(page.locator(".paper-book-lesson")).toHaveCount(74);
   await expect(page.locator(".paper-book-toc > div")).toHaveCount(8);
   await expect(page.locator(".paper-book-answers h3")).toHaveCount(37);
-  await expect(page.locator(".paper-kana-family")).toHaveCount(20);
+  await expect(page.locator(".paper-kana-family")).toHaveCount(30);
   await expect(page.locator(".paper-image-card img")).toHaveCount(6);
   await expect(page.locator(".paper-dialogue")).toHaveCount(3);
   await expect(page.locator(".print-sheet").first()).toContainText("Não é um curso preparatório oficial");

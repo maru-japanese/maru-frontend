@@ -12,9 +12,11 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | Duas entradas | Começar do zero com escolha de meta; diagnóstico para quem já estudou. |
 | Diagnóstico | 15 perguntas, retomada, explicações, sugestão por etapa e ajuste manual. Não concede XP nem conclui lições. |
 | Dojo | Papel washi em SVG estático, tinta escura, vermelho de hanko e tipografia Shippori Mincho. |
-| Celular | Caractere e círculo inteiros dentro do card, nos dois modos. Scanline removida em telas pequenas e com movimento reduzido. |
+| Celular | Caractere e círculo inteiros dentro do card; navegação acessível nos três estilos. Scanline removida em telas pequenas e com movimento reduzido. |
 | Apoio | Página e links discretos no dashboard e configurações; destinos reais configuráveis para Brasil/exterior. |
-| Contas | Supabase Auth para Google, cookies HttpOnly, migração do navegador e isolamento ao sair/trocar conta. |
+| Contas | Supabase Auth por e-mail/senha, confirmação e recuperação; cookies HttpOnly, migração do navegador e isolamento ao sair/trocar conta. Google permanece desativado. |
+| Descoberta | Trilha, prática, impressão e materiais para professores ficam visíveis na navegação e na home. |
+| Heisei Girly | Terceiro estilo visual com cores pastéis e detalhes de caderno, sem arte externa adicional. |
 | Progresso | Selos por etapa realmente concluída e um dia de pausa protegido por semana. |
 | Cultura | Oito cápsulas vinculadas a lições, reutilizando expressões já explicadas. |
 | Temas | Viagem, anime/mangá e trabalho; palavras, frases, expressões e práticas do acervo existente. |
@@ -26,7 +28,7 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 
 ## Ativação externa
 
-- Configurar o provedor Google no Supabase Auth e permitir o callback da Vercel.
+- Configurar SMTP próprio e permitir `https://maru-frontend.vercel.app` como retorno de e-mail no Supabase Auth.
 - Definir a página real de Apoia.se e/ou Ko-fi; nenhum destino foi inventado.
 - Publicar o frontend na Vercel e a Edge Function no Supabase; validar o domínio HTTPS.
 - Configurar a política de backup e retenção do Postgres no Supabase.
