@@ -19,7 +19,6 @@
 .paper-boxes { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: minmax(0,1fr); aspect-ratio: 9 / 1; border-left: 1px solid #a8a8a8; }
 .paper-repeat-grid { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: repeat(9,minmax(0,1fr)); aspect-ratio: 1; border-left: 1px solid #a8a8a8; border-top: 1px solid #a8a8a8; margin-top: 20px; }
 .paper-repeat-grid .paper-box { border-top: 0; }
-.paper-repeat-grid .paper-box::before, .paper-repeat-grid .paper-box::after { display: none; }
 .paper-box { min-width: 0; min-height: 0; overflow: hidden; border: 1px solid #a8a8a8; border-left: 0; position: relative; display: grid; place-items: center; background: #fff; }
 .paper-box::before, .paper-box::after { content: ""; position: absolute; pointer-events: none; }
 .paper-box::before { top: 50%; left: 0; right: 0; border-top: 1px dashed #d5d5d5; }

@@ -9,9 +9,10 @@ const footer = (page, total) => `<footer class="paper-footer"><span>maru. · Jap
 const header = title => `<header class="paper-header"><strong>maru.</strong><span>UM POUQUINHO, TODO DIA.<br>${title}</span></header><div class="paper-name"><span>Nome: __________________________________</span><span>Data: ____ / ____ / ______</span></div>`;
 const repeatPage = () => header("Página de repetição") + '<div class="paper-repeat-grid" aria-label="Quadrados vazios para praticar">' + blankBox.repeat(81) + '</div>';
 const strokeSVG = (char, paths = []) => `<svg viewBox="-4 -4 117 117" role="img" aria-label="Ordem dos traços de ${char}">${paths.map(d=>`<path d="${esc(d)}"/>`).join("")}</svg>`;
+const printKanaRows = KANA_ROWS.filter(row=>row.id!=="n");
 const kanaSlots = (row, script) => {
-  const items = KANA.filter(item=>item.script===script && item.row===row.id);
-  const positions = row.id==="ya" ? [0,2,4] : row.id==="wa" ? [0,4] : row.id==="n" ? [0] : [0,1,2,3,4];
+  const items = KANA.filter(item=>item.script===script && (item.row===row.id || (row.id==="wa" && item.row==="n")));
+  const positions = row.id==="ya" || row.id==="wa" ? [0,2,4] : [0,1,2,3,4];
   const slots = Array(5).fill(null);
   positions.forEach((position,index)=>{slots[position]=items[index];});
   return slots;
@@ -20,7 +21,7 @@ const kanaSheet = (row, script, selected, strokes) => {
   const slots = kanaSlots(row,script);
   if(!slots.some(item=>item && selected.has(item.char)))return null;
   const name = script==="hiragana" ? "Hiragana" : "Katakana";
-  const rowName = row.id==="a" ? "vogais" : row.id==="n" ? "N" : row.id.toUpperCase();
+  const rowName = row.id==="a" ? "vogais" : row.id==="wa" ? "WA · WO/O · N" : row.id.toUpperCase();
   return header(name) + `<h2>${name} · ${rowName}</h2><p class="paper-instructions">Leia as posições da direita para a esquerda. Observe o primeiro modelo, cubra o segundo e escreva nos quadrados vazios.</p>` +
     `<div class="paper-kana-grid" data-kana-row="${row.id}" data-script="${script}" aria-label="Fileira ${rowName}, da direita para a esquerda">${slots.map((item,index)=>{
       const chosen = item && selected.has(item.char);
@@ -47,7 +48,7 @@ export function renderWorksheets(ctx) {
     <div><button class="btn btn-primary" id="print-worksheet" disabled>${icon("pen")} Imprimir / salvar PDF</button></div>
     </div><div class="filter-chips"><label><input id="worksheet-models" type="checkbox" checked> Mostrar modelos para copiar</label><label><input id="worksheet-answers" type="checkbox" checked> Incluir gabarito separado</label></div>
     <div id="worksheet-characters" class="worksheet-selection panel" role="group" aria-label="Caracteres da folha"></div><p class="filter-count" id="worksheet-status" aria-live="polite">Preparando os modelos de traços…</p>
-    <aside class="tip-box">${icon("pen")}<p>Recomendamos começar com 20 caracteres, mas você pode escolher só um, mais de 20 ou todos de uma vez. As páginas de repetição têm apenas quadrados vazios para preencher à mão. Na impressão, escolha A4, escala 100% e desative os cabeçalhos do navegador.</p></aside></div><div id="worksheet-preview" class="worksheet-preview"></div></div>`;
+    <aside class="tip-box">${icon("pen")}<p>Recomendamos começar com 20 caracteres, mas você pode escolher só um, mais de 20 ou todos de uma vez. As páginas de repetição têm quadrados vazios com guias tracejadas para preencher à mão. Na impressão, escolha A4, escala 100% e desative os cabeçalhos do navegador.</p></aside></div><div id="worksheet-preview" class="worksheet-preview"></div></div>`;
   const drawSelection = () => {
     ctx.main.querySelector("#worksheet-characters").innerHTML = characterList().map(item=>`<button class="worksheet-char" data-print-char="${item.char}" aria-pressed="${selected.has(item.char)}" aria-label="${item.char}, ${item.romaji}">${item.char}</button>`).join("");
   };
@@ -63,7 +64,7 @@ export function renderWorksheets(ctx) {
     let sheets = [], answerSheets = [];
     if (kind === "characters") {
       const kanaScripts = script==="all" ? ["hiragana","katakana"] : script==="kanji" ? [] : [script];
-      const kanaSheets = kanaScripts.flatMap(kanaScript=>KANA_ROWS.map(row=>kanaSheet(row,kanaScript,selected,strokes)).filter(Boolean));
+      const kanaSheets = kanaScripts.flatMap(kanaScript=>printKanaRows.map(row=>kanaSheet(row,kanaScript,selected,strokes)).filter(Boolean));
       const kanjiItems = (script==="kanji" || script==="all" ? BEGINNER_KANJI : []).filter(item=>selected.has(item.char));
       const kanjiSheets = chunks(kanjiItems,5).map(page => header("Primeiros kanji") +
         '<h2>Observe. Cubra. Experimente.</h2><p class="paper-instructions">O primeiro quadrado mostra os traços numerados. Nos dois seguintes, cubra o desenho. Nas casas vazias, escreva sozinho. Cada número marca o início de um traço: siga a ordem do modelo.</p>' +

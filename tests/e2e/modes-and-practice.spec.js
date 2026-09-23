@@ -128,7 +128,10 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator(".paper-kana-slot[data-print-char]")).toHaveCount(20);
   await expect(page.locator(".paper-repeat-grid .paper-box")).toHaveCount(81);
   await expect(page.locator(".paper-repeat-grid svg")).toHaveCount(0);
-  expect(await page.locator(".paper-repeat-grid .paper-box").first().evaluate(box=>getComputedStyle(box,"::before").display)).toBe("none");
+  expect(await page.locator(".paper-repeat-grid .paper-box").first().evaluate(box=>({
+    horizontal:getComputedStyle(box,"::before").borderTopStyle,
+    vertical:getComputedStyle(box,"::after").borderLeftStyle
+  }))).toEqual({horizontal:"dashed",vertical:"dashed"});
   expect(await page.locator(".paper-box svg").first().evaluate(svg=>{
     const ink=svg.getBoundingClientRect(), box=svg.parentElement.getBoundingClientRect();
     return ink.left>=box.left && ink.top>=box.top && ink.right<=box.right && ink.bottom<=box.bottom;
@@ -160,17 +163,20 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator(".print-sheet")).toHaveCount(6);
   await page.locator("#worksheet-script").selectOption("hiragana");
   await page.locator("#worksheet-scope").selectOption("all");
-  for(const [row,chars] of [["ya",["や","","ゆ","","よ"]],["wa",["わ","","","","を"]],["n",["ん","","","",""]]]){
+  for(const [row,chars] of [["ya",["や","","ゆ","","よ"]],["wa",["わ","","を","","ん"]]]){
     expect(await page.locator(`[data-kana-row="${row}"] .paper-kana-slot`).evaluateAll(slots=>slots.map(slot=>slot.dataset.printChar || ""))).toEqual(chars);
   }
+  await expect(page.locator('[data-kana-row="n"]')).toHaveCount(0);
+  expect(await page.locator('[data-kana-row="ya"]').evaluate(grid=>grid.closest(".print-sheet").querySelector('[data-kana-row="ra"]')===null)).toBe(true);
+  expect(await page.locator('[data-kana-row="wa"]').evaluate(grid=>["わ","を","ん"].every(char=>grid.closest(".print-sheet").querySelector(`[data-print-char="${char}"]`)))).toBe(true);
   await expect(page.locator('[data-print-char="を"] .paper-kana-label')).toContainText("wo/o");
   await page.locator("#worksheet-script").selectOption("all");
   await page.locator("#worksheet-scope").selectOption("all");
   await expect(page.locator('.worksheet-char[aria-pressed="true"]')).toHaveCount(KANA.length+BEGINNER_KANJI.length);
   for(const script of ["hiragana","katakana"]){
-    expect(await page.locator(`.paper-kana-grid[data-script="${script}"]`).evaluateAll(grids=>grids.map(grid=>grid.dataset.kanaRow))).toEqual(KANA_ROWS.map(row=>row.id));
+    expect(await page.locator(`.paper-kana-grid[data-script="${script}"]`).evaluateAll(grids=>grids.map(grid=>grid.dataset.kanaRow))).toEqual(KANA_ROWS.filter(row=>row.id!=="n").map(row=>row.id));
   }
-  const fullSheetCount=KANA_ROWS.length*2+Math.ceil(BEGINNER_KANJI.length/5)+1;
+  const fullSheetCount=(KANA_ROWS.length-1)*2+Math.ceil(BEGINNER_KANJI.length/5)+1;
   await expect(page.locator(".print-sheet")).toHaveCount(fullSheetCount);
   await page.emulateMedia({media:"print"});
   expect(await page.locator(".paper-boxes .paper-box").evaluateAll(boxes=>boxes.every(box=>{
