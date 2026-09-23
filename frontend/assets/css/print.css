@@ -10,12 +10,7 @@
 .paper-row { margin: 0 0 16px; break-inside: avoid; }
 .paper-row-label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; font-size: 9pt; }
 .paper-row-label strong { font-size: 12pt; }
-.paper-kana-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); direction: rtl; }
-.paper-kana-slot { min-width: 0; direction: ltr; }
-.paper-kana-label { min-height: 36px; display: flex; align-items: baseline; justify-content: center; gap: 5px; font-size: 10pt; }
-.paper-kana-label strong { font-size: 17pt; font-weight: 600; }
-.paper-kana-gap { min-height: 36px; }
-.paper-kana-practice { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: repeat(5,minmax(0,1fr)); aspect-ratio: 1 / 5; border-left: 1px solid #a8a8a8; }
+.paper-kana-gap .paper-boxes { border: 0; }
 .paper-boxes { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: minmax(0,1fr); aspect-ratio: 9 / 1; border-left: 1px solid #a8a8a8; }
 .paper-repeat-grid { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: repeat(9,minmax(0,1fr)); aspect-ratio: 1; border-left: 1px solid #a8a8a8; border-top: 1px solid #a8a8a8; margin-top: 20px; }
 .paper-repeat-grid .paper-box { border-top: 0; }

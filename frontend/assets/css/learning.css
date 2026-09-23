@@ -80,7 +80,7 @@
 .worksheet-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 18px; padding: 22px; margin-bottom: 20px; }
 .worksheet-toolbar label { display: block; margin-bottom: 8px; }
 .worksheet-toolbar select { min-width: 155px; }
-.worksheet-selection { display: flex; flex-wrap: wrap; gap: 8px; padding: 20px; margin: 18px 0; }
+.worksheet-selection { display: flex; flex-flow: row wrap; direction: ltr; justify-content: flex-start; gap: 8px; padding: 20px; margin: 18px 0; }
 .worksheet-char { width: 44px; height: 44px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; font: 21px var(--font-jp); }
 .worksheet-char[aria-pressed="true"] { background: var(--sage); border-color: var(--accent); }
 .worksheet-preview { display: grid; gap: 28px; justify-items: center; margin-top: 28px; }

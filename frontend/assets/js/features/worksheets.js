@@ -9,6 +9,7 @@ const footer = (page, total) => `<footer class="paper-footer"><span>maru. · Jap
 const header = title => `<header class="paper-header"><strong>maru.</strong><span>UM POUQUINHO, TODO DIA.<br>${title}</span></header><div class="paper-name"><span>Nome: __________________________________</span><span>Data: ____ / ____ / ______</span></div>`;
 const repeatPage = () => header("Página de repetição") + '<div class="paper-repeat-grid" aria-label="Quadrados vazios para praticar">' + blankBox.repeat(81) + '</div>';
 const strokeSVG = (char, paths = []) => `<svg viewBox="-4 -4 117 117" role="img" aria-label="Ordem dos traços de ${char}">${paths.map(d=>`<path d="${esc(d)}"/>`).join("")}</svg>`;
+const practiceRow = (item, strokes, reading = item.romaji) => `<section class="paper-row" data-print-char="${item.char}"><div class="paper-row-label"><strong>${item.char} · ${reading}</strong><span>${item.meaning || "Leia em voz alta antes de escrever."}</span></div><div class="paper-boxes"><div class="paper-box model">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div>${blankBox.repeat(6)}</div></section>`;
 const printKanaRows = KANA_ROWS.filter(row=>row.id!=="n");
 const kanaSlots = (row, script) => {
   const items = KANA.filter(item=>item.script===script && (item.row===row.id || (row.id==="wa" && item.row==="n")));
@@ -22,12 +23,12 @@ const kanaSheet = (row, script, selected, strokes) => {
   if(!slots.some(item=>item && selected.has(item.char)))return null;
   const name = script==="hiragana" ? "Hiragana" : "Katakana";
   const rowName = row.id==="a" ? "vogais" : row.id==="wa" ? "WA · WO/O · N" : row.id.toUpperCase();
-  return header(name) + `<h2>${name} · ${rowName}</h2><p class="paper-instructions">Leia as posições da direita para a esquerda. Observe o primeiro modelo, cubra o segundo e escreva nos quadrados vazios.</p>` +
-    `<div class="paper-kana-grid" data-kana-row="${row.id}" data-script="${script}" aria-label="Fileira ${rowName}, da direita para a esquerda">${slots.map((item,index)=>{
+  return header(name) + `<h2>${name} · ${rowName}</h2><p class="paper-instructions">Observe os traços numerados. Cubra os modelos e complete os quadrados vazios.</p>` +
+    `<div class="paper-kana-family" data-kana-row="${row.id}" data-script="${script}" aria-label="Fileira ${rowName}">${slots.map((item,index)=>{
       const chosen = item && selected.has(item.char);
-      if(!chosen)return `<div class="paper-kana-slot paper-kana-gap" data-print-slot="${index}" aria-hidden="true"></div>`;
+      if(!chosen)return `<div class="paper-row paper-kana-gap" data-print-slot="${index}" aria-hidden="true"><div class="paper-row-label"><strong>&nbsp;</strong></div><div class="paper-boxes"></div></div>`;
       const reading = item.romaji==="wo" ? "wo/o" : item.romaji;
-      return `<section class="paper-kana-slot" data-print-slot="${index}" data-print-char="${item.char}"><div class="paper-kana-label"><strong lang="ja">${item.char}</strong><span>${reading}</span></div><div class="paper-kana-practice"><div class="paper-box model">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div>${blankBox.repeat(3)}</div></section>`;
+      return `<div data-print-slot="${index}">${practiceRow(item,strokes,reading)}</div>`;
     }).join("")}</div>`;
 };
 
@@ -37,7 +38,7 @@ export function renderWorksheets(ctx) {
   let scope = "recommended", repeatPages = 1;
   let selected = new Set(KANA.filter(item=>item.script==="hiragana").slice(0,20).map(item=>item.char));
   let strokes = null, printing = false;
-  const characterList = () => script === "all" ? [...KANA, ...BEGINNER_KANJI] : script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
+  const characterList = () => script === "all" ? [...KANA.filter(item=>item.script==="hiragana"),...KANA.filter(item=>item.script==="katakana"), ...BEGINNER_KANJI] : script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
   ctx.main.innerHTML = `<div class="worksheets-page">${pageHeading("LEVE O APRENDIZADO PARA O PAPEL", "Seu caderno, pronto para imprimir.", "Escolha a atividade, confira a folha e imprima em A4. Você também pode salvar em PDF na janela de impressão.",routeLink("writing","Abrir caderno digital " + icon("pen"),"btn btn-ghost"))}<div class="no-print"><div class="panel worksheet-toolbar">
     <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option></select></div>
     <div id="worksheet-script-control"><label class="input-label" for="worksheet-script">Escrita</label><select class="text-input" id="worksheet-script"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option><option value="kanji">Primeiros kanji</option><option value="all">Todos os caracteres</option></select></div>
@@ -47,7 +48,7 @@ export function renderWorksheets(ctx) {
     <div><label class="input-label" for="worksheet-repeat-pages">Páginas para repetir</label><select class="text-input" id="worksheet-repeat-pages"><option value="0">Nenhuma</option><option value="1" selected>1 página em branco</option><option value="2">2 páginas em branco</option><option value="3">3 páginas em branco</option><option value="5">5 páginas em branco</option><option value="10">10 páginas em branco</option></select></div>
     <div><button class="btn btn-primary" id="print-worksheet" disabled>${icon("pen")} Imprimir / salvar PDF</button></div>
     </div><div class="filter-chips"><label><input id="worksheet-models" type="checkbox" checked> Mostrar modelos para copiar</label><label><input id="worksheet-answers" type="checkbox" checked> Incluir gabarito separado</label></div>
-    <div id="worksheet-characters" class="worksheet-selection panel" role="group" aria-label="Caracteres da folha"></div><p class="filter-count" id="worksheet-status" aria-live="polite">Preparando os modelos de traços…</p>
+    <div id="worksheet-characters" class="worksheet-selection panel" role="group" dir="ltr" aria-label="Caracteres da folha"></div><p class="filter-count" id="worksheet-status" aria-live="polite">Preparando os modelos de traços…</p>
     <aside class="tip-box">${icon("pen")}<p>Recomendamos começar com 20 caracteres, mas você pode escolher só um, mais de 20 ou todos de uma vez. As páginas de repetição têm quadrados vazios com guias tracejadas para preencher à mão. Na impressão, escolha A4, escala 100% e desative os cabeçalhos do navegador.</p></aside></div><div id="worksheet-preview" class="worksheet-preview"></div></div>`;
   const drawSelection = () => {
     ctx.main.querySelector("#worksheet-characters").innerHTML = characterList().map(item=>`<button class="worksheet-char" data-print-char="${item.char}" aria-pressed="${selected.has(item.char)}" aria-label="${item.char}, ${item.romaji}">${item.char}</button>`).join("");
@@ -68,7 +69,7 @@ export function renderWorksheets(ctx) {
       const kanjiItems = (script==="kanji" || script==="all" ? BEGINNER_KANJI : []).filter(item=>selected.has(item.char));
       const kanjiSheets = chunks(kanjiItems,5).map(page => header("Primeiros kanji") +
         '<h2>Observe. Cubra. Experimente.</h2><p class="paper-instructions">O primeiro quadrado mostra os traços numerados. Nos dois seguintes, cubra o desenho. Nas casas vazias, escreva sozinho. Cada número marca o início de um traço: siga a ordem do modelo.</p>' +
-        page.map(item=>`<section class="paper-row"><div class="paper-row-label"><strong>${item.char} · ${item.romaji}</strong><span>${item.meaning || "Leia em voz alta antes de escrever."}</span></div><div class="paper-boxes"><div class="paper-box model">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div>${blankBox.repeat(6)}</div></section>`).join("") +
+        page.map(item=>practiceRow(item,strokes)).join("") +
         '<div class="paper-checklist"><span>□ Segui a ordem dos traços.</span><span>□ Observei os espaços.</span><span>□ Tentei sem o modelo.</span></div><p class="paper-instructions">Cubra os modelos acima. De quais caracteres você se lembra? Escreva aqui e depois confira.</p><div class="paper-practice-line"></div><div class="paper-practice-line"></div>');
       sheets = [...kanaSheets,...kanjiSheets];
     } else if (kind === "words") {

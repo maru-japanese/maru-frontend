@@ -124,8 +124,11 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator("#print-worksheet")).toBeEnabled();
   await expect(page.locator("#worksheet-scope")).toHaveValue("recommended");
   await expect(page.locator(".print-sheet")).toHaveCount(5);
-  await expect(page.locator(".paper-kana-grid")).toHaveCount(4);
-  await expect(page.locator(".paper-kana-slot[data-print-char]")).toHaveCount(20);
+  await expect(page.locator(".paper-kana-family")).toHaveCount(4);
+  await expect(page.locator(".paper-kana-family .paper-row[data-print-char]")).toHaveCount(20);
+  await expect(page.locator(".paper-kana-family .paper-row[data-print-char]").first().locator(".paper-box")).toHaveCount(9);
+  await expect(page.locator("#worksheet-characters")).toHaveAttribute("dir","ltr");
+  expect(await page.locator(".worksheet-char").first().evaluate(button=>button.getBoundingClientRect().left)).toBeLessThan(await page.locator(".worksheet-char").nth(1).evaluate(button=>button.getBoundingClientRect().left));
   await expect(page.locator(".paper-repeat-grid .paper-box")).toHaveCount(81);
   await expect(page.locator(".paper-repeat-grid svg")).toHaveCount(0);
   expect(await page.locator(".paper-repeat-grid .paper-box").first().evaluate(box=>({
@@ -144,18 +147,18 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator(".sidebar")).toBeHidden();
   await expect(page.locator(".topbar")).toBeHidden();
   expect(await page.locator(".print-sheet").first().evaluate(element=>getComputedStyle(element).backgroundColor)).toBe("rgb(255, 255, 255)");
-  expect(await page.locator(".paper-kana-practice .paper-box, .paper-repeat-grid .paper-box").evaluateAll(boxes=>boxes.map(box=>{
+  expect(await page.locator(".paper-boxes .paper-box, .paper-repeat-grid .paper-box").evaluateAll(boxes=>boxes.map(box=>{
     const {width,height}=box.getBoundingClientRect();return {grid:box.parentElement.className,width,height};
   }).filter(({width,height})=>Math.abs(width-height)>=2).slice(0,5))).toEqual([]);
-  expect(await page.locator('[data-kana-row="a"] [data-print-slot="0"]').evaluate(slot=>slot.getBoundingClientRect().left)).toBeGreaterThan(await page.locator('[data-kana-row="a"] [data-print-slot="1"]').evaluate(slot=>slot.getBoundingClientRect().left));
+  expect(await page.locator('[data-kana-row="a"] [data-print-slot="0"]').evaluate(slot=>slot.getBoundingClientRect().top)).toBeLessThan(await page.locator('[data-kana-row="a"] [data-print-slot="1"]').evaluate(slot=>slot.getBoundingClientRect().top));
   const pdf=await page.pdf({path:testInfo.outputPath("hiragana-a4.pdf"),preferCSSPageSize:true,printBackground:true});
   expect((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(5);
   await page.emulateMedia({media:"screen"});
   await page.locator("#worksheet-scope").selectOption("one");
-  await expect(page.locator(".paper-kana-slot[data-print-char]")).toHaveCount(1);
+  await expect(page.locator(".paper-kana-family .paper-row[data-print-char]")).toHaveCount(1);
   await page.locator('.worksheet-char[data-print-char="き"]').click();
   await expect(page.locator('.worksheet-char[data-print-char="き"]')).toHaveAttribute("aria-pressed","true");
-  await expect(page.locator('.paper-kana-slot[data-print-char="き"]')).toHaveAttribute("data-print-slot","1");
+  await expect(page.locator('.paper-row[data-print-char="き"]').locator("xpath=..")).toHaveAttribute("data-print-slot","1");
   await page.locator("#worksheet-scope").selectOption("recommended");
   await page.locator(".worksheet-char").nth(20).click();
   await expect(page.locator("#worksheet-scope")).toHaveValue("custom");
@@ -164,17 +167,20 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await page.locator("#worksheet-script").selectOption("hiragana");
   await page.locator("#worksheet-scope").selectOption("all");
   for(const [row,chars] of [["ya",["や","","ゆ","","よ"]],["wa",["わ","","を","","ん"]]]){
-    expect(await page.locator(`[data-kana-row="${row}"] .paper-kana-slot`).evaluateAll(slots=>slots.map(slot=>slot.dataset.printChar || ""))).toEqual(chars);
+    expect(await page.locator(`[data-kana-row="${row}"]`).evaluate(family=>[...family.children].map(slot=>slot.querySelector("[data-print-char]")?.dataset.printChar || ""))).toEqual(chars);
+    await expect(page.locator(`[data-kana-row="${row}"] .paper-kana-gap .paper-box`)).toHaveCount(0);
   }
   await expect(page.locator('[data-kana-row="n"]')).toHaveCount(0);
   expect(await page.locator('[data-kana-row="ya"]').evaluate(grid=>grid.closest(".print-sheet").querySelector('[data-kana-row="ra"]')===null)).toBe(true);
   expect(await page.locator('[data-kana-row="wa"]').evaluate(grid=>["わ","を","ん"].every(char=>grid.closest(".print-sheet").querySelector(`[data-print-char="${char}"]`)))).toBe(true);
-  await expect(page.locator('[data-print-char="を"] .paper-kana-label')).toContainText("wo/o");
+  await expect(page.locator('.paper-row[data-print-char="を"] .paper-row-label')).toContainText("wo/o");
   await page.locator("#worksheet-script").selectOption("all");
   await page.locator("#worksheet-scope").selectOption("all");
   await expect(page.locator('.worksheet-char[aria-pressed="true"]')).toHaveCount(KANA.length+BEGINNER_KANJI.length);
+  await expect(page.locator(".worksheet-char").first()).toHaveText("あ");
+  await expect(page.locator(".worksheet-char").nth(KANA.length/2)).toHaveText("ア");
   for(const script of ["hiragana","katakana"]){
-    expect(await page.locator(`.paper-kana-grid[data-script="${script}"]`).evaluateAll(grids=>grids.map(grid=>grid.dataset.kanaRow))).toEqual(KANA_ROWS.filter(row=>row.id!=="n").map(row=>row.id));
+    expect(await page.locator(`.paper-kana-family[data-script="${script}"]`).evaluateAll(grids=>grids.map(grid=>grid.dataset.kanaRow))).toEqual(KANA_ROWS.filter(row=>row.id!=="n").map(row=>row.id));
   }
   const fullSheetCount=(KANA_ROWS.length-1)*2+Math.ceil(BEGINNER_KANJI.length/5)+1;
   await expect(page.locator(".print-sheet")).toHaveCount(fullSheetCount);
