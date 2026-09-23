@@ -10,14 +10,21 @@
 .paper-row { margin: 0 0 16px; break-inside: avoid; }
 .paper-row-label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; font-size: 9pt; }
 .paper-row-label strong { font-size: 12pt; }
-.paper-boxes { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); border-left: 1px solid #a8a8a8; }
-.paper-repeat-grid { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); border-left: 1px solid #a8a8a8; border-top: 1px solid #a8a8a8; margin-top: 20px; }
+.paper-kana-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); direction: rtl; }
+.paper-kana-slot { min-width: 0; direction: ltr; }
+.paper-kana-label { min-height: 36px; display: flex; align-items: baseline; justify-content: center; gap: 5px; font-size: 10pt; }
+.paper-kana-label strong { font-size: 17pt; font-weight: 600; }
+.paper-kana-gap { min-height: 36px; }
+.paper-kana-practice { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: repeat(5,minmax(0,1fr)); aspect-ratio: 1 / 5; border-left: 1px solid #a8a8a8; }
+.paper-boxes { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: minmax(0,1fr); aspect-ratio: 9 / 1; border-left: 1px solid #a8a8a8; }
+.paper-repeat-grid { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: repeat(9,minmax(0,1fr)); aspect-ratio: 1; border-left: 1px solid #a8a8a8; border-top: 1px solid #a8a8a8; margin-top: 20px; }
 .paper-repeat-grid .paper-box { border-top: 0; }
-.paper-box { aspect-ratio: 1; border: 1px solid #a8a8a8; border-left: 0; position: relative; display: grid; place-items: center; background: #fff; }
+.paper-repeat-grid .paper-box::before, .paper-repeat-grid .paper-box::after { display: none; }
+.paper-box { min-width: 0; min-height: 0; overflow: hidden; border: 1px solid #a8a8a8; border-left: 0; position: relative; display: grid; place-items: center; background: #fff; }
 .paper-box::before, .paper-box::after { content: ""; position: absolute; pointer-events: none; }
 .paper-box::before { top: 50%; left: 0; right: 0; border-top: 1px dashed #d5d5d5; }
 .paper-box::after { left: 50%; top: 0; bottom: 0; border-left: 1px dashed #d5d5d5; }
-.paper-box svg { position: relative; z-index: 1; width: 100%; height: 100%; overflow: visible; }
+.paper-box svg { position: relative; z-index: 1; display: block; width: 100%; height: 100%; overflow: hidden; }
 .paper-box path { fill: none; stroke: #222; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .paper-box text { fill: #444; font: 8px sans-serif; }
 .paper-box.ghost path { stroke: #ccc; }
