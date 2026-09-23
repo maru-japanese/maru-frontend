@@ -9,6 +9,8 @@ import { EXPRESSIONS, SENTENCES } from "../shared/catalog.js";
 import { normalizeSnapshot, mergeSnapshots, recordReview, completeLesson } from "../shared/progress.js";
 import { playerLevel, ACHIEVEMENTS, dailyMissions } from "../shared/gamification.js";
 import { checkGuidedSentence } from "../shared/sentenceCheck.js";
+import { PICTURE_WORDS, PICTURE_BANK_ORDER, PRINT_DIALOGUES } from "../shared/printActivities.js";
+import { readFileSync } from "node:fs";
 
 test("visual and audio preferences migrate safely and survive a newer local snapshot", () => {
   const legacy = normalizeSnapshot({ xp: {total: 42} });
@@ -83,4 +85,20 @@ test("all study pronunciations have context-appropriate text for the voice API",
   for(const item of EXERCISE_GROUPS.flatMap(group=>group.items))assert.ok(getPronunciation(item.speech),item.id);
   assert.equal(audioKey("こんにちは。"),audioKey("こんにちは"));
   assert.equal(getPronunciation("texto livre não autorizado"),undefined);
+});
+
+test("printable picture and dialogue activities have complete local content", () => {
+  assert.equal(PICTURE_WORDS.length,6);
+  assert.deepEqual([...PICTURE_BANK_ORDER].sort((a,b)=>a-b),[0,1,2,3,4,5]);
+  for(const item of PICTURE_WORDS){
+    assert.ok(VOCABULARY.some(word=>word.id===item.wordId),item.wordId);
+    assert.match(readFileSync(new URL(`../frontend/assets/img/worksheets/${item.id}.svg`,import.meta.url),"utf8"),/<svg\b/);
+  }
+  assert.ok(PRINT_DIALOGUES.length>=3);
+  for(const dialogue of PRINT_DIALOGUES){
+    assert.ok(dialogue.title && dialogue.setting);
+    assert.ok(dialogue.turns.some(turn=>turn.answer && turn.cue));
+    assert.ok(dialogue.turns.every(turn=>turn.speaker && (turn.text || turn.answer)));
+    assert.ok(dialogue.questions.every(question=>question.prompt && question.answer));
+  }
 });
