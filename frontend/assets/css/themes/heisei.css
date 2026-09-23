@@ -1,0 +1,68 @@
+/* Heisei Girly: pastel stationery and glossy sticker details, drawn in CSS. */
+:root[data-theme="heisei"] {
+  color-scheme: light;
+  --paper: #fff0f7;
+  --surface: #fffafd;
+  --surface-soft: #ffedf6;
+  --ink: #442d43;
+  --muted: #675363;
+  --subtle: #806d7c;
+  --line: #e8c9dd;
+  --accent: #a5266e;
+  --accent-hover: #831a56;
+  --accent-soft: #ffe0f0;
+  --peach: #ffe2d9;
+  --sage: #dff3e9;
+  --lavender: #eee2ff;
+  --sky: #dff3fa;
+  --sand: #fff0d8;
+  --success: #28614d;
+  --success-bg: #e7f5ef;
+  --radius: 22px;
+  --radius-sm: 13px;
+  --shadow: 0 5px 0 #d99cbb30, 0 12px 28px #a5266e0d;
+  --font-display: "DM Serif Display", Georgia, serif;
+}
+:where([data-theme="heisei"]) body {
+  background-color: var(--paper);
+  background-image: radial-gradient(#eab6d450 1px, transparent 1px), linear-gradient(145deg, #fff1f8, #f0f1ff 70%, #edfdff);
+  background-size: 22px 22px, auto;
+}
+:where([data-theme="heisei"]) .sidebar { background: #fff8fc; border-right: 2px solid var(--line); }
+:where([data-theme="heisei"]) .topbar { background: #fff7fbe8; border-bottom: 2px solid var(--line); }
+:where([data-theme="heisei"]) .brand-period, :where([data-theme="heisei"]) .eyebrow { color: var(--accent); }
+:where([data-theme="heisei"]) .nav-link.is-active { background: #ffe0f0; color: var(--accent); box-shadow: inset 3px 0 #d04b97; }
+:where([data-theme="heisei"]) .welcome-card {
+  background: linear-gradient(135deg, #ffe2f0, #fce9fa 53%, #e5f3ff);
+  border: 2px solid #eeb7d5;
+  box-shadow: var(--shadow);
+}
+:where([data-theme="heisei"]) .welcome-card::before {
+  content: "✦ ♡ ✦";
+  position: absolute;
+  right: 20px;
+  top: 16px;
+  color: #af3d81;
+  font-size: 18px;
+  letter-spacing: 7px;
+  pointer-events: none;
+}
+:where([data-theme="heisei"]) .welcome-copy h2 { color: var(--ink); }
+:where([data-theme="heisei"]) .welcome-copy h2 em { color: var(--accent); }
+:where([data-theme="heisei"]) .welcome-copy > p, :where([data-theme="heisei"]) .hero-footnote { color: var(--muted); }
+:where([data-theme="heisei"]) .art-sun { background: #d765a4; box-shadow: 0 0 0 10px #ffffff70, 0 0 0 13px #f3b2d2; }
+:where([data-theme="heisei"]) .art-orbit { border-color: #c05a9845; }
+:where([data-theme="heisei"]) .art-kana { background: #b7a5ec; border-color: #e6dcff; box-shadow: 0 5px 0 #9c7aca88; }
+:where([data-theme="heisei"]) .art-kanji, :where([data-theme="heisei"]) .art-tag { background: #fffafd; color: var(--accent); border-color: #ecc1d8; }
+:where([data-theme="heisei"]) .art-spark { color: #a5266e; }
+:where([data-theme="heisei"]) .goal-ring { background: conic-gradient(#bb4d92 var(--goal), #f6d9e9 0); }
+:where([data-theme="heisei"]) .week-day i.is-done { background: #a5266e; border-color: #a5266e; color: white; }
+:where([data-theme="heisei"]) .module-card, :where([data-theme="heisei"]) .practice-card, :where([data-theme="heisei"]) .hub-card { box-shadow: var(--shadow); }
+:where([data-theme="heisei"]) .module-card:hover, :where([data-theme="heisei"]) .practice-card:hover, :where([data-theme="heisei"]) .hub-card:hover { border-color: var(--accent); }
+:where([data-theme="heisei"]) .module-symbol { border: 1px solid #e7b9d3; }
+:where([data-theme="heisei"]) .theme-switcher { background: #ffe5f1; }
+:where([data-theme="heisei"]) .theme-choice[aria-pressed="true"] { background: #fffafd; }
+:where([data-theme="heisei"]) .theme-preview.heisei { box-shadow: inset 0 -5px #ffffff80, 0 3px 0 #d59bc2; }
+@media (prefers-reduced-motion: reduce) {
+  :where([data-theme="heisei"]) .module-card:hover { transform: none; }
+}
