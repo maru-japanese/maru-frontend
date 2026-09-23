@@ -124,7 +124,7 @@ function render() {
     vocabulary: () => renderVocabulary(ctx),
     glossary: () => renderGlossary(ctx),
     exercises: () => renderExercises(ctx),
-    worksheets: () => renderWorksheets(ctx),
+    worksheets: () => renderWorksheets(ctx, id),
     themes: () => renderThematic(ctx, id),
     placement: () => renderPlacement(ctx),
     support: () => renderSupport(ctx),

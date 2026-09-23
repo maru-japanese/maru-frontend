@@ -3,6 +3,7 @@ import { BEGINNER_KANJI, SENTENCES } from "/shared/catalog.js";
 import { VOCABULARY, VOCABULARY_GROUPS } from "/shared/vocabulary.js";
 import { PICTURE_WORDS, PICTURE_BANK_ORDER, PRINT_DIALOGUES } from "/shared/printActivities.js";
 import { PARTICLE_EXERCISES } from "/shared/exercises.js";
+import { book1Pages } from "./book1.js";
 import { pageHeading, esc, icon, routeLink } from "../core/ui.js";
 
 const chunks = (items, size) => Array.from({length:Math.ceil(items.length/size)},(_,i)=>items.slice(i*size,(i+1)*size));
@@ -52,22 +53,28 @@ const particleSheet = (items, offset) => header("Atividade · partículas") +
   items.map((item,index)=>`<section class="paper-question"><strong>${offset+index+1}. ${esc(item.context)}</strong><p class="jp" lang="ja">${esc(item.prompt)}</p><div class="paper-practice-line"></div></section>`).join("");
 const particleAnswerSheet = (items, offset) => header("Gabarito · partículas") + '<h2>Compare suas respostas.</h2>' +
   items.map((item,index)=>`<section class="paper-answer"><strong>${offset+index+1}. <span lang="ja">${esc(item.speech)}</span></strong><p>${esc(item.explanation)}</p></section>`).join("");
+const bookWordSheet = items => header("Livro 1 · primeiras palavras") + '<h2>Palavras para reconhecer e usar</h2>' +
+  `<div class="paper-book-words">${items.map(item=>`<div><strong lang="ja">${esc(item.jp)}</strong><span>${esc(item.reading)} · ${esc(item.romaji)}</span><span>${esc(item.pt)}</span><small lang="ja">${esc(item.sentence)}</small></div>`).join("")}</div>`;
+const bookSentenceSheet = (items,offset) => header("Livro 1 · frases") + '<h2>Construa uma frase para cada situação</h2><p class="paper-instructions">Leia a situação e escreva a frase em japonês. Compare as partículas e a ordem no gabarito.</p>' +
+  items.map((item,index)=>`<section class="paper-question"><strong>${offset+index+1}. ${esc(item.prompt)}</strong><p>${esc(item.pattern)}</p><div class="paper-practice-line"></div></section>`).join("");
+const bookSentenceAnswers = (items,offset) => header("Gabarito · frases") + '<h2>Compare suas frases</h2>' +
+  items.map((item,index)=>`<section class="paper-answer"><strong>${offset+index+1}. <span lang="ja">${esc(item.tokens.map(token=>token[0]).join(""))}。</span></strong><p>${esc(item.tokens.map(token=>token[1]).join(" "))} · ${esc(item.hint)}</p></section>`).join("");
 const activityKinds = new Set(["pictures","dialogues","activities"]);
 
-export function renderWorksheets(ctx) {
+export function renderWorksheets(ctx, initialKind = "characters") {
   const controller = new AbortController();
-  let kind = "characters", script = "hiragana", group = "food", batch = 0, answers = true, models = true;
-  let scope = "recommended", repeatPages = 1;
+  let kind = initialKind === "book" ? "book" : "characters", script = "hiragana", group = "food", batch = 0, answers = true, models = true;
+  let scope = "recommended", repeatPages = kind === "book" ? 0 : 1;
   let selected = new Set(KANA.filter(item=>item.script==="hiragana").slice(0,20).map(item=>item.char));
   let strokes = null, printing = false;
   const characterList = () => script === "all" ? [...KANA.filter(item=>item.script==="hiragana"),...KANA.filter(item=>item.script==="katakana"), ...BEGINNER_KANJI] : script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
   ctx.main.innerHTML = `<div class="worksheets-page">${pageHeading("LEVE O APRENDIZADO PARA O PAPEL", "Seu caderno, pronto para imprimir.", "Escolha a atividade, confira a folha e imprima em A4. Você também pode salvar em PDF na janela de impressão.",routeLink("writing","Abrir caderno digital " + icon("pen"),"btn btn-ghost"))}<div class="no-print"><div class="panel worksheet-toolbar">
-    <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option><option value="particles">Complete partículas</option><option value="pictures">Imagens e palavras</option><option value="dialogues">Complete diálogos</option><option value="activities">Pacote de atividades</option></select></div>
+    <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option><option value="particles">Complete partículas</option><option value="pictures">Imagens e palavras</option><option value="dialogues">Complete diálogos</option><option value="activities">Pacote de atividades</option><option value="book" ${kind === "book" ? "selected" : ""}>Livro 1 · volume completo</option></select></div>
     <div id="worksheet-script-control"><label class="input-label" for="worksheet-script">Escrita</label><select class="text-input" id="worksheet-script"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option><option value="kanji">Primeiros kanji</option><option value="all">Todos os caracteres</option></select></div>
     <div id="worksheet-scope-control"><label class="input-label" for="worksheet-scope">Quantidade</label><select class="text-input" id="worksheet-scope"><option value="one">1 caractere</option><option value="recommended" selected>20 caracteres · recomendado</option><option value="all">Todos</option><option value="custom">Escolher livremente</option></select></div>
     <div id="worksheet-group-control" hidden><label class="input-label" for="worksheet-group">Tema</label><select class="text-input" id="worksheet-group">${VOCABULARY_GROUPS.filter(([id])=>id!=="all").map(([id,label])=>`<option value="${id}" ${id===group?"selected":""}>${label}</option>`).join("")}</select></div>
     <div id="worksheet-batch-control" hidden><label class="input-label" for="worksheet-batch">Situações</label><select class="text-input" id="worksheet-batch">${chunks(SENTENCES,5).map((items,i)=>`<option value="${i}">${i*5+1} a ${i*5+items.length}</option>`).join("")}</select></div>
-    <div><label class="input-label" for="worksheet-repeat-pages">Páginas para repetir</label><select class="text-input" id="worksheet-repeat-pages"><option value="0">Nenhuma</option><option value="1" selected>1 página em branco</option><option value="2">2 páginas em branco</option><option value="3">3 páginas em branco</option><option value="5">5 páginas em branco</option><option value="10">10 páginas em branco</option></select></div>
+    <div><label class="input-label" for="worksheet-repeat-pages">Páginas para repetir</label><select class="text-input" id="worksheet-repeat-pages"><option value="0" ${repeatPages === 0 ? "selected" : ""}>Nenhuma</option><option value="1" ${repeatPages === 1 ? "selected" : ""}>1 página em branco</option><option value="2">2 páginas em branco</option><option value="3">3 páginas em branco</option><option value="5">5 páginas em branco</option><option value="10">10 páginas em branco</option></select></div>
     <div><button class="btn btn-primary" id="print-worksheet" disabled>${icon("pen")} Imprimir / salvar PDF</button></div>
     </div><div class="filter-chips"><label><input id="worksheet-models" type="checkbox" checked> Mostrar modelos para copiar</label><label><input id="worksheet-answers" type="checkbox" checked> Incluir gabarito separado</label></div>
     <div id="worksheet-characters" class="worksheet-selection panel" role="group" dir="ltr" aria-label="Caracteres da folha"></div><p class="filter-count" id="worksheet-status" aria-live="polite">Preparando os modelos de traços…</p>
@@ -83,7 +90,7 @@ export function renderWorksheets(ctx) {
     ctx.main.querySelector("#worksheet-characters").hidden = kind !== "characters";
     const modelOption = ctx.main.querySelector("#worksheet-models");
     const answerOption = ctx.main.querySelector("#worksheet-answers");
-    modelOption.disabled = kind === "characters" || kind === "particles" || activityKinds.has(kind);
+    modelOption.disabled = kind === "characters" || kind === "particles" || kind === "book" || activityKinds.has(kind);
     modelOption.parentElement.hidden = modelOption.disabled;
     answerOption.disabled = kind === "characters";
     answerOption.parentElement.hidden = answerOption.disabled;
@@ -110,6 +117,16 @@ export function renderWorksheets(ctx) {
       sheets = [header("Frases · situações "+(batch*5+1)+" a "+(batch*5+items.length))+'<h2>Uma ideia, palavra por palavra.</h2><p class="paper-instructions">'+(models ? "Leia a situação, observe os blocos e escreva a frase na ordem pedida. Os blocos estão separados para você perceber suas funções." : "Escreva em japonês ou kana, seguindo o padrão de cada situação. Tente antes de consultar o gabarito.")+'</p>'+
         items.map((item,i)=>`<section class="paper-question"><strong>${i+1}. ${item.prompt}</strong><p>${item.pattern}</p>${models ? `<p class="jp" lang="ja">${item.tokens.map(t=>t[0]).reverse().join(" ／ ")}</p>` : ""}<div class="paper-practice-line"></div><div class="paper-practice-line"></div></section>`).join("")];
       if(answers) answerSheets = [header("Gabarito · frases")+'<h2>Compare a ordem e as partículas.</h2>'+items.map((item,i)=>`<section class="paper-answer"><strong>${i+1}. <span lang="ja">${item.tokens.map(t=>t[0]).join("")}。</span></strong><p>${item.tokens.map(t=>t[1]).join(" ")}</p><p>${item.hint}</p></section>`).join("")];
+    } else if (kind === "book") {
+      const book = book1Pages();
+      const everyKana = new Set(KANA.map(item=>item.char));
+      const kanaPages = ["hiragana","katakana"].flatMap(kanaScript=>printKanaRows.map(row=>kanaSheet(row,kanaScript,everyKana,strokes)).filter(Boolean));
+      const kanjiPages = chunks(BEGINNER_KANJI,5).map(items=>header("Livro 1 · primeiros kanji")+'<h2>Observe, cubra e escreva.</h2>'+items.map(item=>practiceRow(item,strokes)).join(""));
+      const wordPages = chunks(VOCABULARY,10).map(bookWordSheet);
+      const sentencePages = chunks(SENTENCES,5).map((items,index)=>bookSentenceSheet(items,index*5));
+      const particlePages = chunks(PARTICLE_EXERCISES,6).map((items,index)=>particleSheet(items,index*6));
+      sheets = [...book.pages,...kanaPages,...kanjiPages,...wordPages,...sentencePages,...particlePages,pictureSheet(),...PRINT_DIALOGUES.map(dialogueSheet)];
+      if(answers)answerSheets = [...book.answerPages,...chunks(SENTENCES,10).map((items,index)=>bookSentenceAnswers(items,index*10)),...chunks(PARTICLE_EXERCISES,12).map((items,index)=>particleAnswerSheet(items,index*12)),pictureAnswerSheet(),dialogueAnswerSheet()];
     } else if (kind === "particles") {
       sheets = chunks(PARTICLE_EXERCISES,6).map((items,index)=>particleSheet(items,index*6));
       if(answers)answerSheets = chunks(PARTICLE_EXERCISES,12).map((items,index)=>particleAnswerSheet(items,index*12));
@@ -129,20 +146,20 @@ export function renderWorksheets(ctx) {
       const start=path.getPointAtLength(0), label=document.createElementNS("http://www.w3.org/2000/svg","text");
       label.setAttribute("x",Math.max(3,start.x-5));label.setAttribute("y",Math.max(7,start.y-3));label.textContent=i+1;svg.append(label);
     }));
-    const ready = (kind !== "characters" || strokes) && sheets.length > 0;
+    const ready = ((kind !== "characters" && kind !== "book") || strokes) && sheets.length > 0;
     ctx.main.querySelector("#print-worksheet").disabled = !ready || printing;
     const count = `${sheets.length} ${sheets.length===1 ? "folha A4 preparada" : "folhas A4 preparadas"}.`;
     const characters = kind==="characters" ? ` ${selected.size} ${selected.size===1 ? "caractere selecionado" : "caracteres selecionados"}.` : "";
     const repetition = repeatPages ? ` ${repeatPages} ${repeatPages===1 ? "página de repetição em branco" : "páginas de repetição em branco"}.` : "";
-    ctx.main.querySelector("#worksheet-status").textContent = !sheets.length ? "Selecione pelo menos um caractere." : kind === "characters" && !strokes ? "Preparando os modelos de traços…" : count+characters+repetition;
+    ctx.main.querySelector("#worksheet-status").textContent = !sheets.length ? "Selecione pelo menos um caractere." : (kind === "characters" || kind === "book") && !strokes ? "Preparando os modelos de traços…" : count+characters+repetition;
   }
   ctx.main.addEventListener("change",event=>{
     const {id,value,checked}=event.target;
     if(id==="worksheet-kind"){
       const wasActivity=activityKinds.has(kind);
       kind=value;
-      if(wasActivity!==activityKinds.has(kind)){
-        repeatPages=activityKinds.has(kind)?0:1;
+      if(wasActivity!==activityKinds.has(kind) || kind === "book"){
+        repeatPages=activityKinds.has(kind) || kind === "book" ? 0:1;
         ctx.main.querySelector("#worksheet-repeat-pages").value=String(repeatPages);
       }
     }

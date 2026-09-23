@@ -221,6 +221,21 @@ test("particle exercises print with writing space and a separate answer key",asy
   await expect(page.locator(".print-sheet")).toHaveCount(5);
 });
 
+test("Book 1 compiles the full current curriculum into one printable volume",async({page})=>{
+  await go(page,"worksheets/book");
+  await expect(page.locator("#worksheet-kind")).toHaveValue("book");
+  await expect(page.locator("#print-worksheet")).toBeEnabled();
+  await expect(page.locator(".paper-book-lesson")).toHaveCount(74);
+  await expect(page.locator(".paper-book-toc > div")).toHaveCount(8);
+  await expect(page.locator(".paper-book-answers h3")).toHaveCount(37);
+  await expect(page.locator(".paper-kana-family")).toHaveCount(20);
+  await expect(page.locator(".paper-image-card img")).toHaveCount(6);
+  await expect(page.locator(".paper-dialogue")).toHaveCount(3);
+  await expect(page.locator(".print-sheet").first()).toContainText("Não é um curso preparatório oficial");
+  await page.locator("#worksheet-answers").uncheck();
+  await expect(page.locator(".paper-book-answers")).toHaveCount(0);
+});
+
 test("picture matching and dialogues print with images, answer keys and no accidental blank pages",async({page},testInfo)=>{
   await page.addInitScript(()=>{window.printCalls=0;window.print=()=>window.printCalls++;});
   await go(page,"worksheets");
