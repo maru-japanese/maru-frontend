@@ -1,4 +1,4 @@
-import { KANA } from "/shared/content.js";
+import { KANA, KANA_ROWS } from "/shared/content.js";
 import { BEGINNER_KANJI, SENTENCES } from "/shared/catalog.js";
 import { VOCABULARY, VOCABULARY_GROUPS } from "/shared/vocabulary.js";
 import { pageHeading, esc, icon, routeLink } from "../core/ui.js";
@@ -8,7 +8,27 @@ const blankBox = '<div class="paper-box"></div>';
 const footer = (page, total) => `<footer class="paper-footer"><span>maru. · Japonês, passo a passo<br>Traços: KanjiVG · Ulrich Apel e colaboradores · CC BY-SA 3.0</span><span>${page} / ${total}</span></footer>`;
 const header = title => `<header class="paper-header"><strong>maru.</strong><span>UM POUQUINHO, TODO DIA.<br>${title}</span></header><div class="paper-name"><span>Nome: __________________________________</span><span>Data: ____ / ____ / ______</span></div>`;
 const repeatPage = () => header("Página de repetição") + '<div class="paper-repeat-grid" aria-label="Quadrados vazios para praticar">' + blankBox.repeat(81) + '</div>';
-const strokeSVG = (char, paths = []) => `<svg viewBox="0 0 109 109" role="img" aria-label="Ordem dos traços de ${char}">${paths.map(d=>`<path d="${esc(d)}"/>`).join("")}</svg>`;
+const strokeSVG = (char, paths = []) => `<svg viewBox="-4 -4 117 117" role="img" aria-label="Ordem dos traços de ${char}">${paths.map(d=>`<path d="${esc(d)}"/>`).join("")}</svg>`;
+const kanaSlots = (row, script) => {
+  const items = KANA.filter(item=>item.script===script && item.row===row.id);
+  const positions = row.id==="ya" ? [0,2,4] : row.id==="wa" ? [0,4] : row.id==="n" ? [0] : [0,1,2,3,4];
+  const slots = Array(5).fill(null);
+  positions.forEach((position,index)=>{slots[position]=items[index];});
+  return slots;
+};
+const kanaSheet = (row, script, selected, strokes) => {
+  const slots = kanaSlots(row,script);
+  if(!slots.some(item=>item && selected.has(item.char)))return null;
+  const name = script==="hiragana" ? "Hiragana" : "Katakana";
+  const rowName = row.id==="a" ? "vogais" : row.id==="n" ? "N" : row.id.toUpperCase();
+  return header(name) + `<h2>${name} · ${rowName}</h2><p class="paper-instructions">Leia as posições da direita para a esquerda. Observe o primeiro modelo, cubra o segundo e escreva nos quadrados vazios.</p>` +
+    `<div class="paper-kana-grid" data-kana-row="${row.id}" data-script="${script}" aria-label="Fileira ${rowName}, da direita para a esquerda">${slots.map((item,index)=>{
+      const chosen = item && selected.has(item.char);
+      if(!chosen)return `<div class="paper-kana-slot paper-kana-gap" data-print-slot="${index}" aria-hidden="true"></div>`;
+      const reading = item.romaji==="wo" ? "wo/o" : item.romaji;
+      return `<section class="paper-kana-slot" data-print-slot="${index}" data-print-char="${item.char}"><div class="paper-kana-label"><strong lang="ja">${item.char}</strong><span>${reading}</span></div><div class="paper-kana-practice"><div class="paper-box model">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div>${blankBox.repeat(3)}</div></section>`;
+    }).join("")}</div>`;
+};
 
 export function renderWorksheets(ctx) {
   const controller = new AbortController();
@@ -42,11 +62,14 @@ export function renderWorksheets(ctx) {
     const preview = ctx.main.querySelector("#worksheet-preview");
     let sheets = [], answerSheets = [];
     if (kind === "characters") {
-      const items = characterList().filter(item=>selected.has(item.char));
-      sheets = chunks(items,5).map(page => header(script === "kanji" ? "Primeiros kanji" : script === "hiragana" ? "Hiragana" : script === "katakana" ? "Katakana" : "Todos os caracteres") +
+      const kanaScripts = script==="all" ? ["hiragana","katakana"] : script==="kanji" ? [] : [script];
+      const kanaSheets = kanaScripts.flatMap(kanaScript=>KANA_ROWS.map(row=>kanaSheet(row,kanaScript,selected,strokes)).filter(Boolean));
+      const kanjiItems = (script==="kanji" || script==="all" ? BEGINNER_KANJI : []).filter(item=>selected.has(item.char));
+      const kanjiSheets = chunks(kanjiItems,5).map(page => header("Primeiros kanji") +
         '<h2>Observe. Cubra. Experimente.</h2><p class="paper-instructions">O primeiro quadrado mostra os traços numerados. Nos dois seguintes, cubra o desenho. Nas casas vazias, escreva sozinho. Cada número marca o início de um traço: siga a ordem do modelo.</p>' +
         page.map(item=>`<section class="paper-row"><div class="paper-row-label"><strong>${item.char} · ${item.romaji}</strong><span>${item.meaning || "Leia em voz alta antes de escrever."}</span></div><div class="paper-boxes"><div class="paper-box model">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div>${blankBox.repeat(6)}</div></section>`).join("") +
         '<div class="paper-checklist"><span>□ Segui a ordem dos traços.</span><span>□ Observei os espaços.</span><span>□ Tentei sem o modelo.</span></div><p class="paper-instructions">Cubra os modelos acima. De quais caracteres você se lembra? Escreva aqui e depois confira.</p><div class="paper-practice-line"></div><div class="paper-practice-line"></div>');
+      sheets = [...kanaSheets,...kanjiSheets];
     } else if (kind === "words") {
       const words = VOCABULARY.filter(item=>item.group===group);
       sheets = chunks(words,5).map(page=>header("Palavras · "+VOCABULARY_GROUPS.find(([id])=>id===group)[1])+

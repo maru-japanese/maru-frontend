@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { LISTENING_EXERCISES, PARTICLE_EXERCISES } from "../../shared/exercises.js";
 import { VOCABULARY } from "../../shared/vocabulary.js";
-import { KANA } from "../../shared/content.js";
+import { KANA, KANA_ROWS } from "../../shared/content.js";
 import { BEGINNER_KANJI } from "../../shared/catalog.js";
 
 // Exercise browser playback deterministically without consuming a public API quota.
@@ -124,9 +124,15 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator("#print-worksheet")).toBeEnabled();
   await expect(page.locator("#worksheet-scope")).toHaveValue("recommended");
   await expect(page.locator(".print-sheet")).toHaveCount(5);
-  await expect(page.locator(".paper-row")).toHaveCount(20);
+  await expect(page.locator(".paper-kana-grid")).toHaveCount(4);
+  await expect(page.locator(".paper-kana-slot[data-print-char]")).toHaveCount(20);
   await expect(page.locator(".paper-repeat-grid .paper-box")).toHaveCount(81);
   await expect(page.locator(".paper-repeat-grid svg")).toHaveCount(0);
+  expect(await page.locator(".paper-repeat-grid .paper-box").first().evaluate(box=>getComputedStyle(box,"::before").display)).toBe("none");
+  expect(await page.locator(".paper-box svg").first().evaluate(svg=>{
+    const ink=svg.getBoundingClientRect(), box=svg.parentElement.getBoundingClientRect();
+    return ink.left>=box.left && ink.top>=box.top && ink.right<=box.right && ink.bottom<=box.bottom;
+  })).toBe(true);
   await expect(page.locator(".model svg text").first()).toHaveText("1");
   await page.locator("#print-worksheet").click();
   await expect.poll(()=>page.evaluate(()=>window.printCalls)).toBe(1);
@@ -135,26 +141,43 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator(".sidebar")).toBeHidden();
   await expect(page.locator(".topbar")).toBeHidden();
   expect(await page.locator(".print-sheet").first().evaluate(element=>getComputedStyle(element).backgroundColor)).toBe("rgb(255, 255, 255)");
+  expect(await page.locator(".paper-kana-practice .paper-box, .paper-repeat-grid .paper-box").evaluateAll(boxes=>boxes.map(box=>{
+    const {width,height}=box.getBoundingClientRect();return {grid:box.parentElement.className,width,height};
+  }).filter(({width,height})=>Math.abs(width-height)>=2).slice(0,5))).toEqual([]);
+  expect(await page.locator('[data-kana-row="a"] [data-print-slot="0"]').evaluate(slot=>slot.getBoundingClientRect().left)).toBeGreaterThan(await page.locator('[data-kana-row="a"] [data-print-slot="1"]').evaluate(slot=>slot.getBoundingClientRect().left));
   const pdf=await page.pdf({path:testInfo.outputPath("hiragana-a4.pdf"),preferCSSPageSize:true,printBackground:true});
   expect((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(5);
   await page.emulateMedia({media:"screen"});
   await page.locator("#worksheet-scope").selectOption("one");
-  await expect(page.locator(".paper-row")).toHaveCount(1);
+  await expect(page.locator(".paper-kana-slot[data-print-char]")).toHaveCount(1);
   await page.locator('.worksheet-char[data-print-char="き"]').click();
   await expect(page.locator('.worksheet-char[data-print-char="き"]')).toHaveAttribute("aria-pressed","true");
-  await expect(page.locator(".paper-row-label")).toContainText(["き"]);
+  await expect(page.locator('.paper-kana-slot[data-print-char="き"]')).toHaveAttribute("data-print-slot","1");
   await page.locator("#worksheet-scope").selectOption("recommended");
   await page.locator(".worksheet-char").nth(20).click();
   await expect(page.locator("#worksheet-scope")).toHaveValue("custom");
   await expect(page.locator('.worksheet-char[aria-pressed="true"]')).toHaveCount(21);
   await expect(page.locator(".print-sheet")).toHaveCount(6);
+  await page.locator("#worksheet-script").selectOption("hiragana");
+  await page.locator("#worksheet-scope").selectOption("all");
+  for(const [row,chars] of [["ya",["や","","ゆ","","よ"]],["wa",["わ","","","","を"]],["n",["ん","","","",""]]]){
+    expect(await page.locator(`[data-kana-row="${row}"] .paper-kana-slot`).evaluateAll(slots=>slots.map(slot=>slot.dataset.printChar || ""))).toEqual(chars);
+  }
+  await expect(page.locator('[data-print-char="を"] .paper-kana-label')).toContainText("wo/o");
   await page.locator("#worksheet-script").selectOption("all");
   await page.locator("#worksheet-scope").selectOption("all");
   await expect(page.locator('.worksheet-char[aria-pressed="true"]')).toHaveCount(KANA.length+BEGINNER_KANJI.length);
-  await expect(page.locator(".print-sheet")).toHaveCount(Math.ceil((KANA.length+BEGINNER_KANJI.length)/5)+1);
+  for(const script of ["hiragana","katakana"]){
+    expect(await page.locator(`.paper-kana-grid[data-script="${script}"]`).evaluateAll(grids=>grids.map(grid=>grid.dataset.kanaRow))).toEqual(KANA_ROWS.map(row=>row.id));
+  }
+  const fullSheetCount=KANA_ROWS.length*2+Math.ceil(BEGINNER_KANJI.length/5)+1;
+  await expect(page.locator(".print-sheet")).toHaveCount(fullSheetCount);
   await page.emulateMedia({media:"print"});
+  expect(await page.locator(".paper-boxes .paper-box").evaluateAll(boxes=>boxes.every(box=>{
+    const {width,height}=box.getBoundingClientRect();return Math.abs(width-height)<2;
+  }))).toBe(true);
   const completePdf=await page.pdf({preferCSSPageSize:true,printBackground:true});
-  expect((completePdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(Math.ceil((KANA.length+BEGINNER_KANJI.length)/5)+1);
+  expect((completePdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(fullSheetCount);
   await page.emulateMedia({media:"screen"});
   await page.locator("#worksheet-kind").selectOption("sentences");
   await expect(page.locator(".print-sheet")).toHaveCount(3);
