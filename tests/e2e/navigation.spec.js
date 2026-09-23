@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { NAVIGATION, RESOURCES, PRACTICE_TOOLS } from "../../frontend/assets/js/core/navigation.js";
 
-test("five destinations lead to every resource and show its navigation context", async ({ page }) => {
+test("visible destinations lead to every resource and show its navigation context", async ({ page }) => {
   await page.goto("/#/home");
-  await expect(page.locator('.sidebar nav .nav-link')).toHaveCount(5);
+  await expect(page.locator('.sidebar nav .nav-link')).toHaveCount(NAVIGATION.length);
   await expect(page.locator('.sidebar nav .nav-link')).toHaveText(NAVIGATION.map(item => item.title), { useInnerText: true });
   for (const item of [...PRACTICE_TOOLS, ...RESOURCES]) {
     const hub = PRACTICE_TOOLS.includes(item) ? "practice" : "explore";
@@ -11,11 +11,22 @@ test("five destinations lead to every resource and show its navigation context",
     await page.getByRole("link", { name: item.title, exact: true }).click();
     await expect(page).toHaveURL(new RegExp("/#/" + item.route + "$"));
     await expect(page.locator('main h1')).toBeVisible();
-    await expect(page.locator('.sidebar nav .is-active')).toHaveAttribute("data-nav", hub);
-    await expect(page.locator('#current-parent')).toHaveAttribute("href", "#/" + hub);
-    await page.locator('#current-parent').click();
-    await expect(page).toHaveURL(new RegExp("/#/" + hub + "$"));
+    const section = NAVIGATION.some(nav => nav.route === item.route) ? item.route : hub;
+    await expect(page.locator('.sidebar nav .is-active')).toHaveAttribute("data-nav", section);
+    if (section === hub) {
+      await expect(page.locator('#current-parent')).toHaveAttribute("href", "#/" + hub);
+      await page.locator('#current-parent').click();
+      await expect(page).toHaveURL(new RegExp("/#/" + hub + "$"));
+    }
   }
+});
+
+test("home shows the learning, practice and printable paths", async ({ page }) => {
+  await page.goto('/#/home');
+  await expect(page.locator('.discovery-map-card')).toHaveCount(3);
+  await expect(page.locator('.discovery-map-link')).toHaveCount(14);
+  await expect(page.getByRole('link', { name: 'Livro 1 completo' })).toHaveAttribute('href', '#/worksheets/book');
+  await expect(page.getByRole('link', { name: 'Para professores', exact: true }).last()).toHaveAttribute('href', '#/teacher');
 });
 
 test("resource search combines categories, ignores accents and keeps its state on return", async ({ page }) => {

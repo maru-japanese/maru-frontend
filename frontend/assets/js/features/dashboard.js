@@ -4,6 +4,12 @@ import { MODULES, LESSONS } from "/shared/curriculum.js";
 import { currentStreak, dueReviews, localDay } from "/shared/progress.js";
 import { icon, routeLink, progressBar } from "../core/ui.js";
 
+const DISCOVERY_GROUPS = [
+  { title: "Aprender", description: "Encontre a base antes de praticar.", links: [["journey","Trilha de lições"],["kana","Hiragana e katakana"],["vocabulary","Primeiras palavras"],["kanji","Primeiros kanji"],["particles","Partículas"]] },
+  { title: "Praticar", description: "Experimente e reveja no seu ritmo.", links: [["exercises","Exercícios e escuta"],["writing","Caderno de escrita"],["sentences","Formar frases"],["review","Revisão"]] },
+  { title: "Explorar e levar", description: "Outros caminhos, papel e sala de aula.", links: [["themes","Trilhas temáticas"],["expressions","Expressões e gírias"],["worksheets","Folhas para imprimir"],["worksheets/book","Livro 1 completo"],["teacher","Para professores"]] }
+];
+
 export function renderDashboard(ctx) {
   const controller = new AbortController();
   const p = ctx.progress;
@@ -38,6 +44,7 @@ export function renderDashboard(ctx) {
         <div class="week-strip" aria-label="Atividade nesta semana">${week}</div><div class="daily-bottom">${icon("fire")} <span><strong>${currentStreak(p)} ${currentStreak(p) === 1 ? "dia" : "dias"}</strong> de constância</span>${routeLink("settings", "Ajustar meta", "text-link")}</div>
       </aside>
     </div>
+    <section class="discovery-map" aria-labelledby="discovery-map-title"><div class="section-heading"><div><p class="eyebrow">TODOS OS CAMINHOS À VISTA</p><h2 id="discovery-map-title">O que você quer fazer agora?</h2></div>${routeLink("explore","Ver todos os recursos "+icon("arrow"),"text-link")}</div><div class="discovery-map-grid">${DISCOVERY_GROUPS.map(group=>`<div class="panel discovery-map-card"><h3>${group.title}</h3><p>${group.description}</p><ul>${group.links.map(([route,label])=>`<li>${routeLink(route,label+icon("arrow"),"discovery-map-link")}</li>`).join("")}</ul></div>`).join("")}</div></section>
     <section class="arcade-only panel mission-panel"><p class="eyebrow">SUAS MISSÕES DE HOJE</p><h2>Mais uma fase do seu aprendizado.</h2><div class="mission-list">${dailyMissions(p).map(mission => `<article class="mission-item"><strong>${mission.current === mission.target ? "✓ " : ""}${mission.title}</strong><p>${mission.description}</p>${progressBar(mission.current / mission.target * 100, mission.title)}<p>${mission.current} / ${mission.target}</p></article>`).join("")}</div></section>
     <section class="journey-preview"><div class="section-heading"><div><p class="eyebrow">DO PRIMEIRO SOM À PRIMEIRA FRASE</p><h2>Um caminho para chamar de seu</h2></div>${routeLink("journey", "Ver trilha completa " + icon("arrow"), "text-link")}</div>
       <div class="module-grid">${MODULES.slice(0, 4).map(module => {

@@ -4,7 +4,9 @@ export const NAVIGATION = [
   { route: "journey", icon: "path", title: "Minha trilha" },
   { route: "practice", icon: "target", title: "Praticar" },
   { route: "review", icon: "repeat", title: "Revisão" },
-  { route: "explore", icon: "book", title: "Explorar" }
+  { route: "explore", icon: "book", title: "Explorar" },
+  { route: "worksheets", icon: "pen", title: "Imprimir" },
+  { route: "teacher", icon: "path", title: "Para professores" }
 ];
 export const PRACTICE_TOOLS = [
   { route: "exercises", icon: "volume", title: "Exercícios e escuta", description: "Reconheça os sons, escolha palavras e pratique partículas com explicações a cada resposta.", detail: "Ouvir e responder", color: "sage" },

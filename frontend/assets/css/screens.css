@@ -1,5 +1,14 @@
 /* The learner's home */
 .dashboard-top { display: grid; grid-template-columns: minmax(0, 1fr) 264px; gap: 22px; }
+.discovery-map-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+.discovery-map-card { min-width: 0; padding: 22px; }
+.discovery-map-card h3 { font-size: 16px; }
+.discovery-map-card > p { color: var(--muted); font-size: 12px; line-height: 1.6; margin: 6px 0 14px; }
+.discovery-map-card ul { list-style: none; margin: 0; padding: 0; }
+.discovery-map-card li + li { border-top: 1px solid var(--line); }
+.discovery-map-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; color: var(--ink); font-size: 12px; }
+.discovery-map-link:hover, .discovery-map-link:focus-visible { color: var(--accent); }
+.discovery-map-link .icon { width: 14px; height: 14px; flex-shrink: 0; }
 .welcome-card { min-height: 370px; border-radius: var(--radius); background: #eee7d8; border: 1px solid #e7decd; position: relative; overflow: hidden; display: flex; }
 .welcome-copy { position: relative; z-index: 2; padding: 29px 0 25px 30px; width: 62%; }
 .welcome-copy h2 { font-family: var(--font-display); font-size: clamp(36px, 3.9vw, 55px); font-weight: 400; line-height: 1.07; letter-spacing: -1.5px; margin: 20px 0 17px; color: #363d30; }

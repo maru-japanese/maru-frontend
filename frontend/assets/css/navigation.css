@@ -1,11 +1,11 @@
-/* Five destinations. Detailed choices live in the practice and discovery hubs. */
+/* Main destinations stay visible; detailed choices also live in the hubs. */
 .sidebar { padding: 30px 18px 0; }
 .sidebar-brand { display: flex; align-items: flex-start; gap: 4px; margin-bottom: 35px; }
 .sidebar-brand .brand { padding: 0 9px; min-width: 0; }
 .menu-close { display: none; }
 .sidebar nav { display: grid; gap: 6px; }
 .sidebar .nav-label { padding-inline: 13px; margin: 0 0 12px; font-family: var(--font-body); font-size: 9px; }
-.sidebar .nav-link { margin: 0; min-height: 50px; font-size: 13px; color: var(--muted); }
+.sidebar .nav-link { margin: 0; min-height: 44px; font-size: 12px; color: var(--muted); }
 .sidebar .nav-link.is-active { color: var(--accent); }
 .sidebar-bottom { padding-top: 44px; }
 .sidebar-mode-label { padding: 0 5px; margin-bottom: 10px; font-size: 10px; color: var(--muted); }
@@ -74,7 +74,7 @@
   .sidebar-brand .brand small { font-size: 5px; letter-spacing: .6px; }
   .sidebar-brand .brand img { width: 29px; height: 29px; }
   .menu-close { display: inline-flex; width: 36px; height: 44px; }
-  .sidebar .nav-link { min-height: 52px; }
+  .sidebar .nav-link { min-height: 44px; }
   .sidebar-bottom { padding-top: 30px; }
 }
 @media (max-width: 620px) {

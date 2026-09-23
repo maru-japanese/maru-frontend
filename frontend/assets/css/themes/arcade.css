@@ -88,6 +88,7 @@
 :where([data-theme="arcade"]) .sidebar-message > span { font-family: var(--font-jp-serif); font-size: 22px; letter-spacing: 6px; color: var(--sage-ink); text-shadow: 0 0 12px #35f29a4d; }
 :where([data-theme="arcade"]) .profile-link { display: flex; gap: 10px; align-items: center; border-top: 1px dashed var(--line); padding: 19px 0; }
 :where([data-theme="arcade"]) .profile-avatar, :where([data-theme="arcade"]) .topbar-avatar { width: 34px; height: 34px; display: grid; place-items: center; border-radius: var(--radius-sm); background: var(--surface-raised); border: 1px solid var(--line-bright); color: var(--sky-ink); font-family: var(--font-pixel); font-size: 11px; font-weight: 400; flex-shrink: 0; }
+:where([data-theme="arcade"]) .topbar-avatar { width: auto; min-width: 56px; padding: 0 7px; font-size: 9px; }
 :where([data-theme="arcade"]) .topbar { height: 76px; padding: 0 40px; border-bottom: 2px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; background: #0b1022f2; box-shadow: 0 8px 20px -14px #ff3f8b66; }
 :where([data-theme="arcade"]) .topbar-location strong { color: var(--ink); font-weight: 500; }
 :where([data-theme="arcade"]) .topbar-stats strong { font-family: var(--font-pixel); font-weight: 400; font-size: 11px; }

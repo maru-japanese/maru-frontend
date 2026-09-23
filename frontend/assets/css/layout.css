@@ -32,7 +32,7 @@
 .topbar-streak .icon { color: var(--accent); width: 17px; height: 17px; }
 .xp-label .icon { color: #9d8b52; width: 15px; height: 15px; }
 .topbar-divider { height: 17px; width: 1px; background: var(--line); }
-.topbar-avatar { margin-left: 4px; width: 30px; height: 30px; }
+.topbar-avatar { margin-left: 4px; width: auto; min-width: 48px; height: 32px; padding: 0 10px; border-radius: 999px; }
 .menu-button { display: none !important; }
 .main-content { width: 100%; max-width: 1470px; margin: 0 auto; padding: 38px 40px 28px; flex: 1; }
 .app-footer { margin: auto 40px 0; padding: 24px 0; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 14px; font-size: 10px; color: var(--subtle); }
