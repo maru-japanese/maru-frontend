@@ -37,6 +37,13 @@
 .account-panel .source-note { font-size: 12px; }
 .account-panel #account-logout, .account-panel #google-login { margin: 10px 0; }
 .account-panel .small { overflow-wrap: anywhere; }
+.account-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 12px; }
+.account-tabs button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.account-form { display: grid; gap: 9px; max-width: 440px; margin: 15px 0; }
+.account-form label { font-size: 12px; font-weight: 600; color: var(--ink); }
+.account-form .text-input { font-size: 16px; border-color: var(--line); }
+.account-form .btn { justify-self: start; margin-top: 6px; }
+.account-feedback { min-height: 1.5em; color: var(--ink); font-size: 12px; line-height: 1.7; }
 .support-footer { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; padding: 28px 0 0; color: var(--muted); font-size: 11px; }
 #support-destinations { display: flex; flex-wrap: wrap; gap: 14px; margin: 28px 0; }
 .support-message { padding: 18px; background: var(--surface-soft); border-radius: var(--radius-sm); font-size: 14px; line-height: 1.8; }

@@ -110,7 +110,7 @@ test("account migration and sign-out keep guest and account caches separate",asy
   await page.addInitScript(()=>{
     if(!localStorage.getItem("maru-learning-v2"))localStorage.setItem("maru-learning-v2",JSON.stringify({xp:{total:30},lessons:{welcome:{completedAt:10}},updatedAt:10}));
   });
-  await page.route("**/api/account",route=>route.fulfill({json:{user:signed?{id,name:"Pessoa",email:"pessoa@example.test"}:null,googleEnabled:true}}));
+  await page.route("**/api/account",route=>route.fulfill({json:{user:signed?{id,name:"Pessoa",email:"pessoa@example.test"}:null,googleEnabled:false,emailEnabled:true}}));
   await page.route("**/api/progress",async route=>{
     if(route.request().method()==="PUT")remote=route.request().postDataJSON();
     await route.fulfill({json:signed?remote:normalizeSnapshot({xp:{total:30},lessons:{welcome:{completedAt:10}},updatedAt:10})});
@@ -134,6 +134,6 @@ test("account migration and sign-out keep guest and account caches separate",asy
   await expect(page.locator("#save-status")).toHaveText("Conta alterada · recarregue");
   expect(await page.evaluate(id=>JSON.parse(localStorage.getItem("maru-account-"+id+"-v2")).preferences.dailyGoal,id)).toBe(10);
   await page.getByRole("button",{name:"Sair desta conta",exact:true}).click();
-  await expect(page.locator("#google-login")).toBeVisible();
+  await expect(page.locator("#email-account-form")).toBeVisible();
   await expect(page.locator("#xp-total")).toHaveText("30 XP");
 });

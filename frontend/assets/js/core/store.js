@@ -16,8 +16,8 @@ function readLocal(key = GUEST_KEY) {
 }
 const readIdentity = () => { try { return JSON.parse(localStorage.getItem(identityKey)) || null; } catch { return null; } };
 export async function createStore(onStatus) {
-  let user = readIdentity(), verified = false, googleEnabled = false;
-  try { const state = await getAccount(); user = state.user; googleEnabled = state.googleEnabled; verified = true; } catch {}
+  let user = readIdentity(), verified = false, googleEnabled = false, emailEnabled = false;
+  try { const state = await getAccount(); user = state.user; googleEnabled = state.googleEnabled; emailEnabled = state.emailEnabled; verified = true; } catch {}
   // Never mix an offline account cache with the anonymous profile.
   if (!user || typeof user.id !== "string" || !/^[a-f0-9-]{36}$/.test(user.id)) user = null;
   let key = keyFor(user?.id), snapshot = readLocal(key);
@@ -78,7 +78,7 @@ export async function createStore(onStatus) {
   if (dirty) timer = setTimeout(flush, 250);
   return {
     get snapshot() { return snapshot; },
-    get account() { return { user, googleEnabled, verified }; },
+    get account() { return { user, googleEnabled, emailEnabled, verified }; },
     save() {
       snapshot.updatedAt = Date.now(); persistLocal(); dirty = true;
       if (stopped) { report("account-changed"); return; }

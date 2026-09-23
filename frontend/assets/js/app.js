@@ -21,6 +21,22 @@ import { renderSettings } from "./features/settings.js";
 import { emptyState, routeLink } from "./core/ui.js";
 import { applyTheme, themeSwitcher } from "./core/theme.js";
 import { playerLevel, ACHIEVEMENTS } from "/shared/gamification.js";
+import { completeEmailLink } from "./api.js";
+
+// Supabase sends confirmation/recovery tokens in the fragment for implicit links.
+// Clear the fragment before any further work so the credentials leave the URL quickly.
+if (/^#(?:access_token=|error=)/.test(location.hash)) {
+  const values = new URLSearchParams(location.hash.slice(1));
+  const refreshToken = values.get("refresh_token");
+  const kind = values.get("type");
+  history.replaceState(null, "", "/#/settings/email-link-failed");
+  if (refreshToken && ["signup", "recovery", "invite", "magiclink"].includes(kind)) {
+    try {
+      await completeEmailLink(refreshToken);
+      history.replaceState(null, "", "/#/settings/" + (kind === "recovery" ? "password-reset" : "email-confirmed"));
+    } catch { /* The settings page explains how to request a fresh link. */ }
+  }
+}
 
 const app = document.querySelector("#app");
 let toastTimer;

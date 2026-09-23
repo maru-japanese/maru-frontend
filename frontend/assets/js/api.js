@@ -43,6 +43,14 @@ async function request(path, options){
 export const getAccount = () => request("/api/account");
 export const getSiteConfig = () => request("/api/config");
 export const signOut = () => request("/api/auth/logout", { method: "POST" });
+const authPost = (path, body) => request("/api/auth/email/" + path, {
+  method: "POST", body: JSON.stringify(body), signal: AbortSignal.timeout(15000)
+});
+export const signUpWithEmail = (email, password) => authPost("signup", { email, password });
+export const signInWithEmail = (email, password) => authPost("login", { email, password });
+export const recoverEmail = email => authPost("recover", { email });
+export const completeEmailLink = refreshToken => authPost("complete", { refreshToken });
+export const changeEmailPassword = password => authPost("password", { password });
 
 export function getProgress(){
   return request("/api/progress");
