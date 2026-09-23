@@ -68,7 +68,7 @@ a busca. Nenhuma rota de conteúdo foi removida.
 - Sentences: blocos e digitação para situações específicas.
 - Reference: kanji, partículas, expressões, biblioteca e revisão.
 - Study: palavras por tema, exercícios, escuta e glossário.
-- Worksheets: folhas A4 de caracteres, palavras e frases com gabaritos opcionais.
+- Worksheets: folhas A4 de caracteres, palavras e frases com gabaritos opcionais; seleção livre de caracteres e páginas extras de repetição vazias.
 - Settings: modo visual, áudio, romaji, meta diária, indicadores e conquistas.
 
 ## Persistência
