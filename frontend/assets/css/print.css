@@ -63,7 +63,7 @@
 .paper-book-cover h2 { font-size: 34pt; line-height: 1.15; margin: 5mm 0; }
 .paper-book-cover > p:not(.eyebrow) { max-width: 125mm; }
 .paper-book-cover-art { margin: 8mm 0; align-self: center; }
-.paper-book-cover-art img { width: 45mm; height: 45mm; }
+.paper-book-cover-art img { width: 55mm; height: 55mm; object-fit: contain; }
 .paper-book-cover small { display: block; max-width: 145mm; margin-top: 12mm; font-size: 9pt; }
 .paper-book-toc { display: grid; gap: 4mm; margin-top: 10mm; }
 .paper-book-toc > div { padding: 3mm 0; border-bottom: 1px solid #bbb; }

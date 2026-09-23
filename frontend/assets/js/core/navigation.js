@@ -25,6 +25,7 @@ export const RESOURCES = [
   { route: "themes", group: "culture", icon: "path", title: "Trilhas temáticas", description: "Japonês para viagem, anime, mangá e situações de trabalho.", keywords: "cultura turismo emprego", color: "sage" },
   { route: "glossary", group: "materials", icon: "chat", title: "Explicado do zero", description: "Um glossário simples para os termos que aparecem nas lições.", keywords: "glossario duvidas conceitos ajuda", color: "lavender" },
   { route: "worksheets", group: "materials", icon: "pen", title: "Atividades para imprimir", description: "Folhas A4 para treinar escrita, palavras e frases à mão.", keywords: "pdf impressao papel caligrafia vogais", color: "peach" },
+  { route: "teacher", group: "materials", icon: "path", title: "Para professores", description: "Escolha uma etapa ou tema e compartilhe um pacote de estudo com sua turma.", keywords: "professor professora aula turma livro material", color: "sage" },
   { route: "library", group: "materials", icon: "external", title: "Biblioteca", description: "Fontes e recursos selecionados para continuar descobrindo.", keywords: "referencias sites livros materiais", color: "sky" }
 ];
 const pages = [
@@ -32,6 +33,7 @@ const pages = [
   ...PRACTICE_TOOLS.map(item => ({ ...item, section: "practice" })),
   ...RESOURCES.map(item => ({ ...item, section: "explore" })),
   { route: "lesson", title: "Lição", section: "journey" },
+  { route: "package", title: "Pacote de estudo", section: "teacher" },
   { route: "placement", title: "Encontre seu começo", section: "journey" },
   { route: "settings", title: "Meu ritmo", section: "settings" },
   { route: "support", title: "Apoie o Maru", section: "" }

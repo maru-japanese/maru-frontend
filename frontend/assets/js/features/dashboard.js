@@ -27,6 +27,7 @@ export function renderDashboard(ctx) {
           <p>Do seu primeiro あ à sua primeira conversa.<br>Você não precisa saber nada para começar.</p>
           ${routeLink(next ? "lesson/" + next.id : "review", (completed || p.placement.acceptedModule ? "Continuar aprendendo" : "Começar do zero") + icon("arrow"), "btn btn-primary")}
           ${!completed && !p.placement.acceptedModule ? routeLink("placement", "Já sei um pouco " + icon("arrow"), "text-link placement-entry") : ""}
+          ${!completed && !p.placement.acceptedModule ? routeLink("teacher", "Sou professor(a) " + icon("arrow"), "text-link placement-entry") : ""}
           ${!completed && !p.placement.acceptedModule ? `<label class="welcome-goal" for="welcome-goal">Seu primeiro ritmo<select id="welcome-goal" class="text-input">${[5,10,15].map(amount => `<option value="${amount}" ${goal === amount ? "selected" : ""}>${amount} atividades por dia</option>`).join("")}</select></label>` : ""}
           <span class="hero-footnote">${icon("clock")} ${next ? next.minutes + " min · " + next.title : "Revise o que você já aprendeu"}</span>
         </div>

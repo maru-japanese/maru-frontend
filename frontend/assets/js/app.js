@@ -5,6 +5,7 @@ import { renderPlacement } from "./features/placement.js";
 import { renderSupport } from "./features/support.js";
 import { renderVocabulary, renderGlossary, renderExercises } from "./features/study.js";
 import { renderWorksheets } from "./features/worksheets.js";
+import { renderTeacher } from "./features/teacher.js";
 import { createStore } from "./core/store.js";
 import { createAudio } from "./core/audio.js";
 import { icon } from "./core/icons.js";
@@ -125,6 +126,8 @@ function render() {
     glossary: () => renderGlossary(ctx),
     exercises: () => renderExercises(ctx),
     worksheets: () => renderWorksheets(ctx, id),
+    teacher: () => renderTeacher(ctx),
+    package: () => renderTeacher(ctx, id),
     themes: () => renderThematic(ctx, id),
     placement: () => renderPlacement(ctx),
     support: () => renderSupport(ctx),

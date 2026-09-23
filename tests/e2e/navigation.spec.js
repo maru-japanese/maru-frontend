@@ -20,7 +20,7 @@ test("five destinations lead to every resource and show its navigation context",
 
 test("resource search combines categories, ignores accents and keeps its state on return", async ({ page }) => {
   await page.goto("/#/explore");
-  await expect(page.locator('.hub-card')).toHaveCount(9);
+  await expect(page.locator('.hub-card')).toHaveCount(10);
   await page.getByRole('button', { name: 'Materiais de apoio', exact: true }).click();
   await page.locator('#resource-search').fill('impressao');
   await expect(page.locator('.hub-card')).toHaveCount(1);
@@ -32,11 +32,24 @@ test("resource search combines categories, ignores accents and keeps its state o
   await page.locator('#resource-search').fill('nada-com-este-nome');
   await expect(page.locator('.hub-empty')).toBeVisible();
   await page.getByRole('button', { name: 'Limpar filtros', exact: false }).click();
-  await expect(page.locator('.hub-card')).toHaveCount(9);
+  await expect(page.locator('.hub-card')).toHaveCount(10);
   await expect(page.locator('#resource-search')).toBeFocused();
   await page.locator('#resource-search').fill('girias');
   await expect(page.locator('.hub-card')).toHaveCount(1);
   await expect(page.locator('.hub-card')).toContainText('Expressões e gírias');
+});
+
+test("teachers can share a public curated path and its printable book", async ({ page }) => {
+  await page.goto('/#/teacher');
+  await expect(page.locator('#teacher-link')).toHaveValue(/#\/package\/module-start$/);
+  await page.locator('#teacher-topic').selectOption('theme-travel');
+  await expect(page.locator('#teacher-preview .teacher-lesson-list li')).toHaveCount(3);
+  const link = await page.locator('#teacher-link').inputValue();
+  await page.goto(link);
+  await expect(page.locator('main h1')).toHaveText('Uma viagem, um encontro de cada vez');
+  await expect(page.getByRole('link',{name:/Abrir o conteúdo/})).toHaveAttribute('href','#/themes/travel');
+  await page.getByRole('link',{name:/Imprimir o Livro 1/}).click();
+  await expect(page.locator('#worksheet-kind')).toHaveValue('book');
 });
 
 test("hubs fit both modes; the mobile drawer fits and traps keyboard focus", async ({ page }) => {

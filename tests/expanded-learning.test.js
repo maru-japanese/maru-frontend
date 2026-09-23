@@ -10,7 +10,7 @@ import { normalizeSnapshot, mergeSnapshots, recordReview, completeLesson } from 
 import { playerLevel, ACHIEVEMENTS, dailyMissions } from "../shared/gamification.js";
 import { checkGuidedSentence } from "../shared/sentenceCheck.js";
 import { PICTURE_WORDS, PICTURE_BANK_ORDER, PRINT_DIALOGUES } from "../shared/printActivities.js";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 test("visual and audio preferences migrate safely and survive a newer local snapshot", () => {
   const legacy = normalizeSnapshot({ xp: {total: 42} });
@@ -101,4 +101,12 @@ test("printable picture and dialogue activities have complete local content", ()
     assert.ok(dialogue.turns.every(turn=>turn.speaker && (turn.text || turn.answer)));
     assert.ok(dialogue.questions.every(question=>question.prompt && question.answer));
   }
+});
+
+test("Irasutoya illustration inventory stays within the site-wide cap", () => {
+  const directory = new URL("../frontend/assets/img/",import.meta.url);
+  const images = readdirSync(directory).filter(name=>name.startsWith("irasutoya-") && /\.(png|jpe?g|webp)$/.test(name));
+  const inventory = readFileSync(new URL("../frontend/assets/img/IRASUTOYA.md",import.meta.url),"utf8");
+  assert.ok(images.length<=20);
+  for(const name of images)assert.ok(inventory.includes(name),`Ilustração sem fonte registrada: ${name}`);
 });
