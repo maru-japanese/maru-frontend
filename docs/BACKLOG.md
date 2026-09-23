@@ -1,7 +1,9 @@
 # Continuidade do manual
 
-Referência: maru-arquitetura/maru-arquitetura.html, versão 1.2.
+Referência: maru-arquitetura/maru-arquitetura.html, versão 1.4. O documento é um mapa de propostas, não o estado atual da hospedagem: Vercel + Supabase e o Dojo Tinta e papel já foram escolhidos.
 A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
+
+**Princípio do produto:** ninguém paga para acessar o Maru. Doações são voluntárias e não desbloqueiam lições, livros, impressão ou recursos futuros. Se uma integração futura tiver custo por uso (como IA), só será lançada com orçamento e limites internos que preservem o acesso gratuito.
 
 ## Implementado nesta etapa
 
@@ -18,6 +20,9 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | Temas | Viagem, anime/mangá e trabalho; palavras, frases, expressões e práticas do acervo existente. |
 | Editorial | Gerador de rascunhos, checklist e backlog. Nenhum rascunho é publicado automaticamente. |
 | Operação | Frontend na Vercel, API e Postgres no Supabase; adaptador SQLite legado preservado. |
+| Impressão | Livro 1 compila as 37 lições e atividades atuais em um volume A4 com gabarito; exercícios de partículas também podem ser impressos separadamente. |
+| Professores | Seleção de etapa ou tema gera um link público com as lições e acesso ao Livro 1, sem turma, notas ou progresso individual. |
+| Ilustrações | Duas artes do Irasutoya usadas como apoio visual, com inventário e teto de 20 para o site inteiro; as atividades com imagens continuam usando arte original. |
 
 ## Ativação externa
 
@@ -32,8 +37,8 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | --- | --- | --- | --- |
 | Alta | Prática diária personalizada, retomada de lições e pontos fracos | Experiência transversal | Unificar metadados, histórico e recomendações, preservando IDs existentes. |
 | Alta | Consolidar o básico, por temas pequenos | Bloco 2 | Mais palavras e kanji revisados, objetivos e exemplos contextualizados; sem prometer curso N5/N4 completo. |
-| Média | Corrigir frases livres com IA | Serviço opcional para contas | Escolher provedor/modelo, teto de gastos e limite por conta/dia. Resultado separado do corretor por modelos, com incertezas visíveis. |
-| Média | Exemplos extras com IA | Serviço opcional para contas | Mesmo controle de custo; resposta estruturada e avaliação antes da exposição pública. |
+| Média | Corrigir frases livres com IA | Serviço opcional gratuito para contas | Escolher provedor/modelo, orçamento interno e limite de uso justo. Sem assinatura ou compra; resultado separado do corretor por modelos, com incertezas visíveis. |
+| Média | Exemplos extras com IA | Serviço opcional gratuito para contas | Mesmo controle de custo, resposta estruturada e avaliação antes da exposição pública; sem cobrança ao aluno. |
 | Média | Link mágico por e-mail | Contas, fase 2 | Escolher serviço de e-mail, configurar domínio e definir expiração/uso único; não guardar senhas. |
 | Média | Texto curto e gramática conectiva | Bloco 3 | Preparar sequência didática e critérios de revisão antes de ampliar o catálogo. |
 | Baixa | Leitura longa e contrastes de registro | Bloco 4 | Base intermediária disponível e revisada. |

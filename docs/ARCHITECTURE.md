@@ -68,6 +68,8 @@ a busca. Nenhuma rota de conteúdo foi removida.
 - Sentences: blocos e digitação para situações específicas.
 - Reference: kanji, partículas, expressões, biblioteca e revisão.
 - Study: palavras por tema, exercícios, escuta e glossário.
+- Worksheets/Book 1: folhas avulsas e volume de impressão compilado do currículo existente, sem conteúdo paralelo.
+- Teacher/Package: seleção de etapa ou tema codificada no link público; não há tabela de turmas, contas de aluno nem acesso ao progresso individual.
 - Worksheets: folhas A4 de caracteres, palavras e frases com gabaritos opcionais; seleção livre de caracteres e páginas extras de repetição vazias.
 - Settings: modo visual, áudio, romaji, meta diária, indicadores e conquistas.
 
@@ -211,6 +213,12 @@ Apoio fica no rodapé do dashboard e nas configurações. Trilhas temáticas fic
 Descobrir, assim como os imprimíveis. Cápsulas aparecem na última explicação da
 lição correspondente. Selos derivam de todas as lições reais de uma etapa; não são
 uma segunda fonte de verdade para o progresso.
+
+O material para professores também fica em Descobrir e pode ser acessado pela
+home. O Livro 1 usa as lições e catálogos já publicados, imprime gabaritos ao
+final e não afirma equivalência a uma certificação JLPT. As duas artes do
+Irasutoya são apenas apoio visual e têm inventário de origem e limite global.
+Todo o acesso ao conteúdo permanece gratuito, com apoio voluntário.
 
 Um único dia sem estudo pode ser protegido por semana de segunda a domingo.
 A proteção só é registrada quando a pessoa volta no dia seguinte à pausa e não
