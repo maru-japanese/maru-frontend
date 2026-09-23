@@ -2,6 +2,7 @@ import { KANA, KANA_ROWS } from "/shared/content.js";
 import { BEGINNER_KANJI, SENTENCES } from "/shared/catalog.js";
 import { VOCABULARY, VOCABULARY_GROUPS } from "/shared/vocabulary.js";
 import { PICTURE_WORDS, PICTURE_BANK_ORDER, PRINT_DIALOGUES } from "/shared/printActivities.js";
+import { PARTICLE_EXERCISES } from "/shared/exercises.js";
 import { pageHeading, esc, icon, routeLink } from "../core/ui.js";
 
 const chunks = (items, size) => Array.from({length:Math.ceil(items.length/size)},(_,i)=>items.slice(i*size,(i+1)*size));
@@ -46,6 +47,11 @@ const dialogueSheet = dialogue => header("Atividade · diálogos") + `<h2>${dial
   `<section class="paper-dialogue-questions"><h3>Entenda a conversa</h3>${dialogue.questions.map((question,index)=>`<div><strong>${index+1}. ${question.prompt}</strong><div class="paper-practice-line"></div></div>`).join("")}</section>`;
 const dialogueAnswerSheet = () => header("Gabarito · diálogos") + '<h2>Compare suas respostas.</h2>' +
   PRINT_DIALOGUES.map(dialogue=>`<section class="paper-dialogue-answer"><h3>${dialogue.title}</h3>${dialogue.turns.filter(turn=>turn.answer).map(turn=>`<p><strong>${turn.speaker} · ${turn.cue}</strong> <span lang="ja">${turn.answer}</span></p>`).join("")}${dialogue.questions.map((question,index)=>`<p><strong>${index+1}. ${question.prompt}</strong> ${question.answer}</p>`).join("")}</section>`).join("");
+const particleSheet = (items, offset) => header("Atividade · partículas") +
+  '<h2>Qual partícula completa a frase?</h2><p class="paper-instructions">Leia o contexto, escreva a partícula no espaço e depois copie a frase completa. Confira o gabarito só depois de tentar.</p>' +
+  items.map((item,index)=>`<section class="paper-question"><strong>${offset+index+1}. ${esc(item.context)}</strong><p class="jp" lang="ja">${esc(item.prompt)}</p><div class="paper-practice-line"></div></section>`).join("");
+const particleAnswerSheet = (items, offset) => header("Gabarito · partículas") + '<h2>Compare suas respostas.</h2>' +
+  items.map((item,index)=>`<section class="paper-answer"><strong>${offset+index+1}. <span lang="ja">${esc(item.speech)}</span></strong><p>${esc(item.explanation)}</p></section>`).join("");
 const activityKinds = new Set(["pictures","dialogues","activities"]);
 
 export function renderWorksheets(ctx) {
@@ -56,7 +62,7 @@ export function renderWorksheets(ctx) {
   let strokes = null, printing = false;
   const characterList = () => script === "all" ? [...KANA.filter(item=>item.script==="hiragana"),...KANA.filter(item=>item.script==="katakana"), ...BEGINNER_KANJI] : script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
   ctx.main.innerHTML = `<div class="worksheets-page">${pageHeading("LEVE O APRENDIZADO PARA O PAPEL", "Seu caderno, pronto para imprimir.", "Escolha a atividade, confira a folha e imprima em A4. Você também pode salvar em PDF na janela de impressão.",routeLink("writing","Abrir caderno digital " + icon("pen"),"btn btn-ghost"))}<div class="no-print"><div class="panel worksheet-toolbar">
-    <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option><option value="pictures">Imagens e palavras</option><option value="dialogues">Complete diálogos</option><option value="activities">Pacote de atividades</option></select></div>
+    <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option><option value="particles">Complete partículas</option><option value="pictures">Imagens e palavras</option><option value="dialogues">Complete diálogos</option><option value="activities">Pacote de atividades</option></select></div>
     <div id="worksheet-script-control"><label class="input-label" for="worksheet-script">Escrita</label><select class="text-input" id="worksheet-script"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option><option value="kanji">Primeiros kanji</option><option value="all">Todos os caracteres</option></select></div>
     <div id="worksheet-scope-control"><label class="input-label" for="worksheet-scope">Quantidade</label><select class="text-input" id="worksheet-scope"><option value="one">1 caractere</option><option value="recommended" selected>20 caracteres · recomendado</option><option value="all">Todos</option><option value="custom">Escolher livremente</option></select></div>
     <div id="worksheet-group-control" hidden><label class="input-label" for="worksheet-group">Tema</label><select class="text-input" id="worksheet-group">${VOCABULARY_GROUPS.filter(([id])=>id!=="all").map(([id,label])=>`<option value="${id}" ${id===group?"selected":""}>${label}</option>`).join("")}</select></div>
@@ -77,7 +83,7 @@ export function renderWorksheets(ctx) {
     ctx.main.querySelector("#worksheet-characters").hidden = kind !== "characters";
     const modelOption = ctx.main.querySelector("#worksheet-models");
     const answerOption = ctx.main.querySelector("#worksheet-answers");
-    modelOption.disabled = kind === "characters" || activityKinds.has(kind);
+    modelOption.disabled = kind === "characters" || kind === "particles" || activityKinds.has(kind);
     modelOption.parentElement.hidden = modelOption.disabled;
     answerOption.disabled = kind === "characters";
     answerOption.parentElement.hidden = answerOption.disabled;
@@ -104,6 +110,9 @@ export function renderWorksheets(ctx) {
       sheets = [header("Frases · situações "+(batch*5+1)+" a "+(batch*5+items.length))+'<h2>Uma ideia, palavra por palavra.</h2><p class="paper-instructions">'+(models ? "Leia a situação, observe os blocos e escreva a frase na ordem pedida. Os blocos estão separados para você perceber suas funções." : "Escreva em japonês ou kana, seguindo o padrão de cada situação. Tente antes de consultar o gabarito.")+'</p>'+
         items.map((item,i)=>`<section class="paper-question"><strong>${i+1}. ${item.prompt}</strong><p>${item.pattern}</p>${models ? `<p class="jp" lang="ja">${item.tokens.map(t=>t[0]).reverse().join(" ／ ")}</p>` : ""}<div class="paper-practice-line"></div><div class="paper-practice-line"></div></section>`).join("")];
       if(answers) answerSheets = [header("Gabarito · frases")+'<h2>Compare a ordem e as partículas.</h2>'+items.map((item,i)=>`<section class="paper-answer"><strong>${i+1}. <span lang="ja">${item.tokens.map(t=>t[0]).join("")}。</span></strong><p>${item.tokens.map(t=>t[1]).join(" ")}</p><p>${item.hint}</p></section>`).join("")];
+    } else if (kind === "particles") {
+      sheets = chunks(PARTICLE_EXERCISES,6).map((items,index)=>particleSheet(items,index*6));
+      if(answers)answerSheets = chunks(PARTICLE_EXERCISES,12).map((items,index)=>particleAnswerSheet(items,index*12));
     } else if (activityKinds.has(kind)) {
       if (kind === "pictures" || kind === "activities") {
         sheets.push(pictureSheet());

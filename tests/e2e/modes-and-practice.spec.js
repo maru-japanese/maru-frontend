@@ -208,6 +208,19 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator(".print-sheet").last()).toContainText("Gabarito");
 });
 
+test("particle exercises print with writing space and a separate answer key",async({page})=>{
+  await go(page,"worksheets");
+  await page.locator("#worksheet-kind").selectOption("particles");
+  await expect(page.locator(".print-sheet")).toHaveCount(7);
+  await expect(page.locator(".paper-question")).toHaveCount(24);
+  await expect(page.locator(".paper-answer")).toHaveCount(24);
+  await expect(page.locator(".print-sheet").first()).toContainText("わたし＿学生です。");
+  await expect(page.locator(".print-sheet").last()).toContainText("田中さんが来ます。");
+  await expect(page.locator("#worksheet-models")).toBeHidden();
+  await page.locator("#worksheet-answers").uncheck();
+  await expect(page.locator(".print-sheet")).toHaveCount(5);
+});
+
 test("picture matching and dialogues print with images, answer keys and no accidental blank pages",async({page},testInfo)=>{
   await page.addInitScript(()=>{window.printCalls=0;window.print=()=>window.printCalls++;});
   await go(page,"worksheets");
