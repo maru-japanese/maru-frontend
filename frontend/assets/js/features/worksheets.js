@@ -7,38 +7,43 @@ const chunks = (items, size) => Array.from({length:Math.ceil(items.length/size)}
 const blankBox = '<div class="paper-box"></div>';
 const footer = (page, total) => `<footer class="paper-footer"><span>maru. · Japonês, passo a passo<br>Traços: KanjiVG · Ulrich Apel e colaboradores · CC BY-SA 3.0</span><span>${page} / ${total}</span></footer>`;
 const header = title => `<header class="paper-header"><strong>maru.</strong><span>UM POUQUINHO, TODO DIA.<br>${title}</span></header><div class="paper-name"><span>Nome: __________________________________</span><span>Data: ____ / ____ / ______</span></div>`;
+const repeatPage = () => header("Página de repetição") + '<div class="paper-repeat-grid" aria-label="Quadrados vazios para praticar">' + blankBox.repeat(81) + '</div>';
 const strokeSVG = (char, paths = []) => `<svg viewBox="0 0 109 109" role="img" aria-label="Ordem dos traços de ${char}">${paths.map(d=>`<path d="${esc(d)}"/>`).join("")}</svg>`;
 
 export function renderWorksheets(ctx) {
   const controller = new AbortController();
   let kind = "characters", script = "hiragana", group = "food", batch = 0, answers = true, models = true;
-  let selected = new Set(["あ","い","う","え","お"]);
+  let scope = "recommended", repeatPages = 1;
+  let selected = new Set(KANA.filter(item=>item.script==="hiragana").slice(0,20).map(item=>item.char));
   let strokes = null, printing = false;
-  const characterList = () => script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
+  const characterList = () => script === "all" ? [...KANA, ...BEGINNER_KANJI] : script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
   ctx.main.innerHTML = `<div class="worksheets-page">${pageHeading("LEVE O APRENDIZADO PARA O PAPEL", "Seu caderno, pronto para imprimir.", "Escolha a atividade, confira a folha e imprima em A4. Você também pode salvar em PDF na janela de impressão.",routeLink("writing","Abrir caderno digital " + icon("pen"),"btn btn-ghost"))}<div class="no-print"><div class="panel worksheet-toolbar">
     <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option></select></div>
-    <div id="worksheet-script-control"><label class="input-label" for="worksheet-script">Escrita</label><select class="text-input" id="worksheet-script"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option><option value="kanji">Primeiros kanji</option></select></div>
+    <div id="worksheet-script-control"><label class="input-label" for="worksheet-script">Escrita</label><select class="text-input" id="worksheet-script"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option><option value="kanji">Primeiros kanji</option><option value="all">Todos os caracteres</option></select></div>
+    <div id="worksheet-scope-control"><label class="input-label" for="worksheet-scope">Quantidade</label><select class="text-input" id="worksheet-scope"><option value="one">1 caractere</option><option value="recommended" selected>20 caracteres · recomendado</option><option value="all">Todos</option><option value="custom">Escolher livremente</option></select></div>
     <div id="worksheet-group-control" hidden><label class="input-label" for="worksheet-group">Tema</label><select class="text-input" id="worksheet-group">${VOCABULARY_GROUPS.filter(([id])=>id!=="all").map(([id,label])=>`<option value="${id}" ${id===group?"selected":""}>${label}</option>`).join("")}</select></div>
     <div id="worksheet-batch-control" hidden><label class="input-label" for="worksheet-batch">Situações</label><select class="text-input" id="worksheet-batch">${chunks(SENTENCES,5).map((items,i)=>`<option value="${i}">${i*5+1} a ${i*5+items.length}</option>`).join("")}</select></div>
+    <div><label class="input-label" for="worksheet-repeat-pages">Páginas para repetir</label><select class="text-input" id="worksheet-repeat-pages"><option value="0">Nenhuma</option><option value="1" selected>1 página em branco</option><option value="2">2 páginas em branco</option><option value="3">3 páginas em branco</option><option value="5">5 páginas em branco</option><option value="10">10 páginas em branco</option></select></div>
     <div><button class="btn btn-primary" id="print-worksheet" disabled>${icon("pen")} Imprimir / salvar PDF</button></div>
     </div><div class="filter-chips"><label><input id="worksheet-models" type="checkbox" checked> Mostrar modelos para copiar</label><label><input id="worksheet-answers" type="checkbox" checked> Incluir gabarito separado</label></div>
     <div id="worksheet-characters" class="worksheet-selection panel" role="group" aria-label="Caracteres da folha"></div><p class="filter-count" id="worksheet-status" aria-live="polite">Preparando os modelos de traços…</p>
-    <aside class="tip-box">${icon("pen")}<p>No papel, use lápis ou caneta. Para caracteres, siga a numeração, cubra os modelos claros e tente sem olhar. Nas opções de impressão, escolha A4, escala 100% e desative os cabeçalhos do navegador.</p></aside></div><div id="worksheet-preview" class="worksheet-preview"></div></div>`;
+    <aside class="tip-box">${icon("pen")}<p>Recomendamos começar com 20 caracteres, mas você pode escolher só um, mais de 20 ou todos de uma vez. As páginas de repetição têm apenas quadrados vazios para preencher à mão. Na impressão, escolha A4, escala 100% e desative os cabeçalhos do navegador.</p></aside></div><div id="worksheet-preview" class="worksheet-preview"></div></div>`;
   const drawSelection = () => {
     ctx.main.querySelector("#worksheet-characters").innerHTML = characterList().map(item=>`<button class="worksheet-char" data-print-char="${item.char}" aria-pressed="${selected.has(item.char)}" aria-label="${item.char}, ${item.romaji}">${item.char}</button>`).join("");
   };
   function draw() {
     ctx.main.querySelector("#worksheet-script-control").hidden = kind !== "characters";
+    ctx.main.querySelector("#worksheet-scope-control").hidden = kind !== "characters";
     ctx.main.querySelector("#worksheet-group-control").hidden = kind !== "words";
     ctx.main.querySelector("#worksheet-batch-control").hidden = kind !== "sentences";
     ctx.main.querySelector("#worksheet-characters").hidden = kind !== "characters";
     ctx.main.querySelector("#worksheet-models").disabled = kind === "characters";
     ctx.main.querySelector("#worksheet-answers").disabled = kind === "characters";
     const preview = ctx.main.querySelector("#worksheet-preview");
-    let sheets = [];
+    let sheets = [], answerSheets = [];
     if (kind === "characters") {
       const items = characterList().filter(item=>selected.has(item.char));
-      sheets = chunks(items,5).map(page => header(script === "kanji" ? "Primeiros kanji" : script === "hiragana" ? "Hiragana" : "Katakana") +
+      sheets = chunks(items,5).map(page => header(script === "kanji" ? "Primeiros kanji" : script === "hiragana" ? "Hiragana" : script === "katakana" ? "Katakana" : "Todos os caracteres") +
         '<h2>Observe. Cubra. Experimente.</h2><p class="paper-instructions">O primeiro quadrado mostra os traços numerados. Nos dois seguintes, cubra o desenho. Nas casas vazias, escreva sozinho. Cada número marca o início de um traço: siga a ordem do modelo.</p>' +
         page.map(item=>`<section class="paper-row"><div class="paper-row-label"><strong>${item.char} · ${item.romaji}</strong><span>${item.meaning || "Leia em voz alta antes de escrever."}</span></div><div class="paper-boxes"><div class="paper-box model">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div><div class="paper-box ghost">${strokeSVG(item.char,strokes?.[item.char])}</div>${blankBox.repeat(6)}</div></section>`).join("") +
         '<div class="paper-checklist"><span>□ Segui a ordem dos traços.</span><span>□ Observei os espaços.</span><span>□ Tentei sem o modelo.</span></div><p class="paper-instructions">Cubra os modelos acima. De quais caracteres você se lembra? Escreva aqui e depois confira.</p><div class="paper-practice-line"></div><div class="paper-practice-line"></div>');
@@ -48,13 +53,14 @@ export function renderWorksheets(ctx) {
         '<h2>Escreva e dê significado.</h2><p class="paper-instructions">'+(models ? "Leia o modelo, copie em kana nas casas vazias e diga o significado. Depois cubra o modelo e tente novamente." : "Leia o significado em português e tente escrever a palavra em kana. Use o gabarito apenas depois de tentar.")+'</p>'+
         page.map(item=>`<section class="paper-row"><div class="paper-row-label"><strong>${item.pt}</strong>${models ? `<span class="paper-word jp" lang="ja">${item.reading}</span><span>${item.romaji}</span>` : ""}</div><div class="paper-boxes">${blankBox.repeat(9)}</div></section>`).join("")+
         '<p class="paper-instructions">Escolha duas palavras e escreva uma frase simples com cada uma.</p><div class="paper-practice-line"></div><div class="paper-practice-line"></div>');
-      if(answers) sheets.push(...chunks(words,Math.ceil(words.length / Math.ceil(words.length / 10))).map(answerPage => header("Gabarito · palavras")+'<h2>Confira depois de tentar.</h2>'+answerPage.map(item=>`<div class="paper-answer"><strong>${item.pt} → <span lang="ja">${item.jp} (${item.reading})</span> · ${item.romaji}</strong><span lang="ja">${item.sentence}</span><br>${item.translation}</div>`).join("")));
+      if(answers) answerSheets = chunks(words,Math.ceil(words.length / Math.ceil(words.length / 10))).map(answerPage => header("Gabarito · palavras")+'<h2>Confira depois de tentar.</h2>'+answerPage.map(item=>`<div class="paper-answer"><strong>${item.pt} → <span lang="ja">${item.jp} (${item.reading})</span> · ${item.romaji}</strong><span lang="ja">${item.sentence}</span><br>${item.translation}</div>`).join(""));
     } else {
       const items = chunks(SENTENCES,5)[batch] || [];
       sheets = [header("Frases · situações "+(batch*5+1)+" a "+(batch*5+items.length))+'<h2>Uma ideia, palavra por palavra.</h2><p class="paper-instructions">'+(models ? "Leia a situação, observe os blocos e escreva a frase na ordem pedida. Os blocos estão separados para você perceber suas funções." : "Escreva em japonês ou kana, seguindo o padrão de cada situação. Tente antes de consultar o gabarito.")+'</p>'+
         items.map((item,i)=>`<section class="paper-question"><strong>${i+1}. ${item.prompt}</strong><p>${item.pattern}</p>${models ? `<p class="jp" lang="ja">${item.tokens.map(t=>t[0]).reverse().join(" ／ ")}</p>` : ""}<div class="paper-practice-line"></div><div class="paper-practice-line"></div></section>`).join("")];
-      if(answers) sheets.push(header("Gabarito · frases")+'<h2>Compare a ordem e as partículas.</h2>'+items.map((item,i)=>`<section class="paper-answer"><strong>${i+1}. <span lang="ja">${item.tokens.map(t=>t[0]).join("")}。</span></strong><p>${item.tokens.map(t=>t[1]).join(" ")}</p><p>${item.hint}</p></section>`).join(""));
+      if(answers) answerSheets = [header("Gabarito · frases")+'<h2>Compare a ordem e as partículas.</h2>'+items.map((item,i)=>`<section class="paper-answer"><strong>${i+1}. <span lang="ja">${item.tokens.map(t=>t[0]).join("")}。</span></strong><p>${item.tokens.map(t=>t[1]).join(" ")}</p><p>${item.hint}</p></section>`).join("")];
     }
+    if (sheets.length) sheets.push(...Array.from({length:repeatPages}, repeatPage), ...answerSheets);
     preview.innerHTML = sheets.map((sheet,i)=>`<article class="print-sheet">${sheet}${footer(i+1,sheets.length)}</article>`).join("");
     preview.querySelectorAll(".model svg").forEach(svg=>svg.querySelectorAll("path").forEach((path,i)=>{
       const start=path.getPointAtLength(0), label=document.createElementNS("http://www.w3.org/2000/svg","text");
@@ -62,12 +68,21 @@ export function renderWorksheets(ctx) {
     }));
     const ready = (kind !== "characters" || strokes) && sheets.length > 0;
     ctx.main.querySelector("#print-worksheet").disabled = !ready || printing;
-    ctx.main.querySelector("#worksheet-status").textContent = !sheets.length ? "Selecione pelo menos um caractere." : kind === "characters" && !strokes ? "Preparando os modelos de traços…" : sheets.length+" folha(s) A4 preparada(s)."+(kind==="characters" ? " "+selected.size+" caracteres selecionados; máximo de 20 por vez." : "");
+    const count = `${sheets.length} ${sheets.length===1 ? "folha A4 preparada" : "folhas A4 preparadas"}.`;
+    const characters = kind==="characters" ? ` ${selected.size} ${selected.size===1 ? "caractere selecionado" : "caracteres selecionados"}.` : "";
+    const repetition = repeatPages ? ` ${repeatPages} ${repeatPages===1 ? "página de repetição em branco" : "páginas de repetição em branco"}.` : "";
+    ctx.main.querySelector("#worksheet-status").textContent = !sheets.length ? "Selecione pelo menos um caractere." : kind === "characters" && !strokes ? "Preparando os modelos de traços…" : count+characters+repetition;
   }
   ctx.main.addEventListener("change",event=>{
     const {id,value,checked}=event.target;
     if(id==="worksheet-kind")kind=value;
-    if(id==="worksheet-script"){script=value;selected=new Set(characterList().slice(0,5).map(item=>item.char));drawSelection();}
+    if(id==="worksheet-script"){script=value;scope="recommended";selected=new Set(characterList().slice(0,20).map(item=>item.char));ctx.main.querySelector("#worksheet-scope").value=scope;drawSelection();}
+    if(id==="worksheet-scope"){
+      scope=value;
+      if(scope!=="custom") selected=new Set((scope==="one" ? characterList().slice(0,1) : scope==="recommended" ? characterList().slice(0,20) : characterList()).map(item=>item.char));
+      drawSelection();
+    }
+    if(id==="worksheet-repeat-pages")repeatPages=Number(value);
     if(id==="worksheet-group")group=value;
     if(id==="worksheet-batch")batch=Number(value);
     if(id==="worksheet-models")models=checked;
@@ -78,9 +93,12 @@ export function renderWorksheets(ctx) {
     const button=event.target.closest("[data-print-char]");
     if(button){
       const char=button.dataset.printChar;
-      if(selected.has(char))selected.delete(char);
-      else if(selected.size<20)selected.add(char);
-      else{ctx.toast("Escolha até 20 caracteres por vez para preparar seu caderno em partes.");return;}
+      if(scope==="one")selected=new Set([char]);
+      else{
+        scope="custom";ctx.main.querySelector("#worksheet-scope").value=scope;
+        if(selected.has(char))selected.delete(char);
+        else selected.add(char);
+      }
       drawSelection();draw();
     }
     if(event.target.closest("#print-worksheet") && !printing){

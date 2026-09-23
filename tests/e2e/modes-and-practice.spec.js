@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { LISTENING_EXERCISES, PARTICLE_EXERCISES } from "../../shared/exercises.js";
 import { VOCABULARY } from "../../shared/vocabulary.js";
+import { KANA } from "../../shared/content.js";
+import { BEGINNER_KANJI } from "../../shared/catalog.js";
 
 // Exercise browser playback deterministically without consuming a public API quota.
 // The real service is also checked separately against its remote streaming URL.
@@ -120,8 +122,11 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await page.addInitScript(()=>{window.printCalls=0;window.print=()=>window.printCalls++;});
   await go(page,"worksheets");
   await expect(page.locator("#print-worksheet")).toBeEnabled();
-  await expect(page.locator(".print-sheet")).toHaveCount(1);
-  await expect(page.locator(".paper-row")).toHaveCount(5);
+  await expect(page.locator("#worksheet-scope")).toHaveValue("recommended");
+  await expect(page.locator(".print-sheet")).toHaveCount(5);
+  await expect(page.locator(".paper-row")).toHaveCount(20);
+  await expect(page.locator(".paper-repeat-grid .paper-box")).toHaveCount(81);
+  await expect(page.locator(".paper-repeat-grid svg")).toHaveCount(0);
   await expect(page.locator(".model svg text").first()).toHaveText("1");
   await page.locator("#print-worksheet").click();
   await expect.poll(()=>page.evaluate(()=>window.printCalls)).toBe(1);
@@ -131,9 +136,32 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator(".topbar")).toBeHidden();
   expect(await page.locator(".print-sheet").first().evaluate(element=>getComputedStyle(element).backgroundColor)).toBe("rgb(255, 255, 255)");
   const pdf=await page.pdf({path:testInfo.outputPath("hiragana-a4.pdf"),preferCSSPageSize:true,printBackground:true});
-  expect((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(1);
+  expect((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(5);
+  await page.emulateMedia({media:"screen"});
+  await page.locator("#worksheet-scope").selectOption("one");
+  await expect(page.locator(".paper-row")).toHaveCount(1);
+  await page.locator('.worksheet-char[data-print-char="き"]').click();
+  await expect(page.locator('.worksheet-char[data-print-char="き"]')).toHaveAttribute("aria-pressed","true");
+  await expect(page.locator(".paper-row-label")).toContainText(["き"]);
+  await page.locator("#worksheet-scope").selectOption("recommended");
+  await page.locator(".worksheet-char").nth(20).click();
+  await expect(page.locator("#worksheet-scope")).toHaveValue("custom");
+  await expect(page.locator('.worksheet-char[aria-pressed="true"]')).toHaveCount(21);
+  await expect(page.locator(".print-sheet")).toHaveCount(6);
+  await page.locator("#worksheet-script").selectOption("all");
+  await page.locator("#worksheet-scope").selectOption("all");
+  await expect(page.locator('.worksheet-char[aria-pressed="true"]')).toHaveCount(KANA.length+BEGINNER_KANJI.length);
+  await expect(page.locator(".print-sheet")).toHaveCount(Math.ceil((KANA.length+BEGINNER_KANJI.length)/5)+1);
+  await page.emulateMedia({media:"print"});
+  const completePdf=await page.pdf({preferCSSPageSize:true,printBackground:true});
+  expect((completePdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(Math.ceil((KANA.length+BEGINNER_KANJI.length)/5)+1);
   await page.emulateMedia({media:"screen"});
   await page.locator("#worksheet-kind").selectOption("sentences");
+  await expect(page.locator(".print-sheet")).toHaveCount(3);
+  await expect(page.locator(".print-sheet").nth(1).locator(".paper-repeat-grid .paper-box")).toHaveCount(81);
+  await expect(page.locator(".print-sheet").last()).toContainText("Gabarito");
+  await page.locator("#worksheet-repeat-pages").selectOption("0");
+  await expect(page.locator(".paper-repeat-grid")).toHaveCount(0);
   await expect(page.locator(".print-sheet")).toHaveCount(2);
   await expect(page.locator(".print-sheet").last()).toContainText("Gabarito");
   await page.locator("#worksheet-answers").uncheck();
