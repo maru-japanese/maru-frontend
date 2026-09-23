@@ -32,6 +32,33 @@
 .paper-answer { margin-bottom: 15px; font-size: 10pt; }
 .paper-answer strong { display: block; }
 .paper-word { font-size: 17pt; }
+.paper-image-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4mm; }
+.paper-image-card { box-sizing: border-box; min-height: 59mm; border: 1px solid #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; break-inside: avoid; }
+.paper-image-card img { width: 36mm; height: 36mm; max-width: 80%; object-fit: contain; }
+.paper-image-number { position: absolute; top: 3mm; left: 3mm; font-weight: 700; }
+.paper-image-answer { font-size: 10pt; margin-top: 2mm; }
+.paper-word-bank { margin-top: 8mm; border-top: 1px solid #aaa; padding-top: 3mm; }
+.paper-word-bank h3,.paper-dialogue-questions h3,.paper-dialogue-answer h3 { font-size: 11pt; margin: 0 0 3mm; }
+.paper-word-bank > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 2mm 4mm; }
+.paper-word-bank > div > span { white-space: nowrap; }
+.paper-word-bank small { display: block; margin-left: 5mm; font-size: 8pt; }
+.paper-picture-answers { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5mm; }
+.paper-picture-answers > div { border-bottom: 1px solid #aaa; padding: 4mm 0; }
+.paper-picture-answers strong,.paper-picture-answers span { display: block; }
+.paper-dialogue { display: grid; gap: 4mm; }
+.paper-dialogue-turn { display: grid; grid-template-columns: 12mm minmax(0,1fr); gap: 3mm; padding: 3mm; border: 1px solid #bbb; break-inside: avoid; }
+.paper-dialogue-turn > strong { display: grid; place-items: center; align-self: start; border: 1px solid #888; border-radius: 50%; width: 9mm; height: 9mm; }
+.paper-dialogue-turn p { font: 14pt/1.5 "Noto Sans JP",sans-serif; margin: 0; }
+.paper-dialogue-turn small { font-size: 9pt; }
+.paper-dialogue-turn .paper-practice-line { min-height: 22px; margin-top: 5px; }
+.paper-dialogue-questions { margin-top: 8mm; }
+.paper-dialogue-questions > div { margin: 0 0 5mm; break-inside: avoid; }
+.paper-dialogue-questions strong { font-size: 9pt; }
+.paper-dialogue-questions .paper-practice-line { margin-top: 3mm; }
+.paper-dialogue-answer { border-bottom: 1px solid #aaa; padding: 3mm 0; break-inside: avoid; }
+.paper-dialogue-answer p { margin: 2mm 0; font-size: 9pt; }
+.paper-dialogue-answer p strong { display: inline; margin-right: 2mm; }
+.paper-dialogue-answer p span { font: 11pt "Noto Sans JP",sans-serif; }
 @media (max-width: 600px) { .print-sheet { padding: 6mm; font-size: 9pt; } .paper-header strong { font-size: 15pt; } .paper-header span { font-size: 7pt; } .paper-box .jp { font-size: 22pt; } .paper-name { flex-direction: column; gap: 8px; } }
 @page { size: A4 portrait; margin: 12mm; }
 @media print {

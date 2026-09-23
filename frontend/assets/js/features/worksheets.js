@@ -1,6 +1,7 @@
 import { KANA, KANA_ROWS } from "/shared/content.js";
 import { BEGINNER_KANJI, SENTENCES } from "/shared/catalog.js";
 import { VOCABULARY, VOCABULARY_GROUPS } from "/shared/vocabulary.js";
+import { PICTURE_WORDS, PICTURE_BANK_ORDER, PRINT_DIALOGUES } from "/shared/printActivities.js";
 import { pageHeading, esc, icon, routeLink } from "../core/ui.js";
 
 const chunks = (items, size) => Array.from({length:Math.ceil(items.length/size)},(_,i)=>items.slice(i*size,(i+1)*size));
@@ -31,6 +32,21 @@ const kanaSheet = (row, script, selected, strokes) => {
       return `<div data-print-slot="${index}">${practiceRow(item,strokes,reading)}</div>`;
     }).join("")}</div>`;
 };
+const pictureItems = PICTURE_WORDS.map(item=>({...item,word:VOCABULARY.find(word=>word.id===item.wordId)}));
+const pictureBank = PICTURE_BANK_ORDER.map(index=>pictureItems[index]);
+const pictureLetter = item => String.fromCharCode(65+pictureBank.findIndex(entry=>entry.id===item.id));
+const pictureSheet = () => header("Atividade · imagem e palavra") +
+  '<h2>Qual palavra combina com a imagem?</h2><p class="paper-instructions">Veja as ilustrações e escreva a letra da palavra japonesa correspondente. Depois, confira o gabarito.</p>' +
+  `<div class="paper-image-grid">${pictureItems.map((item,index)=>`<div class="paper-image-card"><span class="paper-image-number">${index+1}</span><img src="/assets/img/worksheets/${item.id}.svg" alt="Ilustração de ${esc(item.word.pt)}" width="120" height="120"><span class="paper-image-answer">Letra: ______</span></div>`).join("")}</div>` +
+  `<section class="paper-word-bank"><h3>Banco de palavras</h3><div>${pictureBank.map((item,index)=>`<span><b>${String.fromCharCode(65+index)}.</b> <span lang="ja">${item.word.jp}</span> <small>${item.word.reading}</small></span>`).join("")}</div></section>`;
+const pictureAnswerSheet = () => header("Gabarito · imagens") + '<h2>Confira suas associações.</h2>' +
+  `<div class="paper-picture-answers">${pictureItems.map((item,index)=>`<div><strong>${index+1}. ${pictureLetter(item)} · <span lang="ja">${item.word.jp}</span></strong><span>${item.word.reading} · ${item.word.pt}</span></div>`).join("")}</div>`;
+const dialogueSheet = dialogue => header("Atividade · diálogos") + `<h2>${dialogue.title}</h2><p class="paper-instructions">${dialogue.setting} Leia as falas e complete as respostas em japonês. As dicas em português ajudam; escreva antes de olhar o gabarito.</p>` +
+  `<div class="paper-dialogue">${dialogue.turns.map(turn=>`<div class="paper-dialogue-turn"><strong>${turn.speaker}</strong><div>${turn.text ? `<p lang="ja">${turn.text}</p>` : `<small>Dica: ${turn.cue}</small><div class="paper-practice-line"></div><div class="paper-practice-line"></div>`}</div></div>`).join("")}</div>` +
+  `<section class="paper-dialogue-questions"><h3>Entenda a conversa</h3>${dialogue.questions.map((question,index)=>`<div><strong>${index+1}. ${question.prompt}</strong><div class="paper-practice-line"></div></div>`).join("")}</section>`;
+const dialogueAnswerSheet = () => header("Gabarito · diálogos") + '<h2>Compare suas respostas.</h2>' +
+  PRINT_DIALOGUES.map(dialogue=>`<section class="paper-dialogue-answer"><h3>${dialogue.title}</h3>${dialogue.turns.filter(turn=>turn.answer).map(turn=>`<p><strong>${turn.speaker} · ${turn.cue}</strong> <span lang="ja">${turn.answer}</span></p>`).join("")}${dialogue.questions.map((question,index)=>`<p><strong>${index+1}. ${question.prompt}</strong> ${question.answer}</p>`).join("")}</section>`).join("");
+const activityKinds = new Set(["pictures","dialogues","activities"]);
 
 export function renderWorksheets(ctx) {
   const controller = new AbortController();
@@ -40,7 +56,7 @@ export function renderWorksheets(ctx) {
   let strokes = null, printing = false;
   const characterList = () => script === "all" ? [...KANA.filter(item=>item.script==="hiragana"),...KANA.filter(item=>item.script==="katakana"), ...BEGINNER_KANJI] : script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
   ctx.main.innerHTML = `<div class="worksheets-page">${pageHeading("LEVE O APRENDIZADO PARA O PAPEL", "Seu caderno, pronto para imprimir.", "Escolha a atividade, confira a folha e imprima em A4. Você também pode salvar em PDF na janela de impressão.",routeLink("writing","Abrir caderno digital " + icon("pen"),"btn btn-ghost"))}<div class="no-print"><div class="panel worksheet-toolbar">
-    <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option></select></div>
+    <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option><option value="pictures">Imagens e palavras</option><option value="dialogues">Complete diálogos</option><option value="activities">Pacote de atividades</option></select></div>
     <div id="worksheet-script-control"><label class="input-label" for="worksheet-script">Escrita</label><select class="text-input" id="worksheet-script"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option><option value="kanji">Primeiros kanji</option><option value="all">Todos os caracteres</option></select></div>
     <div id="worksheet-scope-control"><label class="input-label" for="worksheet-scope">Quantidade</label><select class="text-input" id="worksheet-scope"><option value="one">1 caractere</option><option value="recommended" selected>20 caracteres · recomendado</option><option value="all">Todos</option><option value="custom">Escolher livremente</option></select></div>
     <div id="worksheet-group-control" hidden><label class="input-label" for="worksheet-group">Tema</label><select class="text-input" id="worksheet-group">${VOCABULARY_GROUPS.filter(([id])=>id!=="all").map(([id,label])=>`<option value="${id}" ${id===group?"selected":""}>${label}</option>`).join("")}</select></div>
@@ -59,8 +75,12 @@ export function renderWorksheets(ctx) {
     ctx.main.querySelector("#worksheet-group-control").hidden = kind !== "words";
     ctx.main.querySelector("#worksheet-batch-control").hidden = kind !== "sentences";
     ctx.main.querySelector("#worksheet-characters").hidden = kind !== "characters";
-    ctx.main.querySelector("#worksheet-models").disabled = kind === "characters";
-    ctx.main.querySelector("#worksheet-answers").disabled = kind === "characters";
+    const modelOption = ctx.main.querySelector("#worksheet-models");
+    const answerOption = ctx.main.querySelector("#worksheet-answers");
+    modelOption.disabled = kind === "characters" || activityKinds.has(kind);
+    modelOption.parentElement.hidden = modelOption.disabled;
+    answerOption.disabled = kind === "characters";
+    answerOption.parentElement.hidden = answerOption.disabled;
     const preview = ctx.main.querySelector("#worksheet-preview");
     let sheets = [], answerSheets = [];
     if (kind === "characters") {
@@ -79,11 +99,20 @@ export function renderWorksheets(ctx) {
         page.map(item=>`<section class="paper-row"><div class="paper-row-label"><strong>${item.pt}</strong>${models ? `<span class="paper-word jp" lang="ja">${item.reading}</span><span>${item.romaji}</span>` : ""}</div><div class="paper-boxes">${blankBox.repeat(9)}</div></section>`).join("")+
         '<p class="paper-instructions">Escolha duas palavras e escreva uma frase simples com cada uma.</p><div class="paper-practice-line"></div><div class="paper-practice-line"></div>');
       if(answers) answerSheets = chunks(words,Math.ceil(words.length / Math.ceil(words.length / 10))).map(answerPage => header("Gabarito · palavras")+'<h2>Confira depois de tentar.</h2>'+answerPage.map(item=>`<div class="paper-answer"><strong>${item.pt} → <span lang="ja">${item.jp} (${item.reading})</span> · ${item.romaji}</strong><span lang="ja">${item.sentence}</span><br>${item.translation}</div>`).join(""));
-    } else {
+    } else if (kind === "sentences") {
       const items = chunks(SENTENCES,5)[batch] || [];
       sheets = [header("Frases · situações "+(batch*5+1)+" a "+(batch*5+items.length))+'<h2>Uma ideia, palavra por palavra.</h2><p class="paper-instructions">'+(models ? "Leia a situação, observe os blocos e escreva a frase na ordem pedida. Os blocos estão separados para você perceber suas funções." : "Escreva em japonês ou kana, seguindo o padrão de cada situação. Tente antes de consultar o gabarito.")+'</p>'+
         items.map((item,i)=>`<section class="paper-question"><strong>${i+1}. ${item.prompt}</strong><p>${item.pattern}</p>${models ? `<p class="jp" lang="ja">${item.tokens.map(t=>t[0]).reverse().join(" ／ ")}</p>` : ""}<div class="paper-practice-line"></div><div class="paper-practice-line"></div></section>`).join("")];
       if(answers) answerSheets = [header("Gabarito · frases")+'<h2>Compare a ordem e as partículas.</h2>'+items.map((item,i)=>`<section class="paper-answer"><strong>${i+1}. <span lang="ja">${item.tokens.map(t=>t[0]).join("")}。</span></strong><p>${item.tokens.map(t=>t[1]).join(" ")}</p><p>${item.hint}</p></section>`).join("")];
+    } else if (activityKinds.has(kind)) {
+      if (kind === "pictures" || kind === "activities") {
+        sheets.push(pictureSheet());
+        if(answers)answerSheets.push(pictureAnswerSheet());
+      }
+      if (kind === "dialogues" || kind === "activities") {
+        sheets.push(...PRINT_DIALOGUES.map(dialogueSheet));
+        if(answers)answerSheets.push(dialogueAnswerSheet());
+      }
     }
     if (sheets.length) sheets.push(...Array.from({length:repeatPages}, repeatPage), ...answerSheets);
     preview.innerHTML = sheets.map((sheet,i)=>`<article class="print-sheet">${sheet}${footer(i+1,sheets.length)}</article>`).join("");
@@ -100,7 +129,14 @@ export function renderWorksheets(ctx) {
   }
   ctx.main.addEventListener("change",event=>{
     const {id,value,checked}=event.target;
-    if(id==="worksheet-kind")kind=value;
+    if(id==="worksheet-kind"){
+      const wasActivity=activityKinds.has(kind);
+      kind=value;
+      if(wasActivity!==activityKinds.has(kind)){
+        repeatPages=activityKinds.has(kind)?0:1;
+        ctx.main.querySelector("#worksheet-repeat-pages").value=String(repeatPages);
+      }
+    }
     if(id==="worksheet-script"){script=value;scope="recommended";selected=new Set(characterList().slice(0,20).map(item=>item.char));ctx.main.querySelector("#worksheet-scope").value=scope;drawSelection();}
     if(id==="worksheet-scope"){
       scope=value;
@@ -128,7 +164,11 @@ export function renderWorksheets(ctx) {
     }
     if(event.target.closest("#print-worksheet") && !printing){
       printing=true;ctx.audio.stop();draw();
-      try{await document.fonts.ready;if(!controller.signal.aborted)window.print();}
+      try{
+        await document.fonts.ready;
+        await Promise.all([...ctx.main.querySelectorAll("#worksheet-preview img")].map(image=>image.decode()));
+        if(!controller.signal.aborted)window.print();
+      }catch{ctx.toast("Não foi possível carregar as imagens da atividade. Tente imprimir novamente.");}
       finally{printing=false;if(!controller.signal.aborted)draw();}
     }
   },{signal:controller.signal});

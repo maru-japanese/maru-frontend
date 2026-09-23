@@ -10,6 +10,7 @@ O Maru organiza o estudo em uma trilha clara e acolhedora: a pessoa aprende o al
 - hiragana, katakana, kanji, vocabulário, partículas e construção de frases;
 - prática de escrita com ordem dos traços, áudio e revisão espaçada;
 - folhas A4 para imprimir um, 20 recomendados, mais de 20 ou todos os caracteres; cada família de kana em sua folha, com quadrados pequenos lado a lado, espaços em YA/YU/YO e WA/WO/O/N, e páginas extras de repetição com guias tracejadas;
+- atividades A4 de associação entre imagens e palavras, diálogos para completar e perguntas de compreensão, separadas ou em um pacote, com gabarito opcional;
 - diagnóstico inicial e uma trilha que indica o próximo passo;
 - modos visuais Dojo e Arcade, metas, constância e conquistas;
 - estudo anônimo no navegador ou sincronização entre aparelhos com uma conta.

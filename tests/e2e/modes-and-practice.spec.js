@@ -208,6 +208,48 @@ test("A4 sheets have numbered strokes, separate answers and usable print output 
   await expect(page.locator(".print-sheet").last()).toContainText("Gabarito");
 });
 
+test("picture matching and dialogues print with images, answer keys and no accidental blank pages",async({page},testInfo)=>{
+  await page.addInitScript(()=>{window.printCalls=0;window.print=()=>window.printCalls++;});
+  await go(page,"worksheets");
+  await page.locator("#worksheet-kind").selectOption("pictures");
+  await expect(page.locator("#worksheet-repeat-pages")).toHaveValue("0");
+  await expect(page.locator("#worksheet-models")).toBeHidden();
+  await expect(page.locator("#worksheet-answers")).toBeVisible();
+  await expect(page.locator(".print-sheet")).toHaveCount(2);
+  await expect(page.locator(".paper-image-card img")).toHaveCount(6);
+  await expect.poll(()=>page.locator(".paper-image-card img").evaluateAll(images=>images.every(image=>image.complete && image.naturalWidth>0))).toBe(true);
+  await expect(page.locator(".paper-word-bank > div > span")).toHaveCount(6);
+  await expect(page.locator(".print-sheet").last()).toContainText("Gabarito · imagens");
+  await expect(page.locator(".print-sheet").last()).toContainText("1. B · 水");
+  await page.emulateMedia({media:"print"});
+  let pdf=await page.pdf({path:testInfo.outputPath("picture-activity.pdf"),preferCSSPageSize:true,printBackground:true});
+  expect((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(2);
+  await page.emulateMedia({media:"screen"});
+  await page.locator("#worksheet-kind").selectOption("dialogues");
+  await expect(page.locator(".print-sheet")).toHaveCount(4);
+  await expect(page.locator(".paper-dialogue")).toHaveCount(3);
+  await expect(page.locator(".print-sheet").last()).toContainText("Gabarito · diálogos");
+  await expect(page.locator(".print-sheet").last()).toContainText("あそこです。");
+  await page.emulateMedia({media:"print"});
+  pdf=await page.pdf({path:testInfo.outputPath("dialogue-activities.pdf"),preferCSSPageSize:true,printBackground:true});
+  expect((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(4);
+  await page.emulateMedia({media:"screen"});
+  await page.locator("#worksheet-kind").selectOption("activities");
+  await expect(page.locator(".print-sheet")).toHaveCount(6);
+  await page.emulateMedia({media:"print"});
+  pdf=await page.pdf({preferCSSPageSize:true,printBackground:true});
+  expect((pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)||[]).length).toBe(6);
+  await page.emulateMedia({media:"screen"});
+  await page.locator("#worksheet-answers").uncheck();
+  await expect(page.locator(".print-sheet")).toHaveCount(4);
+  await page.locator("#worksheet-repeat-pages").selectOption("2");
+  await expect(page.locator(".print-sheet")).toHaveCount(6);
+  await page.setViewportSize({width:320,height:900});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1)).toBe(false);
+  await page.locator("#print-worksheet").click();
+  await expect.poll(()=>page.evaluate(()=>window.printCalls)).toBe(1);
+});
+
 test("separate browsers keep their own preferences and server profile",async({page,browser})=>{
   await go(page,"settings");
   await page.locator('.theme-card[data-theme-choice="arcade"]').click();
