@@ -10,7 +10,7 @@ import { kanaToRomaji, isTypedAnswerCorrect } from "../shared/romaji.js";
 
 test("the curriculum has complete, addressable lessons and answer explanations", () => {
   assert.equal(MODULES.length, 8);
-  assert.equal(LESSONS.length, 37);
+  assert.equal(LESSONS.length, 40);
   assert.equal(new Set(LESSONS.map(item => item.id)).size, LESSONS.length);
   assert.equal(getLesson("welcome").moduleId, "start");
   for (const lesson of LESSONS) {

@@ -44,7 +44,7 @@ test("diagnosis, manual entry and resetting suggestions preserve actual achievem
   assert.equal(Object.keys(p.lessons).length, 1);
   const newer = normalizeSnapshot({ placement: { updatedAt:200, acceptedModule:"start" } });
   const merged = mergeSnapshots(p, newer);
-  assert.equal(nextLesson(merged).id, "sounds");
+  assert.equal(nextLesson(merged).id, "how-it-works");
   assert.equal(merged.xp.total, 80);
   for (const lesson of MODULES[0].lessons) merged.lessons[lesson.id] = {completedAt:1};
   assert.equal(moduleSeals(merged)[0].earned,true);
