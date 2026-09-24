@@ -24,6 +24,14 @@ downloads. O site não solicita apoio financeiro.
 | `irasutoya-apple.png` | Associação de imagem e palavra: maçã | https://www.irasutoya.com/2014/10/blog-post_766.html |
 | `irasutoya-fish.png` | Associação de imagem e palavra: peixe | https://www.irasutoya.com/2016/03/blog-post_962.html |
 | `irasutoya-egg.png` | Associação de imagem e palavra: ovo | https://www.irasutoya.com/2013/09/blog-post_5250.html |
+| `irasutoya-cat.png` | Associação de imagem e palavra: gato; mnemônico de hiragana | https://www.irasutoya.com/2018/12/blog-post_505.html |
+| `irasutoya-dog.png` | Associação de imagem e palavra: cachorro; mnemônico de hiragana | https://www.irasutoya.com/2014/08/blog-post_69.html |
+| `irasutoya-book.png` | Associação de imagem e palavra: livro | https://www.irasutoya.com/2016/03/blog-post_42.html |
+| `irasutoya-tree.png` | Associação de imagem e palavra: árvore | https://www.irasutoya.com/2013/07/blog-post_8128.html |
+| `irasutoya-coffee.png` | Associação de imagem e palavra: café; mnemônico de katakana | https://www.irasutoya.com/2016/05/blog-post_350.html |
+| `irasutoya-cake.png` | Associação de imagem e palavra: bolo; mnemônico de katakana | https://www.irasutoya.com/2019/09/blog-post_32.html |
+| `irasutoya-umbrella.png` | Associação de imagem e palavra: guarda-chuva | https://www.irasutoya.com/2020/09/blog-post_737.html |
+| `irasutoya-train.png` | Associação de imagem e palavra: trem | https://www.irasutoya.com/2013/04/blog-post_3537.html |
 
 Adicionar cada nova ilustração a este inventário e manter os créditos nos
 materiais impressos. Os testes verificam a presença de uma fonte para cada
