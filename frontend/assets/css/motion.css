@@ -1,4 +1,7 @@
 /* Movement belongs to navigation, interaction and illustration, never to reading text in a loop. */
+.motion-toggle { position: absolute; right: 14px; bottom: 10px; z-index: 3; min-height: 32px; padding: 5px 9px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--muted); font: 11px/1.4 var(--font-body); }
+.motion-toggle:hover { color: var(--accent); border-color: var(--accent); }
+:root[data-motion="paused"] :is(.kana-art, .heisei-art) * { animation-play-state: paused !important; }
 @media screen and (prefers-reduced-motion: no-preference) {
   body, .sidebar, .topbar, .panel, .welcome-card, .theme-choice { transition: background-color .3s ease, border-color .3s ease, color .2s ease; }
   .sidebar { transition: transform .24s cubic-bezier(.2,.7,.2,1), background-color .3s ease, border-color .3s ease; }
@@ -42,6 +45,7 @@
 @keyframes orbit-turn { to { rotate: 360deg; } }
 @keyframes spark-turn { 0%, 100% { rotate: 0deg; scale: 1; } 50% { rotate: 90deg; scale: .8; } }
 @media (prefers-reduced-motion: reduce) {
+  .motion-toggle { display: none; }
   .art-main, .art-kana, .art-kanji, .art-sun, .art-orbit, .art-spark, .hub-card, .main-content > * { animation: none !important; }
 }
 @media print { *, *::before, *::after { animation: none !important; transition: none !important; } }

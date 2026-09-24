@@ -7,7 +7,7 @@
   --surface-raised: #111a33;
   --ink: #eef1ff;
   --muted: #9aa1d6;
-  --subtle: #5c6499;
+  --subtle: #97a1cc;
   --line: #22284a;
   --line-bright: #35406e;
   --accent: #ff3f8b;
@@ -44,17 +44,7 @@
 
 /* foundation/base.css */
 :where([data-theme="arcade"]) body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; position: relative; }
-:where([data-theme="arcade"]) body::before { content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(180deg, #00000000 0px, #00000000 2px, #00000059 3px, #00000000 4px),
-    radial-gradient(ellipse at 50% 0%, #ff3f8b0d, transparent 60%),
-    radial-gradient(ellipse at center, transparent 55%, #00000080 100%);
-  mix-blend-mode: normal;
-  opacity: .55; }
+:where([data-theme="arcade"]) body::before { content: none; }
 :where([data-theme="arcade"]) button { color: inherit; }
 :where([data-theme="arcade"]) h1, :where([data-theme="arcade"]) h2, :where([data-theme="arcade"]) h3 { font-family: var(--font-display); font-weight: 400; text-transform: uppercase; }
 :where([data-theme="arcade"]) h1 { font-size: clamp(22px, 2.4vw, 32px); letter-spacing: .5px; line-height: 1.45; }
@@ -82,7 +72,7 @@
 :where([data-theme="arcade"]) .nav-link { position: relative; display: flex; align-items: center; gap: 11px; padding: 11px 13px 11px 20px; border-radius: var(--radius-sm); font-size: 12px; line-height: 1.5; font-weight: 500; color: var(--muted); margin: 3px 0; transition: background .12s, color .12s; }
 :where([data-theme="arcade"]) .nav-link:hover { background: var(--surface-raised); color: var(--ink); }
 :where([data-theme="arcade"]) .nav-link.is-active { background: var(--accent-soft); color: var(--accent); font-weight: 650; box-shadow: inset 2px 0 0 var(--accent); }
-:where([data-theme="arcade"]) .nav-link.is-active::before { content: "▸"; position: absolute; left: 6px; font-family: var(--font-pixel); font-size: 9px; animation: blink-cursor 1s steps(1) infinite; }
+:where([data-theme="arcade"]) .nav-link.is-active::before { content: "▸"; position: absolute; left: 6px; font-family: var(--font-pixel); font-size: 9px; }
 :where([data-theme="arcade"]) .nav-count { margin-left: auto; font-family: var(--font-pixel); font-size: 8px; border-radius: var(--radius-sm); background: var(--surface-raised); border: 1px solid var(--line-bright); color: var(--sky-ink); padding: 3px 5px; }
 :where([data-theme="arcade"]) .sidebar-message { border-top: 1px dashed var(--line); text-align: center; padding: 23px 8px 20px; }
 :where([data-theme="arcade"]) .sidebar-message > span { font-family: var(--font-jp-serif); font-size: 22px; letter-spacing: 6px; color: var(--sage-ink); text-shadow: 0 0 12px #35f29a4d; }
@@ -124,7 +114,7 @@
 :where([data-theme="arcade"]) .sky { background: var(--sky); color: var(--sky-ink); border: 1px solid #35e8ff4d; }
 :where([data-theme="arcade"]) .sand { background: var(--sand); color: var(--sand-ink); border: 1px solid #ffd84a4d; }
 :where([data-theme="arcade"]) .progress-track { height: 8px; background: var(--surface-raised); border: 1px solid var(--line-bright); overflow: hidden; border-radius: var(--radius-sm); background-image: repeating-linear-gradient(90deg, #00000000 0, #00000000 5px, #00000055 6px, #00000000 7px); }
-:where([data-theme="arcade"]) .progress-track > span { display: block; height: 100%; background: linear-gradient(90deg, var(--sage-ink), var(--sky-ink)); box-shadow: 0 0 10px #35f29a80; border-radius: inherit; transition: width .25s steps(12); background-image: repeating-linear-gradient(90deg, #00000000 0, #00000000 5px, #00000030 6px, #00000000 7px); }
+:where([data-theme="arcade"]) .progress-track > span { display: block; height: 100%; background: repeating-linear-gradient(90deg, transparent 0 5px, #00000030 6px, transparent 7px), linear-gradient(90deg, var(--sage-ink), var(--sky-ink)); box-shadow: 0 0 10px #35f29a80; border-radius: inherit; transition: width .25s steps(12); }
 :where([data-theme="arcade"]) .segmented { display: inline-flex; gap: 3px; padding: 4px; border: 1px solid var(--line-bright); border-radius: var(--radius); background: var(--paper); }
 :where([data-theme="arcade"]) .segmented button { font-family: var(--font-pixel); font-size: 9px; text-transform: uppercase; font-weight: 400; border-radius: var(--radius-sm); padding: 10px 21px; background: transparent; color: var(--muted); }
 :where([data-theme="arcade"]) .segmented button.is-active { color: #050713; background: var(--sky-ink); box-shadow: 0 0 12px #35e8ff80; }
@@ -298,6 +288,26 @@
 :where([data-theme="arcade"]) .progress-overview dl > div { border-top: 1px dashed var(--line-bright); padding: 13px 0; display: flex; justify-content: space-between; gap: 15px; font-size: 11px; }
 
 /* responsive.css */
+/* Pixel headings keep the arcade identity; controls use the readable UI font. */
+:where([data-theme="arcade"]) :is(.text-link, .chip, .input-label, .back-link, .tab-bar button, .segmented button) { font-family: var(--font-body); font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; line-height: 1.6; }
+:where([data-theme="arcade"]) .tab-bar button { min-height: 44px; }
+:where([data-theme="arcade"]) .btn { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: .2px; }
+:where([data-theme="arcade"]) .btn:hover:not(:disabled), :where([data-theme="arcade"]) .module-card:hover, :where([data-theme="arcade"]) .practice-card:hover { transform: none; }
+:where([data-theme="arcade"]) .welcome-copy h2 { font-size: clamp(24px, 2.5vw, 34px); line-height: 1.35; }
+:where([data-theme="arcade"]) .welcome-actions { display: grid; grid-template-columns: max-content max-content; align-items: center; gap: 8px 15px; margin-top: 20px; }
+:where([data-theme="arcade"]) .welcome-actions .btn { grid-column: 1 / -1; justify-self: start; max-width: 100%; margin: 0; }
+:where([data-theme="arcade"]) .art-caption { bottom: 57px; }
+:where([data-theme="arcade"]) .welcome-actions .placement-entry { margin: 0; }
+:where([data-theme="arcade"]) .daily-card { align-self: start; }
+:where([data-theme="arcade"]) .daily-card .week-strip { margin-top: 12px; }
+:where([data-theme="arcade"]) .art-tag { font-family: var(--font-jp); font-size: 12px; }
+:where([data-theme="arcade"]) .art-tag small { font-family: var(--font-body); font-size: 9px; }
+:where([data-theme="arcade"]) .kana-cell small { color: var(--muted); font-size: 11px; }
+:where([data-theme="arcade"]) .mission-panel { margin-top: 28px; }
+:where([data-theme="arcade"]) .discovery-map-link { font-size: 13px; }
+:where([data-theme="arcade"]) .daily-bottom { flex-wrap: wrap; }
+:where([data-theme="arcade"]) .daily-bottom .text-link { font-family: var(--font-body); font-size: 11px; }
+:where([data-theme="arcade"]) .skip-link:focus { transform: translateY(0); }
 @media (max-width: 820px) {
 :where([data-theme="arcade"]) .sidebar-backdrop { position: fixed; inset: 0; z-index: 35; background: #050713b3; backdrop-filter: blur(2px); }
 }

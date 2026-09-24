@@ -3,6 +3,8 @@ import { dailyMissions } from "/shared/gamification.js";
 import { MODULES, LESSONS } from "/shared/curriculum.js";
 import { currentStreak, dueReviews, localDay } from "/shared/progress.js";
 import { icon, routeLink, progressBar } from "../core/ui.js";
+import { heiseiArt } from "../core/theme-art.js";
+import { syncMotion, toggleMotion } from "../core/theme.js";
 
 const DISCOVERY_GROUPS = [
   { title: "Aprender", description: "Encontre a base antes de praticar.", links: [["journey","Trilha de lições"],["kana","Hiragana e katakana"],["vocabulary","Primeiras palavras"],["kanji","Primeiros kanji"],["particles","Partículas"]] },
@@ -31,13 +33,15 @@ export function renderDashboard(ctx) {
         <div class="welcome-copy"><span class="pill light">${icon("leaf")} ${completed ? "CONTINUE A SUA JORNADA" : "FEITO PARA QUEM COMEÇA DO ZERO"}</span>
           <h2>Um novo idioma.<br>Um passo de<br><em>cada vez.</em></h2>
           <p>Do seu primeiro あ à sua primeira conversa.<br>Você não precisa saber nada para começar.</p>
-          ${routeLink(next ? "lesson/" + next.id : "review", (completed || p.placement.acceptedModule ? "Continuar aprendendo" : "Começar do zero") + icon("arrow"), "btn btn-primary")}
+          <div class="welcome-actions">${routeLink(next ? "lesson/" + next.id : "review", (completed || p.placement.acceptedModule ? "Continuar aprendendo" : "Começar do zero") + icon("arrow"), "btn btn-primary")}
           ${!completed && !p.placement.acceptedModule ? routeLink("placement", "Já sei um pouco " + icon("arrow"), "text-link placement-entry") : ""}
           ${!completed && !p.placement.acceptedModule ? routeLink("teacher", "Sou professor(a) " + icon("arrow"), "text-link placement-entry") : ""}
+          </div>
           ${!completed && !p.placement.acceptedModule ? `<label class="welcome-goal" for="welcome-goal">Seu primeiro ritmo<select id="welcome-goal" class="text-input">${[5,10,15].map(amount => `<option value="${amount}" ${goal === amount ? "selected" : ""}>${amount} atividades por dia</option>`).join("")}</select></label>` : ""}
           <span class="hero-footnote">${icon("clock")} ${next ? next.minutes + " min · " + next.title : "Revise o que você já aprendeu"}</span>
         </div>
         <div class="kana-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><span class="art-sun"></span><span class="art-main jp">あ</span><span class="art-tag tag-hira">ひらがな <small>hiragana</small></span><span class="art-kana jp">ア</span><span class="art-kanji jp">日</span><span class="art-caption">はじめの一歩<small>o primeiro passo</small></span><svg class="art-spark" viewBox="0 0 32 32"><path d="M16 0Q18 14 32 16Q18 18 16 32Q14 18 0 16Q14 14 16 0" fill="currentColor"/></svg></div>
+        ${heiseiArt()}<button type="button" class="motion-toggle" data-motion-toggle aria-pressed="false">Pausar animações</button>
       </section>
       <aside class="daily-card panel"><div class="section-label">${icon("target")} UM POUQUINHO, TODO DIA</div><h2>Sua meta de hoje</h2><p>O hábito começa com um pequeno passo.</p>
         <div class="goal-ring" style="--goal:${Math.min(100, today / goal * 100)}%"><div><strong>${Math.min(today, goal)}<span>/${goal}</span></strong><small>atividades</small></div></div>
@@ -61,6 +65,8 @@ export function renderDashboard(ctx) {
     </section>
     <div class="dashboard-note"><span class="jp" lang="ja">一歩ずつ</span><p><strong>Ippo zutsu. Um passo de cada vez.</strong><br>Você não precisa aprender tudo hoje. Só precisa dar o próximo passo.</p><span class="journey-total">${completed} de ${LESSONS.length} lições concluídas</span></div><div class="support-footer"><span>Gratuito para aprender. Sempre.</span>${routeLink("support", "Apoie o Maru " + icon("arrow"), "text-link")}</div>
   `;
+  syncMotion();
+  ctx.main.querySelector("[data-motion-toggle]")?.addEventListener("click", toggleMotion, { signal: controller.signal });
   ctx.main.querySelector("#welcome-goal")?.addEventListener("change", event => {
     ctx.progress.preferences.dailyGoal = Number(event.target.value);
     ctx.save();

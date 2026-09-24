@@ -37,6 +37,21 @@ test("theme switching keeps the active answer, persists and updates both selecto
   await expect(page.locator("html")).toHaveAttribute("data-theme","arcade");
   await go(page,"settings");
   await expect(page.locator('.theme-card[data-theme-choice="arcade"]')).toHaveAttribute("aria-pressed","true");
+  await page.locator('.theme-card[data-theme-choice="heisei"]').click();
+  await go(page,"home");
+  await expect(page.locator(".heisei-art")).toBeVisible();
+  await expect(page.locator(".kana-art")).toBeHidden();
+  await page.getByRole("button",{name:"Pausar animações"}).click();
+  await expect(page.locator(".heisei-phone")).toHaveCSS("animation-play-state","paused");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme","heisei");
+  await expect(page.getByRole("button",{name:"Retomar animações"})).toHaveAttribute("aria-pressed","true");
+  await page.getByRole("button",{name:"Retomar animações"}).click();
+  await expect(page.locator(".heisei-phone")).toHaveCSS("animation-play-state","running");
+  await page.emulateMedia({reducedMotion:"reduce"});
+  await expect(page.locator(".heisei-phone")).toHaveCSS("animation-name","none");
+  await expect(page.locator("[data-motion-toggle]")).toBeHidden();
+  await go(page,"settings");
   await page.locator('.theme-card[data-theme-choice="dojo"]').click();
   await expect(page.locator('#arcade-hud')).toBeHidden();
   await expect(page.locator('.sidebar [data-theme-choice="dojo"]')).toHaveAttribute("aria-pressed","true");
@@ -293,17 +308,17 @@ test("separate browsers keep their own preferences and server profile",async({pa
   }finally{await other.close();}
 });
 
-test("new screens and arcade layouts fit desktop, tablet and small phones",async({page})=>{
-  test.setTimeout(90000);
+test("all themes fit desktop, tablet and small phones",async({page})=>{
+  test.setTimeout(150000);
   const errors=[];page.on("pageerror",error=>errors.push(error.message));
-  for(const theme of ["dojo","arcade"]){
+  for(const theme of ["dojo","arcade","heisei"]){
     await go(page,"settings");await page.locator('.theme-card[data-theme-choice="'+theme+'"]').click();
     for(const width of [1440,768,390,320]){
       await page.setViewportSize({width,height:900});
-      const routes=theme==="arcade"?["home","journey","kana","kanji","writing","sentences","particles","expressions","library","review","settings","lesson/welcome","vocabulary","exercises","worksheets","glossary"]:["vocabulary","exercises","worksheets","glossary","settings"];
+      const routes=theme!=="dojo"?["home","journey","kana","kanji","writing","sentences","particles","expressions","library","review","settings","lesson/welcome","vocabulary","exercises","worksheets","glossary","teacher"]:["vocabulary","exercises","worksheets","glossary","settings"];
       for(const route of routes){
         await go(page,route);
-        await expect(page.locator("body"),theme+" colors at "+width).toHaveCSS("background-color",theme==="arcade"?"rgb(5, 7, 19)":"rgb(248, 247, 243)");
+        await expect(page.locator("body"),theme+" colors at "+width).toHaveCSS("background-color",{arcade:"rgb(5, 7, 19)",heisei:"rgb(255, 240, 247)",dojo:"rgb(248, 247, 243)"}[theme]);
         expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),theme+" "+route+" at "+width).toBe(false);
       }
     }
