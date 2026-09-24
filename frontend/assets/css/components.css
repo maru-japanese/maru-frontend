@@ -17,6 +17,7 @@
 .pill .icon { width: 13px; height: 13px; flex-basis: 13px; }
 .pill.light { background: #fff9f080; color: #816b54; border: 1px solid #d7c9b44d; letter-spacing: .8px; font-size: 8px; }
 .small-pill { margin-left: 10px; padding: 3px 6px; font-size: 8px; background: var(--accent-soft); color: var(--accent); vertical-align: middle; }
+.caution-pill { background: #f7e9c9; color: #8a6414; }
 .peach { background: var(--peach); color: #9e593f; }
 .sage { background: var(--sage); color: #647454; }
 .lavender { background: var(--lavender); color: #80728e; }
@@ -57,6 +58,11 @@
 .romaji { font-size: 12px; color: #8c795f; line-height: 1.7; margin-top: 2px; }
 .translation { font-size: 13px; margin-top: 5px; }
 .example-note { font-size: 11px; color: var(--muted); line-height: 1.7; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
+ruby { ruby-position: over; }
+rt { font-size: 0.45em; font-weight: 400; color: var(--muted); user-select: none; }
+:root[data-theme="arcade"] rt { color: inherit; opacity: .75; }
+.example-art { display: block; width: 72px; height: 72px; object-fit: contain; border-radius: 8px; background: #fff; border: 1px solid var(--line); padding: 6px; margin-bottom: 10px; }
+.art-credit { display: block; font-size: 10px; color: var(--muted); margin: -6px 0 10px; }
 .empty-state { padding: 55px 25px; text-align: center; }
 .empty-state p { margin: 12px auto 24px; color: var(--muted); max-width: 510px; font-size: 13px; }
 .empty-symbol { display: block; font-family: var(--font-jp-serif); font-size: 65px; color: #9aa185; margin-bottom: 13px; }

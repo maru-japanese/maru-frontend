@@ -1,8 +1,11 @@
 import { VOCABULARY, VOCABULARY_GROUPS } from "/shared/vocabulary.js";
 import { GLOSSARY } from "/shared/glossary.js";
 import { EXERCISE_GROUPS, VOCABULARY_EXERCISES } from "/shared/exercises.js";
-import { pageHeading, icon, esc, audioButton, exampleHTML, routeLink, emptyState } from "../core/ui.js";
+import { PICTURE_WORDS } from "/shared/printActivities.js";
+import { pageHeading, icon, esc, audioButton, exampleHTML, routeLink, emptyState, jpHTML, irasutoyaImg } from "../core/ui.js";
 import { renderPractice } from "./practice.js";
+
+const wordImage = Object.fromEntries(PICTURE_WORDS.map(item => [item.wordId, item.id]));
 
 export function renderVocabulary(ctx) {
   const controller = new AbortController();
@@ -16,7 +19,7 @@ export function renderVocabulary(ctx) {
     filtered = VOCABULARY.filter(item => (group === "all" || item.group === group) && [item.jp,item.reading,item.romaji,item.pt].some(text => text.toLocaleLowerCase("pt-BR").includes(normalized)));
     ctx.main.querySelector("#word-count").textContent = filtered.length + " de " + VOCABULARY.length + " palavras";
     ctx.main.querySelector("#practice-words").disabled = !filtered.length;
-    ctx.main.querySelector("#word-results").innerHTML = filtered.length ? filtered.map(item => `<article class="panel word-card"><div class="word-card-top"><h2 class="jp" lang="ja">${item.jp}</h2>${audioButton(item.jp, "Ouvir " + item.pt)}</div><p class="word-reading"><span lang="ja">${item.reading}</span>${ctx.progress.preferences.romaji ? " · " + item.romaji : ""}</p><p class="word-meaning">${item.pt}</p>${exampleHTML({jp:item.sentence,romaji:item.sentenceRomaji,pt:item.translation},ctx.progress.preferences.romaji)}${item.note ? `<p class="small muted">${item.note}</p>` : ""}<button class="btn btn-ghost btn-small" data-add-review="${item.id}" ${ctx.progress.reviews[item.id] ? "disabled" : ""}>${icon(ctx.progress.reviews[item.id] ? "check" : "repeat")} ${ctx.progress.reviews[item.id] ? "Na sua revisão" : "Adicionar à revisão"}</button></article>`).join("") : emptyState("Nenhuma palavra encontrada", "Tente outro termo ou tema.");
+    ctx.main.querySelector("#word-results").innerHTML = filtered.length ? filtered.map(item => `<article class="panel word-card">${wordImage[item.id] ? irasutoyaImg(wordImage[item.id], item.pt) : ""}<div class="word-card-top"><h2 class="jp" lang="ja">${jpHTML(item.jp, item.reading)}</h2>${audioButton(item.jp, "Ouvir " + item.pt)}</div><p class="word-reading"><span lang="ja">${item.reading}</span>${ctx.progress.preferences.romaji ? " · " + item.romaji : ""}</p><p class="word-meaning">${item.pt}</p>${exampleHTML({jp:item.sentence,reading:item.sentenceReading,romaji:item.sentenceRomaji,pt:item.translation},ctx.progress.preferences.romaji)}${item.note ? `<p class="small muted">${item.note}</p>` : ""}<button class="btn btn-ghost btn-small" data-add-review="${item.id}" ${ctx.progress.reviews[item.id] ? "disabled" : ""}>${icon(ctx.progress.reviews[item.id] ? "check" : "repeat")} ${ctx.progress.reviews[item.id] ? "Na sua revisão" : "Adicionar à revisão"}</button></article>`).join("") : emptyState("Nenhuma palavra encontrada", "Tente outro termo ou tema.");
   };
   ctx.main.addEventListener("input", event => { if (event.target.id === "word-search") { query = event.target.value; draw(); } }, {signal:controller.signal});
   ctx.main.addEventListener("change", event => { if (event.target.id === "word-group") { group = event.target.value; draw(); } }, {signal:controller.signal});

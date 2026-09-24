@@ -145,6 +145,8 @@
 .quiz-stage { text-align: center; padding: 35px; margin-top: 25px; }
 .quiz-character { font-size: clamp(50px, 7vw, 105px); line-height: 1.5; margin: 16px 0; font-weight: 400; overflow-wrap: anywhere; }
 .quiz-character:lang(ja) { font-family: var(--font-jp-serif); }
+.quiz-image { margin: 16px 0; display: flex; flex-direction: column; align-items: center; }
+.quiz-image .example-art { width: 140px; height: 140px; margin-bottom: 8px; }
 .quiz-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 27px 0; }
 .quiz-stage .input-label { text-align: left; margin-top: 25px; }
 .quiz-stage .text-input { margin-bottom: 20px; }

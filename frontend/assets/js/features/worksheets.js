@@ -4,7 +4,7 @@ import { VOCABULARY, VOCABULARY_GROUPS } from "/shared/vocabulary.js";
 import { PICTURE_WORDS, PICTURE_BANK_ORDER, PRINT_DIALOGUES } from "/shared/printActivities.js";
 import { PARTICLE_EXERCISES } from "/shared/exercises.js";
 import { book1Pages } from "./book1.js";
-import { pageHeading, esc, icon, routeLink } from "../core/ui.js";
+import { pageHeading, esc, icon, routeLink, jpHTML } from "../core/ui.js";
 
 const chunks = (items, size) => Array.from({length:Math.ceil(items.length/size)},(_,i)=>items.slice(i*size,(i+1)*size));
 const blankBox = '<div class="paper-box"></div>';
@@ -44,21 +44,21 @@ const pictureSheet = () => header("Atividade · imagem e palavra") +
 const pictureAnswerSheet = () => header("Gabarito · imagens") + '<h2>Confira suas associações.</h2>' +
   `<div class="paper-picture-answers">${pictureItems.map((item,index)=>`<div><strong>${index+1}. ${pictureLetter(item)} · <span lang="ja">${item.word.jp}</span></strong><span>${item.word.reading} · ${item.word.pt}</span></div>`).join("")}</div>`;
 const dialogueSheet = dialogue => header("Atividade · diálogos") + `<h2>${dialogue.title}</h2><p class="paper-instructions">${dialogue.setting} Leia as falas e complete as respostas em japonês. As dicas em português ajudam; escreva antes de olhar o gabarito.</p>` +
-  `<div class="paper-dialogue">${dialogue.turns.map(turn=>`<div class="paper-dialogue-turn"><strong>${turn.speaker}</strong><div>${turn.text ? `<p lang="ja">${turn.text}</p>` : `<small>Dica: ${turn.cue}</small><div class="paper-practice-line"></div><div class="paper-practice-line"></div>`}</div></div>`).join("")}</div>` +
+  `<div class="paper-dialogue">${dialogue.turns.map(turn=>`<div class="paper-dialogue-turn"><strong>${turn.speaker}</strong><div>${turn.text ? `<p lang="ja">${jpHTML(turn.text,turn.reading)}</p>` : `<small>Dica: ${turn.cue}</small><div class="paper-practice-line"></div><div class="paper-practice-line"></div>`}</div></div>`).join("")}</div>` +
   `<section class="paper-dialogue-questions"><h3>Entenda a conversa</h3>${dialogue.questions.map((question,index)=>`<div><strong>${index+1}. ${question.prompt}</strong><div class="paper-practice-line"></div></div>`).join("")}</section>`;
 const dialogueAnswerSheet = () => header("Gabarito · diálogos") + '<h2>Compare suas respostas.</h2>' +
-  PRINT_DIALOGUES.map(dialogue=>`<section class="paper-dialogue-answer"><h3>${dialogue.title}</h3>${dialogue.turns.filter(turn=>turn.answer).map(turn=>`<p><strong>${turn.speaker} · ${turn.cue}</strong> <span lang="ja">${turn.answer}</span></p>`).join("")}${dialogue.questions.map((question,index)=>`<p><strong>${index+1}. ${question.prompt}</strong> ${question.answer}</p>`).join("")}</section>`).join("");
+  PRINT_DIALOGUES.map(dialogue=>`<section class="paper-dialogue-answer"><h3>${dialogue.title}</h3>${dialogue.turns.filter(turn=>turn.answer).map(turn=>`<p><strong>${turn.speaker} · ${turn.cue}</strong> <span lang="ja">${jpHTML(turn.answer,turn.answerReading)}</span></p>`).join("")}${dialogue.questions.map((question,index)=>`<p><strong>${index+1}. ${question.prompt}</strong> ${question.answer}</p>`).join("")}</section>`).join("");
 const particleSheet = (items, offset) => header("Atividade · partículas") +
   '<h2>Qual partícula completa a frase?</h2><p class="paper-instructions">Leia o contexto, escreva a partícula no espaço e depois copie a frase completa. Confira o gabarito só depois de tentar.</p>' +
-  items.map((item,index)=>`<section class="paper-question"><strong>${offset+index+1}. ${esc(item.context)}</strong><p class="jp" lang="ja">${esc(item.prompt)}</p><div class="paper-practice-line"></div></section>`).join("");
+  items.map((item,index)=>`<section class="paper-question"><strong>${offset+index+1}. ${esc(item.context)}</strong><p class="jp" lang="ja">${jpHTML(item.prompt,item.reading)}</p><div class="paper-practice-line"></div></section>`).join("");
 const particleAnswerSheet = (items, offset) => header("Gabarito · partículas") + '<h2>Compare suas respostas.</h2>' +
-  items.map((item,index)=>`<section class="paper-answer"><strong>${offset+index+1}. <span lang="ja">${esc(item.speech)}</span></strong><p>${esc(item.explanation)}</p></section>`).join("");
+  items.map((item,index)=>`<section class="paper-answer"><strong>${offset+index+1}. <span lang="ja">${jpHTML(item.speech,item.reading&&item.reading.replace("＿",item.answer))}</span></strong><p>${esc(item.explanation)}</p></section>`).join("");
 const bookWordSheet = items => header("Livro 1 · primeiras palavras") + '<h2>Palavras para reconhecer e usar</h2>' +
-  `<div class="paper-book-words">${items.map(item=>`<div><strong lang="ja">${esc(item.jp)}</strong><span>${esc(item.reading)} · ${esc(item.romaji)}</span><span>${esc(item.pt)}</span><small lang="ja">${esc(item.sentence)}</small></div>`).join("")}</div>`;
+  `<div class="paper-book-words">${items.map(item=>`<div><strong lang="ja">${esc(item.jp)}</strong><span>${esc(item.reading)} · ${esc(item.romaji)}</span><span>${esc(item.pt)}</span><small lang="ja">${jpHTML(item.sentence,item.sentenceReading)}</small></div>`).join("")}</div>`;
 const bookSentenceSheet = (items,offset) => header("Livro 1 · frases") + '<h2>Construa uma frase para cada situação</h2><p class="paper-instructions">Leia a situação e escreva a frase em japonês. Compare as partículas e a ordem no gabarito.</p>' +
   items.map((item,index)=>`<section class="paper-question"><strong>${offset+index+1}. ${esc(item.prompt)}</strong><p>${esc(item.pattern)}</p><div class="paper-practice-line"></div></section>`).join("");
 const bookSentenceAnswers = (items,offset) => header("Gabarito · frases") + '<h2>Compare suas frases</h2>' +
-  items.map((item,index)=>`<section class="paper-answer"><strong>${offset+index+1}. <span lang="ja">${esc(item.tokens.map(token=>token[0]).join(""))}。</span></strong><p>${esc(item.tokens.map(token=>token[1]).join(" "))} · ${esc(item.hint)}</p></section>`).join("");
+  items.map((item,index)=>`<section class="paper-answer"><strong>${offset+index+1}. <span lang="ja">${jpHTML(item.tokens.map(token=>token[0]).join("")+"。",item.tokens.map(token=>token[3]||token[0]).join("")+"。")}</span></strong><p>${esc(item.tokens.map(token=>token[1]).join(" "))} · ${esc(item.hint)}</p></section>`).join("");
 const activityKinds = new Set(["pictures","dialogues","activities"]);
 
 export function renderWorksheets(ctx, initialKind = "characters") {
