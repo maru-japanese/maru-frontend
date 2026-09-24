@@ -41,7 +41,6 @@ async function request(path, options){
   return res.json();
 }
 export const getAccount = () => request("/api/account");
-export const getSiteConfig = () => request("/api/config");
 export const signOut = () => request("/api/auth/logout", { method: "POST" });
 const authPost = (path, body) => request("/api/auth/email/" + path, {
   method: "POST", body: JSON.stringify(body), signal: AbortSignal.timeout(15000)

@@ -17,7 +17,7 @@ O Maru organiza o estudo em uma trilha clara e acolhedora: a pessoa aprende o al
 - estilos visuais Dojo, Arcade e Heisei Girly, metas, constância e conquistas;
 - estudo anônimo no navegador ou sincronização entre aparelhos com uma conta por e-mail.
 
-Todo o conteúdo é gratuito; apoio financeiro é voluntário e não libera recursos exclusivos. Duas ilustrações do Irasutoya são usadas como elementos visuais e catalogadas em [IRASUTOYA.md](frontend/assets/img/IRASUTOYA.md); o projeto limita o uso a 20 ilustrações distintas no site inteiro.
+Todo o conteúdo é gratuito, sem pedidos de apoio financeiro. As ilustrações do Irasutoya têm fontes e registro da autorização informada pela responsável em [IRASUTOYA.md](frontend/assets/img/IRASUTOYA.md). O antigo teto interno de 20 foi retirado para o uso educacional gratuito do Maru.
 
 ## Rodar localmente
 

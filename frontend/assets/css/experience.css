@@ -15,9 +15,9 @@
 .stage-seal.is-earned .hanko { color: var(--accent); opacity: 1; }
 .stage-seal h3 { font-size: 13px; line-height: 1.7; }
 .stage-seal p, .stage-seal small { color: var(--muted); font-size: 11px; margin-top: 10px; display: block; }
-.placement-intro, .placement-result, .placement-breakdown, .support-card { padding: clamp(24px, 4vw, 42px); max-width: 830px; margin: 24px auto; }
-.placement-intro h2, .placement-result h2, .placement-breakdown h2, .support-card h2 { font-family: var(--font-display); font-size: clamp(24px, 3vw, 34px); line-height: 1.45; margin: 24px 0 18px; }
-.placement-intro p, .placement-result > p, .placement-breakdown > p, .support-card > p { font-size: 15px; color: var(--muted); line-height: 1.9; margin: 16px 0; }
+.placement-intro, .placement-result, .placement-breakdown { padding: clamp(24px, 4vw, 42px); max-width: 830px; margin: 24px auto; }
+.placement-intro h2, .placement-result h2, .placement-breakdown h2 { font-family: var(--font-display); font-size: clamp(24px, 3vw, 34px); line-height: 1.45; margin: 24px 0 18px; }
+.placement-intro p, .placement-result > p, .placement-breakdown > p { font-size: 15px; color: var(--muted); line-height: 1.9; margin: 16px 0; }
 .placement-result > .eyebrow { margin-top: 24px; color: var(--accent); font-size: 11px; }
 .plain-list { padding-left: 20px; color: var(--muted); line-height: 1.9; font-size: 14px; margin: 20px 0; }
 .placement-question { font-size: 24px; line-height: 1.65; margin-bottom: 28px; overflow-wrap: anywhere; }
@@ -44,9 +44,6 @@
 .account-form .text-input { font-size: 16px; border-color: var(--line); }
 .account-form .btn { justify-self: start; margin-top: 6px; }
 .account-feedback { min-height: 1.5em; color: var(--ink); font-size: 12px; line-height: 1.7; }
-.support-footer { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; padding: 28px 0 0; color: var(--muted); font-size: 11px; }
-#support-destinations { display: flex; flex-wrap: wrap; gap: 14px; margin: 28px 0; }
-.support-message { padding: 18px; background: var(--surface-soft); border-radius: var(--radius-sm); font-size: 14px; line-height: 1.8; }
 .journey-module > summary > div { min-width: 0; }
 .journey-module h2 .pill { vertical-align: middle; margin: 6px 0 6px 10px; }
 :root[data-theme="arcade"] { --surface-soft: #111a33; }

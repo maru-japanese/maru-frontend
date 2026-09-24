@@ -63,7 +63,7 @@ export function renderDashboard(ctx) {
         ...(due ? [["review", "repeat", "Relembrar o que aprendeu", due + " itens esperando por você.", "lavender"]] : [])
       ].map(([route, symbol, title, text, color]) => `<a class="practice-card" href="#/${route}"><span class="practice-icon ${color}">${symbol === "あ" ? '<span class="jp">あ</span>' : icon(symbol)}</span><div><h3>${title}</h3><p>${text}</p></div>${icon("chevron")}</a>`).join("")}</div>
     </section>
-    <div class="dashboard-note"><span class="jp" lang="ja">一歩ずつ</span><p><strong>Ippo zutsu. Um passo de cada vez.</strong><br>Você não precisa aprender tudo hoje. Só precisa dar o próximo passo.</p><span class="journey-total">${completed} de ${LESSONS.length} lições concluídas</span></div><div class="support-footer"><span>Gratuito para aprender. Sempre.</span>${routeLink("support", "Apoie o Maru " + icon("arrow"), "text-link")}</div>
+    <div class="dashboard-note"><span class="jp" lang="ja">一歩ずつ</span><p><strong>Ippo zutsu. Um passo de cada vez.</strong><br>Você não precisa aprender tudo hoje. Só precisa dar o próximo passo.</p><span class="journey-total">${completed} de ${LESSONS.length} lições concluídas</span></div>
   `;
   syncMotion();
   ctx.main.querySelector("[data-motion-toggle]")?.addEventListener("click", toggleMotion, { signal: controller.signal });

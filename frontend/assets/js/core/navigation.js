@@ -38,7 +38,6 @@ const pages = [
   { route: "package", title: "Pacote de estudo", section: "teacher" },
   { route: "placement", title: "Encontre seu começo", section: "journey" },
   { route: "settings", title: "Meu ritmo", section: "settings" },
-  { route: "support", title: "Apoie o Maru", section: "" }
 ];
 export function navigationFor(route) {
   return pages.find(item => item.route === route) || { title: "Página não encontrada", section: "" };

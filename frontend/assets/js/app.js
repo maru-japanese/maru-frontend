@@ -2,7 +2,6 @@ import { renderPracticeHub, renderExplore } from "./features/hubs.js";
 import { NAVIGATION, navigationFor } from "./core/navigation.js";
 import { renderThematic } from "./features/thematic.js";
 import { renderPlacement } from "./features/placement.js";
-import { renderSupport } from "./features/support.js";
 import { renderVocabulary, renderGlossary, renderExercises } from "./features/study.js";
 import { renderWorksheets } from "./features/worksheets.js";
 import { renderTeacher } from "./features/teacher.js";
@@ -146,7 +145,6 @@ function render() {
     package: () => renderTeacher(ctx, id),
     themes: () => renderThematic(ctx, id),
     placement: () => renderPlacement(ctx),
-    support: () => renderSupport(ctx),
     settings: () => renderSettings(ctx, id)
   };
   if (views[route]) cleanup = views[route]();

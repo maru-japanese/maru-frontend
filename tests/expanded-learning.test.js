@@ -104,10 +104,10 @@ test("printable picture and dialogue activities have complete local content", ()
   }
 });
 
-test("Irasutoya illustration inventory stays within the site-wide cap", () => {
+test("every Irasutoya illustration has a registered source", () => {
   const directory = new URL("../frontend/assets/img/",import.meta.url);
   const images = readdirSync(directory).filter(name=>name.startsWith("irasutoya-") && /\.(png|jpe?g|webp)$/.test(name));
   const inventory = readFileSync(new URL("../frontend/assets/img/IRASUTOYA.md",import.meta.url),"utf8");
-  assert.ok(images.length<=20);
+  assert.ok(images.length>0);
   for(const name of images)assert.ok(inventory.includes(name),`Ilustração sem fonte registrada: ${name}`);
 });

@@ -63,15 +63,16 @@ test("thematic sentence links open the correct exercise; lesson capsules are exp
   await expect(page.locator(".culture-capsule")).toContainText("Não é uma tradução literal");
 });
 
-test("support stays discreet and only displays a configured real destination",async({page})=>{
-  await page.route("**/api/config",route=>route.fulfill({json:{support:[]}}));
-  await page.goto("/#/home");
-  await expect(page.locator('.sidebar a[href="#/support"]')).toHaveCount(0);
-  await page.locator('.support-footer a').click();
-  await expect(page.locator("#support-destinations")).toContainText("ainda está sendo preparado");
-  await page.route("**/api/config",route=>route.fulfill({json:{support:[{label:"Apoiar no Brasil",url:"https://apoia.se/maru-test"}]}}));
-  await page.reload();
-  await expect(page.locator("#support-destinations a")).toHaveAttribute("href","https://apoia.se/maru-test");
+test("home and account have no financial support links or configuration request",async({page})=>{
+  const requests=[];
+  page.on("request",request=>{if(request.url().endsWith("/api/config"))requests.push(request.url());});
+  for(const route of ["home","settings"]){
+    await page.goto("/#/"+route);
+    await expect(page.locator("main h1")).toBeVisible();
+    await expect(page.getByRole("link",{name:/Apoie|Apoiar/})).toHaveCount(0);
+    await expect(page.locator('a[href="#/support"]')).toHaveCount(0);
+  }
+  expect(requests).toEqual([]);
 });
 
 test("the new routes and full hero seal fit both modes, including 320px phones",async({page})=>{
@@ -89,7 +90,7 @@ test("the new routes and full hero seal fit both modes, including 320px phones",
         return [seal,char].every(r=>r.left>=hero.left && r.right<=hero.right && r.top>=hero.top && r.bottom<=hero.bottom);
       });
       expect(contained,theme+" seal at "+width).toBe(true);
-      for(const route of ["placement","themes","themes/travel","support","settings","journey"]){
+      for(const route of ["placement","themes","themes/travel","settings","journey"]){
         await page.goto("/#/"+route);
         await expect(page.locator("main h1")).toBeVisible();
         expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),theme+" "+route+" at "+width).toBe(false);

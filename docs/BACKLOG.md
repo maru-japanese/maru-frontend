@@ -3,7 +3,7 @@
 Referência: maru-arquitetura/maru-arquitetura.html, versão 1.4. O documento é um mapa de propostas, não o estado atual da hospedagem: Vercel + Supabase e o Dojo Tinta e papel já foram escolhidos.
 A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 
-**Princípio do produto:** ninguém paga para acessar o Maru. Doações são voluntárias e não desbloqueiam lições, livros, impressão ou recursos futuros. Se uma integração futura tiver custo por uso (como IA), só será lançada com orçamento e limites internos que preservem o acesso gratuito.
+**Princípio do produto:** ninguém paga para acessar o Maru e não há pedidos de apoio financeiro. Se uma integração futura tiver custo por uso (como IA), só será lançada com orçamento e limites internos que preservem o acesso gratuito.
 
 ## Implementado nesta etapa
 
@@ -12,11 +12,10 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | Duas entradas | Começar do zero com escolha de meta; diagnóstico para quem já estudou. |
 | Diagnóstico | 15 perguntas, retomada, explicações, sugestão por etapa e ajuste manual. Não concede XP nem conclui lições. |
 | Dojo | Papel washi em SVG estático, tinta escura, vermelho de hanko e tipografia Shippori Mincho. |
-| Celular | Caractere e círculo inteiros dentro do card; navegação acessível nos três estilos. Scanline removida em telas pequenas e com movimento reduzido. |
-| Apoio | Página e links discretos no dashboard e configurações; destinos reais configuráveis para Brasil/exterior. |
+| Celular | Navegação acessível nos três estilos; sem camada escurecendo o Arcade. Animações decorativas podem ser pausadas e respeitam movimento reduzido. |
 | Contas | Supabase Auth por e-mail/senha, confirmação e recuperação; cookies HttpOnly, migração do navegador e isolamento ao sair/trocar conta. Google permanece desativado. |
 | Descoberta | Trilha, prática, impressão e materiais para professores ficam visíveis na navegação e na home. |
-| Heisei Girly | Terceiro estilo visual com cores pastéis e detalhes de caderno, sem arte externa adicional. |
+| Heisei Girly | Caderno de adesivos colorido: rosa vibrante, aqua, lilás, amarelo e celular de flip animado em SVG original. |
 | Progresso | Selos por etapa realmente concluída e um dia de pausa protegido por semana. |
 | Cultura | Oito cápsulas vinculadas a lições, reutilizando expressões já explicadas. |
 | Temas | Viagem, anime/mangá e trabalho; palavras, frases, expressões e práticas do acervo existente. |
@@ -24,12 +23,11 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | Operação | Frontend na Vercel, API e Postgres no Supabase; adaptador SQLite legado preservado. |
 | Impressão | Livro 1 compila as 37 lições e atividades atuais em um volume A4 com gabarito; exercícios de partículas também podem ser impressos separadamente. |
 | Professores | Seleção de etapa ou tema gera um link público com as lições e acesso ao Livro 1, sem turma, notas ou progresso individual. |
-| Ilustrações | Duas artes do Irasutoya usadas como apoio visual, com inventário e teto de 20 para o site inteiro; as atividades com imagens continuam usando arte original. |
+| Ilustrações | Artes do Irasutoya com créditos e inventário; autorização informada pela responsável para o uso educacional gratuito, sem o antigo teto interno de 20. |
 
 ## Ativação externa
 
 - Configurar SMTP próprio e permitir `https://maru-frontend.vercel.app` como retorno de e-mail no Supabase Auth.
-- Definir a página real de Apoia.se e/ou Ko-fi; nenhum destino foi inventado.
 - Publicar o frontend na Vercel e a Edge Function no Supabase; validar o domínio HTTPS.
 - Configurar a política de backup e retenção do Postgres no Supabase.
 

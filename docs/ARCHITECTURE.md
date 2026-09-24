@@ -181,7 +181,7 @@ animação contínua. A troca de tema continua preservando a atividade em andame
 
 GET /api/account informa a sessão; GET /api/auth/google inicia OAuth;
 GET /api/auth/google/callback valida state, PKCE, nonce e identidade.
-POST /api/auth/logout revoga a sessão. GET /api/config expõe apenas links de apoio.
+POST /api/auth/logout revoga a sessão.
 O navegador envia o perfil anônimo em x-maru-user; contas são resolvidas pelo cookie.
 Escritas de conta exigem a identidade esperada em x-maru-account e origem válida.
 Esse cabeçalho previne gravações de abas obsoletas e não autentica sozinho.
@@ -210,16 +210,17 @@ Seu resultado não passa por completeLesson ou recordReview: apenas placement é
 salvo. learningPath.js seleciona a próxima lição a partir da etapa aceita. Etapas
 anteriores continuam livres e aparecem como revisão opcional.
 
-Apoio fica no rodapé do dashboard e nas configurações. Trilhas temáticas ficam em
+Trilhas temáticas ficam em
 Descobrir, assim como os imprimíveis. Cápsulas aparecem na última explicação da
 lição correspondente. Selos derivam de todas as lições reais de uma etapa; não são
 uma segunda fonte de verdade para o progresso.
 
 O material para professores também fica em Descobrir e pode ser acessado pela
 home. O Livro 1 usa as lições e catálogos já publicados, imprime gabaritos ao
-final e não afirma equivalência a uma certificação JLPT. As duas artes do
-Irasutoya são apenas apoio visual e têm inventário de origem e limite global.
-Todo o acesso ao conteúdo permanece gratuito, com apoio voluntário.
+final e não afirma equivalência a uma certificação JLPT. As artes do Irasutoya
+têm inventário de origem e registro da autorização informada pela responsável
+para o uso educacional gratuito do Maru, sem o antigo teto interno de 20.
+Todo o acesso ao conteúdo permanece gratuito, sem pedidos de apoio financeiro.
 
 Um único dia sem estudo pode ser protegido por semana de segunda a domingo.
 A proteção só é registrada quando a pessoa volta no dia seguinte à pausa e não
