@@ -20,7 +20,7 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | Temas | Viagem, anime/mangá e trabalho; palavras, frases, expressões e práticas do acervo existente. |
 | Editorial | Gerador de rascunhos, checklist e backlog. Nenhum rascunho é publicado automaticamente. |
 | Operação | Frontend na Vercel, API e Postgres no Supabase; adaptador SQLite legado preservado. |
-| Impressão | Livro 1 compila as 37 lições e atividades atuais em um volume A4 com gabarito; exercícios de partículas também podem ser impressos separadamente. |
+| Impressão | Livro 1 compila as 40 lições e atividades atuais em um volume A4 com gabarito; exercícios de partículas também podem ser impressos separadamente. |
 | Professores | Seleção de etapa ou tema gera um link público com as lições e acesso ao Livro 1, sem turma, notas ou progresso individual. |
 | Ilustrações | Artes do Irasutoya com créditos e inventário; autorização informada pela responsável para o uso educacional gratuito, sem o antigo teto interno de 20. |
 
