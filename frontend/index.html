@@ -9,13 +9,13 @@
   <link rel="icon" href="/assets/img/maru-mark.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&amp;family=DM+Serif+Display:ital@0;1&amp;family=M+PLUS+Rounded+1c:wght@700;800&amp;family=Noto+Sans+JP:wght@400;500;600;700&amp;family=Noto+Serif+JP:wght@400;500;600&amp;family=Press+Start+2P&amp;family=Shippori+Mincho:wght@400;500;600;700&amp;family=Silkscreen:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700;750;800&amp;family=DM+Serif+Display:ital@0;1&amp;family=Noto+Sans+JP:wght@400;500;600;700&amp;family=Noto+Serif+JP:wght@400;500;600&amp;family=Press+Start+2P&amp;family=Shippori+Mincho:wght@400;500;600;700&amp;family=Silkscreen:wght@400;700&amp;display=swap">
   <script>
     try {
       const account = JSON.parse(localStorage.getItem("maru-active-account"));
       const key = account?.id ? "maru-account-" + account.id + "-v2" : "maru-learning-v2";
       const theme = JSON.parse(localStorage.getItem(key))?.preferences?.theme;
-      document.documentElement.dataset.theme = ["dojo", "arcade", "heisei"].includes(theme) ? theme : "dojo";
+      document.documentElement.dataset.theme = ["dojo", "arcade"].includes(theme) ? theme : "dojo";
       document.documentElement.dataset.motion = localStorage.getItem("maru-decoration-paused") === "true" ? "paused" : "running";
     }
     catch { document.documentElement.dataset.theme = "dojo"; }

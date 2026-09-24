@@ -20,7 +20,7 @@ test("visual and audio preferences migrate safely and survive a newer local snap
   assert.equal(legacy.stats.writingSessions,0);
   const invalid = normalizeSnapshot({preferences:{theme:"unknown",audioRate:-1}});
   assert.equal(invalid.preferences.theme,"dojo");
-  assert.equal(normalizeSnapshot({preferences:{theme:"heisei"}}).preferences.theme,"heisei");
+  assert.equal(normalizeSnapshot({preferences:{theme:"heisei"}}).preferences.theme,"dojo");
   assert.equal(invalid.preferences.audioRate,1);
   const local = normalizeSnapshot({updatedAt:200,preferences:{theme:"arcade",audioRate:.75,soundEffects:false},stats:{writingSessions:3}});
   const merged = mergeSnapshots(local,{updatedAt:100,preferences:{theme:"dojo"}});

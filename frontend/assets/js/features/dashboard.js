@@ -3,7 +3,6 @@ import { dailyMissions } from "/shared/gamification.js";
 import { MODULES, LESSONS } from "/shared/curriculum.js";
 import { currentStreak, dueReviews, localDay } from "/shared/progress.js";
 import { icon, routeLink, progressBar } from "../core/ui.js";
-import { heiseiArt } from "../core/theme-art.js";
 import { syncMotion, toggleMotion } from "../core/theme.js";
 
 const DISCOVERY_GROUPS = [
@@ -41,7 +40,7 @@ export function renderDashboard(ctx) {
           <span class="hero-footnote">${icon("clock")} ${next ? next.minutes + " min · " + next.title : "Revise o que você já aprendeu"}</span>
         </div>
         <div class="kana-art" aria-hidden="true"><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div><span class="art-sun"></span><span class="art-main jp">あ</span><span class="art-tag tag-hira">ひらがな <small>hiragana</small></span><span class="art-kana jp">ア</span><span class="art-kanji jp">日</span><span class="art-caption">はじめの一歩<small>o primeiro passo</small></span><svg class="art-spark" viewBox="0 0 32 32"><path d="M16 0Q18 14 32 16Q18 18 16 32Q14 18 0 16Q14 14 16 0" fill="currentColor"/></svg></div>
-        ${heiseiArt()}<button type="button" class="motion-toggle" data-motion-toggle aria-pressed="false">Pausar animações</button>
+        <button type="button" class="motion-toggle" data-motion-toggle aria-pressed="false">Pausar animações</button>
       </section>
       <aside class="daily-card panel"><div class="section-label">${icon("target")} UM POUQUINHO, TODO DIA</div><h2>Sua meta de hoje</h2><p>O hábito começa com um pequeno passo.</p>
         <div class="goal-ring" style="--goal:${Math.min(100, today / goal * 100)}%"><div><strong>${Math.min(today, goal)}<span>/${goal}</span></strong><small>atividades</small></div></div>

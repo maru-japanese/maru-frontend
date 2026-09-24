@@ -14,7 +14,7 @@ O Maru organiza o estudo em uma trilha clara e acolhedora: a pessoa aprende o al
 - Livro 1 completo para imprimir, com as 37 lições, práticas de escrita, palavras, frases, partículas, imagens, diálogos e gabaritos;
 - pacotes públicos para professores compartilharem uma etapa ou trilha temática com a turma, sem conta de aluno ou acompanhamento individual;
 - diagnóstico inicial e uma trilha que indica o próximo passo;
-- estilos visuais Dojo, Arcade e Heisei Girly, metas, constância e conquistas;
+- estilos visuais Dojo e Arcade, metas, constância e conquistas;
 - estudo anônimo no navegador ou sincronização entre aparelhos com uma conta por e-mail.
 
 Todo o conteúdo é gratuito, sem pedidos de apoio financeiro. As ilustrações do Irasutoya têm fontes e registro da autorização informada pela responsável em [IRASUTOYA.md](frontend/assets/img/IRASUTOYA.md). O antigo teto interno de 20 foi retirado para o uso educacional gratuito do Maru.

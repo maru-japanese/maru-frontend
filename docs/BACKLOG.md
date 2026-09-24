@@ -12,10 +12,9 @@ A direção Dojo escolhida é **Tinta e papel**. Arcade mantém sua identidade.
 | Duas entradas | Começar do zero com escolha de meta; diagnóstico para quem já estudou. |
 | Diagnóstico | 15 perguntas, retomada, explicações, sugestão por etapa e ajuste manual. Não concede XP nem conclui lições. |
 | Dojo | Papel washi em SVG estático, tinta escura, vermelho de hanko e tipografia Shippori Mincho. |
-| Celular | Navegação acessível nos três estilos; sem camada escurecendo o Arcade. Animações decorativas podem ser pausadas e respeitam movimento reduzido. |
+| Celular | Navegação acessível nos dois estilos; sem camada escurecendo o Arcade. Animações decorativas podem ser pausadas e respeitam movimento reduzido. |
 | Contas | Supabase Auth por e-mail/senha, confirmação e recuperação; cookies HttpOnly, migração do navegador e isolamento ao sair/trocar conta. Google permanece desativado. |
 | Descoberta | Trilha, prática, impressão e materiais para professores ficam visíveis na navegação e na home. |
-| Heisei Girly | Caderno de adesivos colorido: rosa vibrante, aqua, lilás, amarelo, bolinhas e celular de flip em SVG original. Toque hyperpop com movimento suave, pausa e áreas de leitura tranquilas. |
 | Progresso | Selos por etapa realmente concluída e um dia de pausa protegido por semana. |
 | Cultura | Oito cápsulas vinculadas a lições, reutilizando expressões já explicadas. |
 | Temas | Viagem, anime/mangá e trabalho; palavras, frases, expressões e práticas do acervo existente. |

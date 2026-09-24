@@ -68,7 +68,7 @@ test("teachers can share a public curated path and its printable book", async ({
 
 test("hubs fit both modes; the mobile drawer fits and traps keyboard focus", async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
-  for (const theme of ['dojo', 'arcade', 'heisei']) {
+  for (const theme of ['dojo', 'arcade']) {
     for (const width of [1440, 768, 390, 320]) {
       await page.setViewportSize({ width, height: 740 });
       for (const route of ['home', 'practice', 'explore']) {

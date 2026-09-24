@@ -171,7 +171,7 @@ document.addEventListener("keydown", event => {
 });
 document.addEventListener("click", event => {
   const theme = event.target.closest("[data-theme-choice]");
-  if (theme) { ctx.setTheme(theme.dataset.themeChoice); toast("Estilo " + ({ dojo: "Dojo", arcade: "Arcade", heisei: "Heisei Girly" }[theme.dataset.themeChoice] || "Dojo") + " ativado. Seu progresso continua o mesmo."); }
+  if (theme) { ctx.setTheme(theme.dataset.themeChoice); toast("Estilo " + ({ dojo: "Dojo", arcade: "Arcade" }[theme.dataset.themeChoice] || "Dojo") + " ativado. Seu progresso continua o mesmo."); }
   const speaker = event.target.closest("[data-speak]");
   if (speaker) { event.preventDefault(); audio.speak(speaker.dataset.speak, speaker); }
   const review = event.target.closest("[data-add-review]");

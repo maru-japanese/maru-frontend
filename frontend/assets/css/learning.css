@@ -16,8 +16,6 @@
 .theme-preview { display: flex; align-items: center; justify-content: space-between; min-height: 96px; padding: 20px; border-radius: 4px; }
 .theme-preview.dojo { background: #f7f4ec; color: #365b48; font: 40px var(--font-jp); }
 .theme-preview.arcade { background: #0c0e19; color: #b6fa68; font: 30px var(--font-jp); border: 2px solid #6a5194; box-shadow: inset 0 -4px #343046; }
-.theme-preview.heisei { background: radial-gradient(circle,#d246935c 2.5px,transparent 3px) 0 0 / 18px 18px, linear-gradient(115deg,#ffd4eb,#cefcf9 55%,#fff2a1); color: #951362; font: 44px var(--font-jp); border: 3px solid white; border-radius: 18px; box-shadow: 3px 4px #d59bc2; }
-.theme-preview.heisei small { background: #fff9ef; color: #73305f; padding: 6px; border-radius: 7px; }
 .theme-preview { gap: 12px; }
 .theme-preview > small { min-width: 0; text-align: right; }
 .theme-preview small { font-size: 11px; color: inherit; }

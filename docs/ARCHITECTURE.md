@@ -150,7 +150,6 @@ A folha anterior foi substituída integralmente:
 - components.css: botões, campos, exemplos e feedback;
 - screens.css: composição de cada tela;
 - themes/arcade.css: variantes do modo Arcade, condicionadas por data-theme;
-- themes/heisei.css: cores vibrantes, bolinhas e adesivos do estilo Heisei Girly;
 - responsive.css: desktop, tablet e celular, com prioridade sobre o tema;
 - learning.css: vocabulário, exercícios, temas, missões e conquistas;
 - navigation.css: navegação simplificada, páginas Praticar/Explorar e busca;
@@ -161,8 +160,6 @@ Dojo usa papel claro (#f8f7f3), superfícies quase brancas, washi em SVG estáti
 Shippori Mincho e vermelho de hanko. themes/dojo.css concentra essa identidade;
 experience.css compõe as novas telas e contém o selo da home em tamanhos móveis.
 Arcade usa pixels e neon, sem camada de escurecimento sobre o conteúdo.
-Heisei Girly combina rosa, aqua, lilás e amarelo, bolinhas e adesivos originais
-em SVG/CSS, com um toque hyperpop concentrado nas áreas decorativas.
 Animações respeitam movimento reduzido; o botão na home permite pausá-las e
 guarda a escolha neste navegador, sem mudar o progresso de estudo.
 Os seletores de Arcade usam `:where()` para não impedir os ajustes de responsividade.
