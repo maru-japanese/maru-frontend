@@ -1,6 +1,7 @@
 // Decorative, original vector stationery for the Heisei theme.
 export function heiseiArt() {
   return `<div class="heisei-art" aria-hidden="true">
+    <span class="heisei-bubble heisei-bubble-one"></span><span class="heisei-bubble heisei-bubble-two"></span><span class="heisei-bubble heisei-bubble-three"></span>
     <span class="heisei-note">まるといっしょ♡<small>um pouquinho por dia!</small></span>
     <div class="heisei-phone"><img src="/assets/img/heisei-phone.svg" alt="" width="260" height="420"></div>
     <svg class="heisei-sticker heisei-bow" viewBox="0 0 120 80" fill="none"><path d="M53 34C6-9-10 4 14 60l37-15-8 25 16-8 16 10-8-26 36 14c27-56 3-73-42-26Z" fill="#82e9ef" stroke="white" stroke-width="8" stroke-linejoin="round"/><path d="m47 38-24-8m48 8 24-8" stroke="#2aa1b2" stroke-width="3" stroke-linecap="round"/><ellipse cx="59" cy="39" rx="12" ry="15" fill="#34c7d9" stroke="white" stroke-width="3"/></svg>

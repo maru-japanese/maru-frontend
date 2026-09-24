@@ -29,8 +29,8 @@
 }
 :where([data-theme="heisei"]) body {
   background-color: var(--paper);
-  background-image: linear-gradient(90deg, #ffb9df26 50%, transparent 50%), linear-gradient(#ffb9df26 50%, transparent 50%);
-  background-size: 32px 32px;
+  background-image: radial-gradient(circle, #d579b34a 1.5px, transparent 1.8px);
+  background-size: 24px 24px;
 }
 :where([data-theme="heisei"]) ::selection { background: #a9f2f5; color: var(--ink); }
 :where([data-theme="heisei"]) :is(h1, h2, h3) { font-family: var(--font-display); font-weight: 800; text-wrap: balance; }
@@ -51,10 +51,12 @@
 :where([data-theme="heisei"]) .welcome-card {
   display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center;
   min-height: 440px; overflow: hidden; border: 3px solid #ee90c8; border-radius: 24px;
-  background: linear-gradient(90deg, #fffaf7 52%, #fffaf700 70%), repeating-linear-gradient(0deg, #fbe7ff 0 23px, #ead1f5 23px 24px);
+  background-color: #f5e5ff;
+  background-image: linear-gradient(90deg, #fffaf7 50%, #fffaf700 78%), radial-gradient(circle, #bc8be080 3.5px, transparent 4px);
+  background-size: 100% 100%, 25px 25px;
   box-shadow: 5px 6px 0 #b7e8ec;
 }
-:where([data-theme="heisei"]) .welcome-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 9px; background: repeating-linear-gradient(90deg, #ff80c3 0 25px, #8ae8ed 25px 50px, #ffe67c 50px 75px, #bfa3f4 75px 100px); }
+:where([data-theme="heisei"]) .welcome-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 10px; background: repeating-linear-gradient(90deg, #ff80c3 0 25px, #8ae8ed 25px 50px, #ffe67c 50px 75px, #bfa3f4 75px 100px); }
 :where([data-theme="heisei"]) .welcome-copy { width: 100%; padding: 30px 0 30px 27px; }
 :where([data-theme="heisei"]) .welcome-copy h2 { color: #a91a72; font: 800 clamp(27px, 3vw, 41px)/1.18 var(--font-display); letter-spacing: -1.3px; margin: 19px 0; }
 :where([data-theme="heisei"]) .welcome-copy h2 em { display: inline-block; color: #76448f; background: #fff092; padding: 0 10px 5px; border-radius: 5px 13px 6px 13px; font-style: normal; box-shadow: 2px 3px #f0d482; }
@@ -70,6 +72,10 @@
 :where([data-theme="heisei"]) .heisei-art { display: block; position: relative; min-width: 0; width: 100%; max-width: 380px; height: 390px; justify-self: center; }
 .heisei-phone { position: absolute; top: 34px; left: 14%; width: 64%; transform: rotate(9deg); filter: drop-shadow(4px 7px 0 #b16daa40); }
 .heisei-phone img { display: block; width: 100%; height: auto; }
+.heisei-bubble { position: absolute; border: 4px solid white; border-radius: 50%; box-shadow: 3px 4px #b16daa30; pointer-events: none; }
+.heisei-bubble-one { width: 38px; height: 38px; top: 69px; left: 0; background: #ff77bf; }
+.heisei-bubble-two { width: 28px; height: 28px; right: 9%; bottom: 125px; background: #55dfe6; }
+.heisei-bubble-three { width: 19px; height: 19px; left: 5%; bottom: 152px; background: #ffdc57; border-width: 3px; }
 .heisei-sticker { position: absolute; filter: drop-shadow(2px 4px 0 #a176b03b); pointer-events: none; }
 .heisei-bow { width: 96px; top: 17px; right: 7%; transform: rotate(16deg); }
 .heisei-flower { width: 94px; bottom: 21px; right: 2%; transform: rotate(-10deg); }
@@ -100,6 +106,7 @@
 :where([data-theme="heisei"]) .module-card:nth-child(3) { background: #dff8fc; border-color: #98cedc; }
 :where([data-theme="heisei"]) .module-card:nth-child(4) { background: #ffe1ef; border-color: #e7a3c2; }
 :where([data-theme="heisei"]) .module-symbol { border: 3px solid white; border-radius: 15px; box-shadow: 2px 3px #b28cba40; transform: rotate(-6deg); }
+:where([data-theme="heisei"]) .module-number { display: grid; place-items: center; width: 33px; height: 33px; border: 2px dotted #b385c2; border-radius: 50%; color: #7a4188; background: #fffaf7; }
 :where([data-theme="heisei"]) :is(.hub-card, .practice-card) { border-width: 2px; border-color: #c8b1e5; border-radius: 18px; box-shadow: var(--shadow); }
 :where([data-theme="heisei"]) :is(.module-card, .hub-card, .practice-card):hover { border-color: var(--accent); box-shadow: 5px 6px #e7a4d15c; }
 :where([data-theme="heisei"]) .btn { border-radius: 12px; font-weight: 700; }
@@ -108,7 +115,7 @@
 :where([data-theme="heisei"]) .btn-ghost { background: #fffdf9; border-color: #c8a4d3; }
 :where([data-theme="heisei"]) .btn-ghost:hover { background: #f9e9ff; }
 :where([data-theme="heisei"]) .theme-switcher { background: #d6f1f4; border-color: #9ed2d9; }
-:where([data-theme="heisei"]) .theme-choice[aria-pressed="true"] { background: #ffcbe6; color: #8f145b; border-color: white; box-shadow: 2px 2px #c899ba; }
+:where([data-theme="heisei"]) .theme-choice[aria-pressed="true"] { background: #ffcbe6; color: #8f145b; border-color: white; border-radius: 999px; box-shadow: 2px 2px #c899ba; }
 :where([data-theme="heisei"]) .progress-track { background: #e4d3ef; height: 6px; }
 :where([data-theme="heisei"]) .progress-track > span { background: linear-gradient(90deg, #d32c8f, #9862d8, #26a3b4); }
 :where([data-theme="heisei"]) .kana-cell { background: #fff1f8; border: 1px solid #e9bad9; border-radius: 10px; }
@@ -127,6 +134,7 @@
   .heisei-flower { animation: heisei-flower 7s ease-in-out infinite; }
   .heisei-star, .heisei-mini-star { animation: heisei-sparkle 3s ease-in-out infinite; }
   .heisei-mini-star { animation-delay: -1.5s; }
+  .heisei-bubble-one { animation: heisei-bob 7s ease-in-out -3s infinite; }
 }
 @keyframes heisei-sway { 0%, 100% { transform: translateY(0) rotate(9deg); } 50% { transform: translateY(-8px) rotate(5deg); } }
 @keyframes heisei-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
@@ -143,7 +151,7 @@
   :where([data-theme="heisei"]) .daily-card .daily-bottom { grid-column: 3; grid-row: 3; flex-wrap: wrap; }
 }
 @media (max-width: 650px) {
-  :where([data-theme="heisei"]) .welcome-card { grid-template-columns: 1fr; }
+  :where([data-theme="heisei"]) .welcome-card { grid-template-columns: 1fr; background-image: linear-gradient(#fffaf7 47%, #fffaf700 75%), radial-gradient(circle, #bc8be080 3.5px, transparent 4px); }
   :where([data-theme="heisei"]) .welcome-copy { padding: 26px 23px 8px; }
   :where([data-theme="heisei"]) .welcome-copy h2 { font-size: clamp(28px, 8vw, 38px); }
   :where([data-theme="heisei"]) .heisei-art { height: 255px; max-width: 280px; margin: 16px 0 33px; }

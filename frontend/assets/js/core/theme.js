@@ -1,7 +1,7 @@
 export const THEMES = [
   { id: "dojo", title: "Dojo", subtitle: "Papel, tinta e tranquilidade.", description: "Papel washi, tinta sumi e selos vermelhos. Um espaço tradicional para estudar com calma.", symbol: "道" },
   { id: "arcade", title: "Arcade", subtitle: "Pixels, neon e novas conquistas.", description: "Um fliperama escuro com nível, missões e feedback de jogo.", symbol: "遊" },
-  { id: "heisei", title: "Heisei Girly", subtitle: "Seu caderno de adesivos dos anos 2000.", description: "Rosa vibrante, aqua, lilás e amarelo. Celular de flip, laços e estrelinhas que se mexem com você.", symbol: "♡" }
+  { id: "heisei", title: "Heisei Girly", subtitle: "Seu caderno de adesivos dos anos 2000.", description: "Rosa vibrante, aqua, bolinhas e adesivos. Celular de flip e um toque hyperpop, com movimento suave e espaço para estudar.", symbol: "♡" }
 ];
 export function applyTheme(theme) {
   const selected = THEMES.some(item => item.id === theme) ? theme : "dojo";
