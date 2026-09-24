@@ -35,6 +35,7 @@
 .paper-image-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4mm; }
 .paper-image-card { box-sizing: border-box; min-height: 59mm; border: 1px solid #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; break-inside: avoid; }
 .paper-image-card img { width: 36mm; height: 36mm; max-width: 80%; object-fit: contain; }
+.paper-art-credit { color: #555; font: 8pt/1.5 var(--font-body); margin-top: 5mm; }
 .paper-image-number { position: absolute; top: 3mm; left: 3mm; font-weight: 700; }
 .paper-image-answer { font-size: 10pt; margin-top: 2mm; }
 .paper-word-bank { margin-top: 8mm; border-top: 1px solid #aaa; padding-top: 3mm; }

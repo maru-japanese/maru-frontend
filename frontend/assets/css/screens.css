@@ -86,7 +86,10 @@
 .journey-list { display: grid; gap: 15px; }
 .teacher-builder { display: grid; grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.15fr); gap: 22px; align-items: start; }
 .teacher-builder-controls,.teacher-package { padding: 28px; }
-.teacher-art { display: block; width: 190px; height: 190px; max-width: 100%; object-fit: contain; margin: -12px auto 16px; mix-blend-mode: multiply; }
+.teacher-illustration { margin: 0 auto 24px; text-align: center; }
+.teacher-art { display: block; width: 190px; height: auto; max-width: 100%; object-fit: contain; margin: 0 auto 8px; }
+.illustration-credit { font-size: 10px; line-height: 1.6; color: var(--muted); }
+.illustration-credit a { text-decoration: underline; text-underline-offset: 3px; }
 .teacher-builder-controls .input-label { display: block; margin: 0 0 8px; }
 .teacher-builder-controls select { width: 100%; margin-bottom: 24px; }
 .teacher-share { display: flex; gap: 8px; }

@@ -261,6 +261,8 @@ test("picture matching and dialogues print with images, answer keys and no accid
   await expect(page.locator(".print-sheet")).toHaveCount(2);
   await expect(page.locator(".paper-image-card img")).toHaveCount(6);
   await expect.poll(()=>page.locator(".paper-image-card img").evaluateAll(images=>images.every(image=>image.complete && image.naturalWidth>0))).toBe(true);
+  await expect(page.locator(".paper-art-credit")).toContainText("Irasutoya");
+  expect(await page.locator(".paper-image-card img").evaluateAll(images=>images.every(image=>getComputedStyle(image).objectFit==="contain"))).toBe(true);
   await expect(page.locator(".paper-word-bank > div > span")).toHaveCount(6);
   await expect(page.locator(".print-sheet").last()).toContainText("Gabarito · imagens");
   await expect(page.locator(".print-sheet").last()).toContainText("1. B · 水");

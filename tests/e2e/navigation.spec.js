@@ -52,6 +52,9 @@ test("resource search combines categories, ignores accents and keeps its state o
 
 test("teachers can share a public curated path and its printable book", async ({ page }) => {
   await page.goto('/#/teacher');
+  await expect.poll(()=>page.locator('.teacher-art').evaluate(image=>image.complete && image.naturalWidth>0)).toBe(true);
+  await expect(page.locator('.teacher-art')).toHaveCSS('mix-blend-mode','normal');
+  await expect(page.locator('.illustration-credit')).toContainText('Irasutoya');
   await expect(page.locator('#teacher-link')).toHaveValue(/#\/package\/module-start$/);
   await page.locator('#teacher-topic').selectOption('theme-travel');
   await expect(page.locator('#teacher-preview .teacher-lesson-list li')).toHaveCount(3);

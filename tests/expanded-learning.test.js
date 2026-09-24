@@ -93,7 +93,9 @@ test("printable picture and dialogue activities have complete local content", ()
   assert.deepEqual([...PICTURE_BANK_ORDER].sort((a,b)=>a-b),[0,1,2,3,4,5]);
   for(const item of PICTURE_WORDS){
     assert.ok(VOCABULARY.some(word=>word.id===item.wordId),item.wordId);
-    assert.match(readFileSync(new URL(`../frontend/assets/img/worksheets/${item.id}.svg`,import.meta.url),"utf8"),/<svg\b/);
+    const image = readFileSync(new URL(`../frontend/assets/img/irasutoya-${item.id}.png`,import.meta.url));
+    assert.equal(image.subarray(1,4).toString(),"PNG");
+    assert.ok(image.readUInt32BE(16)>=250 && image.readUInt32BE(20)>=250,"Imagem legível na impressão");
   }
   assert.ok(PRINT_DIALOGUES.length>=3);
   for(const dialogue of PRINT_DIALOGUES){
