@@ -89,8 +89,8 @@ test("all study pronunciations have context-appropriate text for the voice API",
 });
 
 test("printable picture and dialogue activities have complete local content", () => {
-  assert.equal(PICTURE_WORDS.length,6);
-  assert.deepEqual([...PICTURE_BANK_ORDER].sort((a,b)=>a-b),[0,1,2,3,4,5]);
+  assert.equal(PICTURE_WORDS.length,14);
+  assert.deepEqual([...PICTURE_BANK_ORDER].sort((a,b)=>a-b),Array.from({length:14},(_,i)=>i));
   for(const item of PICTURE_WORDS){
     assert.ok(VOCABULARY.some(word=>word.id===item.wordId),item.wordId);
     const image = readFileSync(new URL(`../frontend/assets/img/irasutoya-${item.id}.png`,import.meta.url));
