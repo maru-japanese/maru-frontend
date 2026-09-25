@@ -1,121 +1,130 @@
-/* Paper remains white regardless of the selected visual mode. */
-.print-sheet { min-width: 0; box-sizing: border-box; width: 100%; max-width: 186mm; padding: 12mm; background: white; color: #181818; border: 1px solid #dadada; box-shadow: 0 4px 25px #00000008; font-family: "DM Sans",sans-serif; font-size: 11pt; line-height: 1.5; }
-.print-sheet * { color: inherit; text-shadow: none; }
-.paper-header { display: flex; justify-content: space-between; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 18px; gap: 10px; }
-.paper-header strong { font-size: 19pt; font-weight: 600; }
-.paper-header span { font-size: 9pt; text-align: right; }
-.paper-name { display: flex; justify-content: space-between; gap: 16px; font-size: 9pt; margin: 16px 0; }
-.print-sheet h2 { font: 600 15pt/1.4 "DM Sans",sans-serif; margin: 15px 0 7px; }
-.paper-instructions { font-size: 9pt; margin-bottom: 22px; line-height: 1.7; }
-.paper-row { margin: 0 0 16px; break-inside: avoid; }
-.paper-row-label { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; font-size: 9pt; }
-.paper-row-label strong { font-size: 12pt; }
-.paper-kana-gap .paper-boxes { border: 0; }
-.paper-boxes { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: minmax(0,1fr); aspect-ratio: 9 / 1; border-left: 1px solid #a8a8a8; }
-.paper-repeat-grid { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: repeat(9,minmax(0,1fr)); aspect-ratio: 1; border-left: 1px solid #a8a8a8; border-top: 1px solid #a8a8a8; margin-top: 20px; }
-.paper-repeat-grid .paper-box { border-top: 0; }
-.paper-box { min-width: 0; min-height: 0; overflow: hidden; border: 1px solid #a8a8a8; border-left: 0; position: relative; display: grid; place-items: center; background: #fff; }
-.paper-box::before, .paper-box::after { content: ""; position: absolute; pointer-events: none; }
-.paper-box::before { top: 50%; left: 0; right: 0; border-top: 1px dashed #d5d5d5; }
-.paper-box::after { left: 50%; top: 0; bottom: 0; border-left: 1px dashed #d5d5d5; }
-.paper-box svg { position: relative; z-index: 1; display: block; width: 100%; height: 100%; overflow: hidden; }
+/* One physical page for preview and PDF. Themes never recolor the paper. */
+.worksheet-preview { --paper-scale: 1; display: grid; grid-template-columns: minmax(0,1fr); justify-items: center; gap: 24px; margin-top: 28px; overflow: hidden; }
+.paper-preview-page { width: calc(210mm * var(--paper-scale)); height: calc(297mm * var(--paper-scale)); position: relative; }
+.print-sheet { box-sizing: border-box; width: 210mm; height: 297mm; padding: 14mm; display: flex; flex-direction: column; background: #fff; color: #252525; border: 0; outline: 1px solid #ddd; box-shadow: 0 3px 16px #0000000c; font: 10.5pt/1.55 "DM Sans",sans-serif; transform: scale(var(--paper-scale)); transform-origin: top left; }
+.print-sheet *, .paper-source * { box-sizing: border-box; text-shadow: none; }
+.print-sheet :is(h2,h3,p,small,strong,span,div,section,figure) { color: inherit; }
+.print-sheet :is(h2,h3) { font-family: "DM Sans",sans-serif; letter-spacing: -.25px; }
+.print-sheet :is(.eyebrow,.jp,.paper-art-credit) { color: inherit; }
+.print-sheet [lang="ja"] { font-family: "Noto Sans JP",sans-serif; }
+.print-sheet ruby { ruby-position: over; }
+.print-sheet rt { font-size: .55em; font-weight: 400; }
+.paper-heading { flex: 0 0 auto; }
+.paper-body { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
+.paper-body > * { flex-shrink: 0; }
+.paper-header { display: flex; justify-content: space-between; align-items: center; gap: 6mm; border-bottom: 1.5pt solid #333; padding-bottom: 3mm; margin-bottom: 4mm; }
+.paper-header strong { font: 700 22pt/1 "DM Sans",sans-serif; letter-spacing: -1px; }
+.paper-header span { font-size: 8pt; line-height: 1.5; text-align: right; max-width: 115mm; }
+.paper-name { display: flex; justify-content: space-between; gap: 5mm; font-size: 8.5pt; margin: 0 0 5mm; }
+.print-sheet h2 { font: 700 17pt/1.3 "DM Sans",sans-serif; margin: 2mm 0 3mm; }
+.paper-instructions { font-size: 9pt; line-height: 1.6; margin: 0 0 5mm; }
+.paper-continuation { text-transform: uppercase; letter-spacing: 1px; font-size: 7.5pt; margin: 0 0 3mm; }
+.paper-footer { display: flex; justify-content: space-between; align-items: flex-end; gap: 6mm; flex: 0 0 10mm; margin-top: 4mm; padding-top: 2mm; border-top: .5pt solid #aaa; font-size: 7.5pt; line-height: 1.5; }
+.paper-footer small { display: block; font-size: 6.5pt; }
+.paper-page-number { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.paper-row { margin: 0 0 4mm; break-inside: avoid; }
+.paper-row-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3mm; margin-bottom: 2mm; font-size: 8.5pt; }
+.paper-row-label strong { font-size: 11pt; }
+.paper-row-label .paper-word { font: 16pt "Noto Sans JP",sans-serif; }
+.paper-boxes { display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: minmax(0,1fr); aspect-ratio: 9 / 1; border-left: .5pt solid #999; }
+.paper-box { min-width: 0; min-height: 0; position: relative; display: grid; place-items: center; overflow: hidden; background: white; border: .5pt solid #999; border-left: 0; }
+.paper-box::before,.paper-box::after { content: ""; position: absolute; pointer-events: none; }
+.paper-box::before { left: 0; right: 0; top: 50%; border-top: .5pt dashed #ccc; }
+.paper-box::after { top: 0; bottom: 0; left: 50%; border-left: .5pt dashed #ccc; }
+.paper-box svg { width: 100%; height: 100%; display: block; position: relative; z-index: 1; overflow: hidden; }
 .paper-box path { fill: none; stroke: #222; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .paper-box text { fill: #444; font: 8px sans-serif; }
 .paper-box.ghost path { stroke: #ccc; }
 .paper-box.ghost text { display: none; }
-.paper-box .jp { font: 32pt "Noto Sans JP",sans-serif; color: #ccc; }
-.paper-practice-line { min-height: 26px; border-bottom: 1px solid #bbb; margin-top: 12px; }
-.paper-checklist { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 9pt; margin: 18px 0; }
-.paper-footer { padding-top: 12px; margin-top: 20px; border-top: 1px solid #aaa; font-size: 8pt; display: flex; justify-content: space-between; gap: 10px; }
-.paper-question { margin: 16px 0; break-inside: avoid; }
-.paper-question .jp { font-size: 16pt; margin: 5px 0; }
-.paper-answer { margin-bottom: 15px; font-size: 10pt; }
-.paper-answer strong { display: block; }
-.paper-word { font-size: 17pt; }
+.paper-box .jp { font: 30pt "Noto Sans JP",sans-serif; color: #ccc; }
+.paper-body-kana .paper-kana-family { flex: 1; min-height: 0; display: grid; grid-template-rows: repeat(5,minmax(0,1fr)); gap: 3mm; }
+.paper-kana-family .paper-row { margin: 0; }
+.paper-kana-gap .paper-boxes { border: 0; }
+.paper-repeat-grid { width: 100%; display: grid; grid-template-columns: repeat(9,minmax(0,1fr)); grid-template-rows: repeat(9,minmax(0,1fr)); aspect-ratio: 1; border-top: .5pt solid #999; border-left: .5pt solid #999; margin: 7mm 0; }
+.paper-repeat-grid .paper-box { border-top: 0; }
+.paper-practice-line { min-height: 8mm; border-bottom: .5pt solid #aaa; margin-top: 1mm; }
+.paper-checklist { display: flex; flex-wrap: wrap; gap: 2mm 5mm; margin: 2mm 0 5mm; font-size: 8pt; }
+.paper-question { padding: 0 0 2mm; margin: 0 0 2mm; break-inside: avoid; }
+.paper-question > strong { font-size: 10pt; }
+.paper-question > p { margin: 1.5mm 0; font-size: 9pt; }
+.paper-question .jp { font-size: 13pt; line-height: 1.8; }
+.paper-question .paper-practice-line { min-height: 6mm; }
+.paper-writing-extension { margin-top: 3mm; }
+.paper-body-practice > .paper-question { flex-grow: 1; display: flex; flex-direction: column; }
+.paper-body-practice > .paper-question .paper-practice-line:last-child { margin-top: auto; }
+.paper-answer { margin: 0 0 4mm; padding-bottom: 3mm; border-bottom: .5pt solid #ddd; font-size: 9pt; break-inside: avoid; }
+.paper-answer strong { display: block; font-size: 10pt; margin-bottom: 1mm; }
+.paper-answer p { margin: 1mm 0; }
 .paper-image-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4mm; }
-.paper-image-card { box-sizing: border-box; min-height: 59mm; border: 1px solid #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; break-inside: avoid; }
-.paper-image-card img { width: 36mm; height: 36mm; max-width: 80%; object-fit: contain; }
-.paper-art-credit { color: #555; font: 8pt/1.5 var(--font-body); margin-top: 5mm; }
-.paper-image-number { position: absolute; top: 3mm; left: 3mm; font-weight: 700; }
-.paper-image-answer { font-size: 10pt; margin-top: 2mm; }
-.paper-word-bank { margin-top: 8mm; border-top: 1px solid #aaa; padding-top: 3mm; }
-.paper-word-bank h3,.paper-dialogue-questions h3,.paper-dialogue-answer h3 { font-size: 11pt; margin: 0 0 3mm; }
-.paper-word-bank > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 2mm 4mm; }
-.paper-word-bank > div > span { white-space: nowrap; }
-.paper-word-bank small { display: block; margin-left: 5mm; font-size: 8pt; }
-.paper-picture-answers { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5mm; }
-.paper-picture-answers > div { border-bottom: 1px solid #aaa; padding: 4mm 0; }
-.paper-picture-answers strong,.paper-picture-answers span { display: block; }
-.paper-dialogue { display: grid; gap: 4mm; }
-.paper-dialogue-turn { display: grid; grid-template-columns: 12mm minmax(0,1fr); gap: 3mm; padding: 3mm; border: 1px solid #bbb; break-inside: avoid; }
-.paper-dialogue-turn > strong { display: grid; place-items: center; align-self: start; border: 1px solid #888; border-radius: 50%; width: 9mm; height: 9mm; }
-.paper-dialogue-turn p { font: 14pt/1.5 "Noto Sans JP",sans-serif; margin: 0; }
+.paper-image-grid[data-count="4"],.paper-image-grid[data-count="2"] { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.paper-image-card { height: 59mm; border: .5pt solid #ccc; border-radius: 2mm; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; break-inside: avoid; }
+.paper-image-card img { width: 33mm; height: 33mm; object-fit: contain; max-width: 80%; }
+.paper-image-number { position: absolute; top: 3mm; left: 3mm; font-weight: 700; font-size: 9pt; }
+.paper-image-answer { font-size: 9pt; margin-top: 3mm; }
+.paper-art-credit { font: 7pt/1.5 "DM Sans",sans-serif; margin-top: 4mm; }
+.paper-word-bank { margin-top: 6mm; padding: 4mm; border: .5pt solid #bbb; border-radius: 2mm; }
+.paper-word-bank h3,.paper-dialogue-questions h3,.paper-dialogue-answer h3 { font: 700 11pt/1.4 "DM Sans",sans-serif; margin: 0 0 3mm; }
+.paper-word-bank > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 3mm; }
+.paper-word-bank > div > span { font-size: 10pt; white-space: nowrap; }
+.paper-word-bank small { display: block; font: 8pt "Noto Sans JP",sans-serif; margin-left: 4mm; }
+.paper-picture-answers { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4mm 6mm; }
+.paper-picture-answers > div { border-bottom: .5pt solid #ccc; padding: 3mm 0; }
+.paper-picture-answers strong,.paper-picture-answers span { display: block; font-size: 10pt; }
+.paper-picture-answers span { font-size: 9pt; }
+.paper-dialogue { display: grid; gap: 3mm; }
+.paper-dialogue-turn { display: grid; grid-template-columns: 10mm minmax(0,1fr); gap: 3mm; border: .5pt solid #ccc; border-radius: 2mm; padding: 3mm; break-inside: avoid; }
+.paper-dialogue-turn > strong { display: grid; place-items: center; width: 8mm; height: 8mm; border: .5pt solid #999; border-radius: 50%; font-size: 10pt; }
+.paper-dialogue-turn p { font: 12pt/1.9 "Noto Sans JP",sans-serif; margin: 0; }
 .paper-dialogue-turn small { font-size: 9pt; }
-.paper-dialogue-turn .paper-practice-line { min-height: 22px; margin-top: 5px; }
-.paper-dialogue-questions { margin-top: 8mm; }
-.paper-dialogue-questions > div { margin: 0 0 5mm; break-inside: avoid; }
+.paper-dialogue-turn .paper-practice-line { min-height: 7mm; }
+.paper-dialogue-questions { margin-top: 6mm; }
+.paper-dialogue-questions > div { margin-bottom: 4mm; }
 .paper-dialogue-questions strong { font-size: 9pt; }
-.paper-dialogue-questions .paper-practice-line { margin-top: 3mm; }
-.paper-dialogue-answer { border-bottom: 1px solid #aaa; padding: 3mm 0; break-inside: avoid; }
-.paper-dialogue-answer p { margin: 2mm 0; font-size: 9pt; }
-.paper-dialogue-answer p strong { display: inline; margin-right: 2mm; }
-.paper-dialogue-answer p span { font: 11pt "Noto Sans JP",sans-serif; }
-.paper-book-cover { min-height: 225mm; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
-.paper-book-cover h2 { font-size: 34pt; line-height: 1.15; margin: 5mm 0; }
-.paper-book-cover > p:not(.eyebrow) { max-width: 125mm; }
-.paper-book-cover-art { margin: 8mm 0; align-self: center; }
-.paper-book-cover-art img { width: 55mm; height: 55mm; object-fit: contain; }
-.paper-book-cover small { display: block; max-width: 145mm; margin-top: 12mm; font-size: 9pt; }
-.paper-book-toc { display: grid; gap: 4mm; margin-top: 10mm; }
-.paper-book-toc > div { padding: 3mm 0; border-bottom: 1px solid #bbb; }
+.paper-dialogue-answer { padding: 0 0 4mm; margin-bottom: 4mm; border-bottom: .5pt solid #ccc; break-inside: avoid; }
+.paper-dialogue-answer p { font-size: 9pt; margin: 2mm 0; }
+.paper-dialogue-answer p strong { margin-right: 2mm; }
+.paper-dialogue-answer p span { font-size: 10pt; }
+.paper-body-cover .paper-book-cover { flex: 1; }
+.paper-book-cover { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.paper-book-cover h2 { font-size: 34pt; line-height: 1.15; margin: 5mm 0; letter-spacing: -1.5px; }
+.paper-book-cover > p:not(.eyebrow) { max-width: 135mm; }
+.paper-book-cover-art { margin: 9mm 0; align-self: center; text-align: center; }
+.paper-book-cover-art img { width: 52mm; height: 52mm; object-fit: contain; }
+.paper-book-cover small { font-size: 9pt; max-width: 150mm; margin-top: 8mm; }
+.paper-book-toc { display: grid; gap: 3mm; margin-top: 5mm; }
+.paper-book-toc > div { padding: 4mm 0; border-bottom: .5pt solid #bbb; }
 .paper-book-toc strong,.paper-book-toc span { display: block; }
 .paper-book-toc span { font-size: 9pt; }
-.paper-book-lesson { font-size: 9pt; line-height: 1.4; }
-.paper-book-lesson h2 { font-size: 16pt; }
-.paper-book-goal { padding: 3mm; border-left: 2px solid #222; }
-.paper-book-section { margin: 4mm 0; }
-.paper-book-section h3 { font-size: 10pt; margin: 0 0 1mm; }
-.paper-book-section > p { margin: 1mm 0; }
-.paper-book-example { display: flex; gap: 3mm; align-items: baseline; }
-.paper-book-example span { font: 11pt "Noto Sans JP",sans-serif; }
-.paper-book-example small { font-size: 8pt; }
-.paper-book-tip { padding: 2mm 3mm; background: #f5f5f5; }
-.paper-book-question { margin: 8mm 0; }
-.paper-book-question > strong { display: block; font-size: 11pt; }
-.paper-book-question > p { margin: 2mm 0; }
-.paper-book-question .paper-practice-line { min-height: 15mm; }
-.paper-book-answers { margin: 3mm 0; break-inside: avoid; font-size: 9pt; }
-.paper-book-answers h3 { margin: 0 0 1mm; font-size: 10pt; }
-.paper-book-answers p { margin: 1mm 0; }
+.paper-book-goal { font-size: 9pt; padding: 2mm 3mm; margin: 0 0 4mm; border-left: 2pt solid #555; }
+.paper-book-section { font-size: 10pt; line-height: 1.55; padding-bottom: 3mm; margin-bottom: 3mm; }
+.paper-book-section h3 { font-size: 11pt; margin: 0 0 2mm; }
+.paper-book-section > p { margin: 1.5mm 0; }
+.paper-book-example { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 3mm; align-items: baseline; padding: 1mm 0; }
+.paper-book-example span { font: 11pt/1.8 "Noto Sans JP",sans-serif; overflow-wrap: anywhere; }
+.paper-book-example small { font-size: 8.5pt; }
+.paper-book-tip { font-size: 9pt; padding: 2mm 3mm; border-left: 1pt solid #aaa; background: #f7f7f7; }
+.paper-book-practice-title { font-size: 11pt; border-top: 1pt solid #aaa; padding-top: 3mm; margin: 1mm 0 3mm; }
+.paper-book-question { margin: 0 0 3mm; font-size: 9pt; break-inside: avoid; }
+.paper-book-question > strong { display: block; margin-bottom: 2mm; }
+.paper-book-choices { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.5mm 4mm; font-size: 9pt; margin: 2mm 0; }
+.paper-book-question .paper-practice-line { min-height: 5mm; }
+.paper-book-answers { padding-bottom: 3mm; margin-bottom: 3mm; border-bottom: .5pt solid #ccc; font-size: 9pt; break-inside: avoid; }
+.paper-book-answers h3 { font-size: 11pt; margin-bottom: 2mm; }
+.paper-book-answers p { margin: 1.5mm 0; }
 .paper-book-words { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4mm; }
-.paper-book-words > div { border-bottom: 1px solid #bbb; padding: 2mm 0; }
+.paper-book-words > div { padding: 2mm 0; border-bottom: .5pt solid #bbb; }
 .paper-book-words strong,.paper-book-words span,.paper-book-words small { display: block; }
-.paper-book-words strong { font: 14pt "Noto Sans JP",sans-serif; }
-.paper-book-words small { font: 9pt "Noto Sans JP",sans-serif; }
-@media (max-width: 600px) { .print-sheet { padding: 6mm; font-size: 9pt; } .paper-header strong { font-size: 15pt; } .paper-header span { font-size: 7pt; } .paper-box .jp { font-size: 22pt; } .paper-name { flex-direction: column; gap: 8px; } }
-@page { size: A4 portrait; margin: 12mm; }
+.paper-book-words strong { font: 13pt/1.8 "Noto Sans JP",sans-serif; }
+.paper-book-words span { font-size: 9pt; }
+.paper-book-words small { font: 10pt/1.8 "Noto Sans JP",sans-serif; }
+.paper-source { visibility: hidden; position: absolute; width: 182mm; font: 10.5pt/1.55 "DM Sans",sans-serif; }
+@page { size: A4 portrait; margin: 0; }
 @media print {
-  html,html[data-theme="arcade"],body { color-scheme: light; background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; font-size: 11pt; }
+  html,html[data-theme],body { color-scheme: light; background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; }
   body::before,body::after,.sidebar,.sidebar-backdrop,.topbar,.app-footer,#arcade-hud,.skip-link,#toast,.no-print,.worksheets-page > .page-heading,.worksheets-page > .tip-box { display: none !important; }
   .app-body,#app,.main-content,.worksheets-page,.worksheet-preview { display: block !important; width: auto !important; min-height: 0 !important; max-width: none !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
-  .print-sheet { width: 100%; max-width: none; padding: 0; border: 0; box-shadow: none; break-after: page; background: white !important; color: #181818 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  .print-sheet:last-child { break-after: auto; }
-  .paper-name { flex-direction: row; }
-  .paper-header strong { font-size: 19pt; }
-  .paper-header span { font-size: 9pt; }
-  .paper-box .jp { font-size: 30pt; }
-  .paper-row { margin-bottom: 12px; }
-  .paper-instructions { margin-bottom: 14px; line-height: 1.55; }
-  .paper-header { margin-bottom: 12px; }
-  .paper-checklist { margin: 14px 0; }
-  .paper-box { background: white !important; background-image: none !important; }
+  .paper-preview-page { display: contents; }
+  .print-sheet { transform: none; outline: 0; box-shadow: none; break-after: page; break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .paper-preview-page:last-child .print-sheet { break-after: auto; }
   a[href]::after { content: none !important; }
 }
-
-.worksheet-preview { grid-template-columns: minmax(0,1fr); }
-.paper-row-label { flex-wrap: wrap; }
-.paper-name span { overflow-wrap: anywhere; }
-
-.paper-question { margin: 12px 0; }
-.paper-question .paper-practice-line { min-height: 22px; margin-top: 5px; }
-.paper-question .jp { font-size: 14pt; line-height: 1.4; }

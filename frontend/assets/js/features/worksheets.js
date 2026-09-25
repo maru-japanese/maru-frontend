@@ -4,11 +4,20 @@ import { VOCABULARY, VOCABULARY_GROUPS } from "/shared/vocabulary.js";
 import { PICTURE_WORDS, PICTURE_BANK_ORDER, PRINT_DIALOGUES } from "/shared/printActivities.js";
 import { PARTICLE_EXERCISES } from "/shared/exercises.js";
 import { book1Pages } from "./book1.js";
+import { renderPrintPages, scalePrintPreview } from "./print-layout.js";
 import { pageHeading, esc, icon, routeLink, jpHTML } from "../core/ui.js";
 
 const chunks = (items, size) => Array.from({length:Math.ceil(items.length/size)},(_,i)=>items.slice(i*size,(i+1)*size));
+const balancedChunks = (items, maximum) => {
+  const count = Math.ceil(items.length / maximum), groups = [];
+  let offset = 0;
+  for (let index = 0; index < count; index++) {
+    const size = Math.ceil((items.length - offset) / (count - index));
+    groups.push(items.slice(offset, offset + size)); offset += size;
+  }
+  return groups;
+};
 const blankBox = '<div class="paper-box"></div>';
-const footer = (page, total) => `<footer class="paper-footer"><span>maru. · Japonês, passo a passo<br>Traços: KanjiVG · Ulrich Apel e colaboradores · CC BY-SA 3.0</span><span>${page} / ${total}</span></footer>`;
 const header = title => `<header class="paper-header"><strong>maru.</strong><span>UM POUQUINHO, TODO DIA.<br>${title}</span></header><div class="paper-name"><span>Nome: __________________________________</span><span>Data: ____ / ____ / ______</span></div>`;
 const repeatPage = () => header("Página de repetição") + '<div class="paper-repeat-grid" aria-label="Quadrados vazios para praticar">' + blankBox.repeat(81) + '</div>';
 const strokeSVG = (char, paths = []) => `<svg viewBox="-4 -4 117 117" role="img" aria-label="Ordem dos traços de ${char}">${paths.map(d=>`<path d="${esc(d)}"/>`).join("")}</svg>`;
@@ -35,13 +44,23 @@ const kanaSheet = (row, script, selected, strokes) => {
     }).join("")}</div>`;
 };
 const pictureItems = PICTURE_WORDS.map(item=>({...item,word:VOCABULARY.find(word=>word.id===item.wordId)}));
-const pictureBank = PICTURE_BANK_ORDER.map(index=>pictureItems[index]);
-const pictureLetter = item => String.fromCharCode(65+pictureBank.findIndex(entry=>entry.id===item.id));
-const pictureSheet = () => header("Atividade · imagem e palavra") +
-  '<h2>Qual palavra combina com a imagem?</h2><p class="paper-instructions">Veja as ilustrações e escreva a letra da palavra japonesa correspondente. Depois, confira o gabarito.</p>' +
-  `<div class="paper-image-grid">${pictureItems.map((item,index)=>`<div class="paper-image-card"><span class="paper-image-number">${index+1}</span><img src="/assets/img/irasutoya-${item.id}.png" alt="Ilustração de ${esc(item.word.pt)}" width="120" height="120"><span class="paper-image-answer">Letra: ______</span></div>`).join("")}</div>` +
-  `<section class="paper-word-bank"><h3>Banco de palavras</h3><div>${pictureBank.map((item,index)=>`<span><b>${String.fromCharCode(65+index)}.</b> <span lang="ja">${item.word.jp}</span> <small>${item.word.reading}</small></span>`).join("")}</div></section><p class="paper-art-credit">Ilustrações: Mifune Takashi / Irasutoya · www.irasutoya.com</p>`;
-const pictureAnswerSheet = () => header("Gabarito · imagens") + '<h2>Confira suas associações.</h2>' +
+// Balance the final group too: 14 images become 5 + 5 + 4.
+const pictureGroups = (() => {
+  const count = Math.ceil(pictureItems.length / 6), groups = [];
+  let offset = 0;
+  for (let index = 0; index < count; index++) {
+    const size = Math.ceil((pictureItems.length - offset) / (count - index));
+    groups.push(pictureItems.slice(offset, offset + size)); offset += size;
+  }
+  return groups;
+})();
+const pictureBank = items => PICTURE_BANK_ORDER.map(index=>pictureItems[index]).filter(item=>items.includes(item));
+const pictureLetter = item => String.fromCharCode(65 + pictureBank(pictureGroups.find(group=>group.includes(item))).indexOf(item));
+const pictureSheets = () => pictureGroups.map((items,groupIndex) => header("Atividade · imagem e palavra · "+(groupIndex+1)) +
+  '<h2>Qual palavra combina com a imagem?</h2><p class="paper-instructions">Escreva a letra da palavra japonesa correspondente. Use o banco desta folha e confira o gabarito só depois de tentar.</p>' +
+  `<div class="paper-image-grid" data-count="${items.length}">${items.map(item=>`<div class="paper-image-card"><span class="paper-image-number">${pictureItems.indexOf(item)+1}</span><img src="/assets/img/irasutoya-${item.id}.png" alt="Ilustração de ${esc(item.word.pt)}" width="120" height="120"><span class="paper-image-answer">Letra: ______</span></div>`).join("")}</div>` +
+  `<section class="paper-word-bank"><h3>Banco de palavras desta folha</h3><div>${pictureBank(items).map((item,index)=>`<span><b>${String.fromCharCode(65+index)}.</b> <span lang="ja">${item.word.jp}</span> <small>${item.word.reading}</small></span>`).join("")}</div></section><p class="paper-art-credit">Ilustrações: Mifune Takashi / Irasutoya · www.irasutoya.com</p>`);
+const pictureAnswerSheet = () => header("Gabarito · imagens") + '<h2>Confira suas associações.</h2><p class="paper-instructions">A numeração acompanha as imagens. As letras correspondem ao banco de palavras de cada folha.</p>' +
   `<div class="paper-picture-answers">${pictureItems.map((item,index)=>`<div><strong>${index+1}. ${pictureLetter(item)} · <span lang="ja">${item.word.jp}</span></strong><span>${item.word.reading} · ${item.word.pt}</span></div>`).join("")}</div>`;
 const dialogueSheet = dialogue => header("Atividade · diálogos") + `<h2>${dialogue.title}</h2><p class="paper-instructions">${dialogue.setting} Leia as falas e complete as respostas em japonês. As dicas em português ajudam; escreva antes de olhar o gabarito.</p>` +
   `<div class="paper-dialogue">${dialogue.turns.map(turn=>`<div class="paper-dialogue-turn"><strong>${turn.speaker}</strong><div>${turn.text ? `<p lang="ja">${jpHTML(turn.text,turn.reading)}</p>` : `<small>Dica: ${turn.cue}</small><div class="paper-practice-line"></div><div class="paper-practice-line"></div>`}</div></div>`).join("")}</div>` +
@@ -66,7 +85,7 @@ export function renderWorksheets(ctx, initialKind = "characters") {
   let kind = initialKind === "book" ? "book" : "characters", script = "hiragana", group = "food", batch = 0, answers = true, models = true;
   let scope = "recommended", repeatPages = kind === "book" ? 0 : 1;
   let selected = new Set(KANA.filter(item=>item.script==="hiragana").slice(0,20).map(item=>item.char));
-  let strokes = null, printing = false;
+  let strokes = null, printing = false, renderVersion = 0;
   const characterList = () => script === "all" ? [...KANA.filter(item=>item.script==="hiragana"),...KANA.filter(item=>item.script==="katakana"), ...BEGINNER_KANJI] : script === "kanji" ? BEGINNER_KANJI : KANA.filter(item=>item.script===script);
   ctx.main.innerHTML = `<div class="worksheets-page">${pageHeading("LEVE O APRENDIZADO PARA O PAPEL", "Seu caderno, pronto para imprimir.", "Escolha a atividade, confira a folha e imprima em A4. Você também pode salvar em PDF na janela de impressão.",routeLink("writing","Abrir caderno digital " + icon("pen"),"btn btn-ghost"))}<div class="no-print"><div class="panel worksheet-toolbar">
     <div><label class="input-label" for="worksheet-kind">Atividade</label><select class="text-input" id="worksheet-kind"><option value="characters">Traços e caracteres</option><option value="words">Escrever palavras</option><option value="sentences">Formar frases no papel</option><option value="particles">Complete partículas</option><option value="pictures">Imagens e palavras</option><option value="dialogues">Complete diálogos</option><option value="activities">Pacote de atividades</option><option value="book" ${kind === "book" ? "selected" : ""}>Livro 1 · volume completo</option></select></div>
@@ -79,10 +98,14 @@ export function renderWorksheets(ctx, initialKind = "characters") {
     </div><div class="filter-chips"><label><input id="worksheet-models" type="checkbox" checked> Mostrar modelos para copiar</label><label><input id="worksheet-answers" type="checkbox" checked> Incluir gabarito separado</label></div>
     <div id="worksheet-characters" class="worksheet-selection panel" role="group" dir="ltr" aria-label="Caracteres da folha"></div><p class="filter-count" id="worksheet-status" aria-live="polite">Preparando os modelos de traços…</p>
     <aside class="tip-box">${icon("pen")}<p>Recomendamos começar com 20 caracteres, mas você pode escolher só um, mais de 20 ou todos de uma vez. As páginas de repetição têm quadrados vazios com guias tracejadas para preencher à mão. Na impressão, escolha A4, escala 100% e desative os cabeçalhos do navegador.</p></aside></div><div id="worksheet-preview" class="worksheet-preview"></div></div>`;
+  const previewScale = scalePrintPreview(ctx.main.querySelector("#worksheet-preview"));
   const drawSelection = () => {
     ctx.main.querySelector("#worksheet-characters").innerHTML = characterList().map(item=>`<button class="worksheet-char" data-print-char="${item.char}" aria-pressed="${selected.has(item.char)}" aria-label="${item.char}, ${item.romaji}">${item.char}</button>`).join("");
   };
-  function draw() {
+  async function draw() {
+    const version = ++renderVersion;
+    const isCurrent = () => !controller.signal.aborted && version === renderVersion;
+    ctx.main.querySelector("#print-worksheet").disabled = true;
     ctx.main.querySelector("#worksheet-script-control").hidden = kind !== "characters";
     ctx.main.querySelector("#worksheet-scope-control").hidden = kind !== "characters";
     ctx.main.querySelector("#worksheet-group-control").hidden = kind !== "words";
@@ -107,10 +130,10 @@ export function renderWorksheets(ctx, initialKind = "characters") {
       sheets = [...kanaSheets,...kanjiSheets];
     } else if (kind === "words") {
       const words = VOCABULARY.filter(item=>item.group===group);
-      sheets = chunks(words,5).map(page=>header("Palavras · "+VOCABULARY_GROUPS.find(([id])=>id===group)[1])+
+      sheets = balancedChunks(words,5).map(page=>header("Palavras · "+VOCABULARY_GROUPS.find(([id])=>id===group)[1])+
         '<h2>Escreva e dê significado.</h2><p class="paper-instructions">'+(models ? "Leia o modelo, copie em kana nas casas vazias e diga o significado. Depois cubra o modelo e tente novamente." : "Leia o significado em português e tente escrever a palavra em kana. Use o gabarito apenas depois de tentar.")+'</p>'+
         page.map(item=>`<section class="paper-row"><div class="paper-row-label"><strong>${item.pt}</strong>${models ? `<span class="paper-word jp" lang="ja">${item.reading}</span><span>${item.romaji}</span>` : ""}</div><div class="paper-boxes">${blankBox.repeat(9)}</div></section>`).join("")+
-        '<p class="paper-instructions">Escolha duas palavras e escreva uma frase simples com cada uma.</p><div class="paper-practice-line"></div><div class="paper-practice-line"></div>');
+        '<section class="paper-writing-extension"><p class="paper-instructions">Escolha duas palavras e escreva uma frase simples com cada uma.</p><div class="paper-practice-line"></div><div class="paper-practice-line"></div></section>');
       if(answers) answerSheets = chunks(words,Math.ceil(words.length / Math.ceil(words.length / 10))).map(answerPage => header("Gabarito · palavras")+'<h2>Confira depois de tentar.</h2>'+answerPage.map(item=>`<div class="paper-answer"><strong>${item.pt} → <span lang="ja">${item.jp} (${item.reading})</span> · ${item.romaji}</strong><span lang="ja">${item.sentence}</span><br>${item.translation}</div>`).join(""));
     } else if (kind === "sentences") {
       const items = chunks(SENTENCES,5)[batch] || [];
@@ -122,17 +145,17 @@ export function renderWorksheets(ctx, initialKind = "characters") {
       const everyKana = new Set(KANA.map(item=>item.char));
       const kanaPages = ["hiragana","katakana"].flatMap(kanaScript=>printKanaRows.map(row=>kanaSheet(row,kanaScript,everyKana,strokes)).filter(Boolean));
       const kanjiPages = chunks(BEGINNER_KANJI,5).map(items=>header("Livro 1 · primeiros kanji")+'<h2>Observe, cubra e escreva.</h2>'+items.map(item=>practiceRow(item,strokes)).join(""));
-      const wordPages = chunks(VOCABULARY,10).map(bookWordSheet);
+      const wordPages = balancedChunks(VOCABULARY,10).map(bookWordSheet);
       const sentencePages = chunks(SENTENCES,5).map((items,index)=>bookSentenceSheet(items,index*5));
       const particlePages = chunks(PARTICLE_EXERCISES,6).map((items,index)=>particleSheet(items,index*6));
-      sheets = [...book.pages,...kanaPages,...kanjiPages,...wordPages,...sentencePages,...particlePages,pictureSheet(),...PRINT_DIALOGUES.map(dialogueSheet)];
-      if(answers)answerSheets = [...book.answerPages,...chunks(SENTENCES,10).map((items,index)=>bookSentenceAnswers(items,index*10)),...chunks(PARTICLE_EXERCISES,12).map((items,index)=>particleAnswerSheet(items,index*12)),pictureAnswerSheet(),dialogueAnswerSheet()];
+      sheets = [...book.pages,...kanaPages,...kanjiPages,...wordPages,...sentencePages,...particlePages,...pictureSheets(),...PRINT_DIALOGUES.map(dialogueSheet)];
+      if(answers)answerSheets = [...book.answerPages,bookSentenceAnswers(SENTENCES,0),particleAnswerSheet(PARTICLE_EXERCISES,0),pictureAnswerSheet(),dialogueAnswerSheet()];
     } else if (kind === "particles") {
       sheets = chunks(PARTICLE_EXERCISES,6).map((items,index)=>particleSheet(items,index*6));
-      if(answers)answerSheets = chunks(PARTICLE_EXERCISES,12).map((items,index)=>particleAnswerSheet(items,index*12));
+      if(answers)answerSheets = [particleAnswerSheet(PARTICLE_EXERCISES,0)];
     } else if (activityKinds.has(kind)) {
       if (kind === "pictures" || kind === "activities") {
-        sheets.push(pictureSheet());
+        sheets.push(...pictureSheets());
         if(answers)answerSheets.push(pictureAnswerSheet());
       }
       if (kind === "dialogues" || kind === "activities") {
@@ -141,14 +164,26 @@ export function renderWorksheets(ctx, initialKind = "characters") {
       }
     }
     if (sheets.length) sheets.push(...Array.from({length:repeatPages}, repeatPage), ...answerSheets);
-    preview.innerHTML = sheets.map((sheet,i)=>`<article class="print-sheet">${sheet}${footer(i+1,sheets.length)}</article>`).join("");
+    let pageCount;
+    try {
+      pageCount = await renderPrintPages(preview, sheets, isCurrent);
+      if (!isCurrent()) return;
+    } catch (error) {
+      if (isCurrent()) {
+        preview.replaceChildren();
+        preview.dataset.ready = "false";
+        ctx.main.querySelector("#worksheet-status").textContent = error.message?.includes("A4") ? error.message : "Não foi possível preparar todas as folhas. Reabra a página e tente novamente.";
+      }
+      return;
+    }
     preview.querySelectorAll(".model svg").forEach(svg=>svg.querySelectorAll("path").forEach((path,i)=>{
       const start=path.getPointAtLength(0), label=document.createElementNS("http://www.w3.org/2000/svg","text");
       label.setAttribute("x",Math.max(3,start.x-5));label.setAttribute("y",Math.max(7,start.y-3));label.textContent=i+1;svg.append(label);
     }));
     const ready = ((kind !== "characters" && kind !== "book") || strokes) && sheets.length > 0;
     ctx.main.querySelector("#print-worksheet").disabled = !ready || printing;
-    const count = `${sheets.length} ${sheets.length===1 ? "folha A4 preparada" : "folhas A4 preparadas"}.`;
+    previewScale.resize();
+    const count = `${pageCount} ${pageCount===1 ? "folha A4 preparada" : "folhas A4 preparadas"}.`;
     const characters = kind==="characters" ? ` ${selected.size} ${selected.size===1 ? "caractere selecionado" : "caracteres selecionados"}.` : "";
     const repetition = repeatPages ? ` ${repeatPages} ${repeatPages===1 ? "página de repetição em branco" : "páginas de repetição em branco"}.` : "";
     ctx.main.querySelector("#worksheet-status").textContent = !sheets.length ? "Selecione pelo menos um caractere." : (kind === "characters" || kind === "book") && !strokes ? "Preparando os modelos de traços…" : count+characters+repetition;
@@ -177,7 +212,7 @@ export function renderWorksheets(ctx, initialKind = "characters") {
     draw();
   },{signal:controller.signal});
   ctx.main.addEventListener("click",async event=>{
-    const button=event.target.closest("[data-print-char]");
+    const button=event.target.closest("button[data-print-char]");
     if(button){
       const char=button.dataset.printChar;
       if(scope==="one")selected=new Set([char]);
@@ -189,11 +224,13 @@ export function renderWorksheets(ctx, initialKind = "characters") {
       drawSelection();draw();
     }
     if(event.target.closest("#print-worksheet") && !printing){
-      printing=true;ctx.audio.stop();draw();
+      printing=true;ctx.audio.stop();
+      ctx.main.querySelector("#print-worksheet").disabled = true;
+      const version = renderVersion;
       try{
         await document.fonts.ready;
         await Promise.all([...ctx.main.querySelectorAll("#worksheet-preview img")].map(image=>image.decode()));
-        if(!controller.signal.aborted)window.print();
+        if(!controller.signal.aborted && version === renderVersion)window.print();
       }catch{ctx.toast("Não foi possível carregar as imagens da atividade. Tente imprimir novamente.");}
       finally{printing=false;if(!controller.signal.aborted)draw();}
     }
@@ -202,5 +239,5 @@ export function renderWorksheets(ctx, initialKind = "characters") {
     if(controller.signal.aborted)return;strokes=data.characters;draw();
   }).catch(()=>{if(!controller.signal.aborted)ctx.main.querySelector("#worksheet-status").textContent="Não foi possível carregar os traços. Reabra a página para tentar novamente; palavras e frases continuam disponíveis.";});
   drawSelection();draw();
-  return ()=>controller.abort();
+  return ()=>{controller.abort();previewScale.disconnect();};
 }
